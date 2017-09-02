@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Server List</title>
+<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+<link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+<v-app dark>
+<template>
+  <v-toolbar-title>Server List</v-toolbar-title>
+  <v-spacer></v-spacer>
+</template>
+<template>
+  <v-data-table
+      v-bind:headers="headers"
+      :items="items"
+      class="elevation-1"
+    >
+    <template slot="items" scope="props">
+      <td><v-btn flat dark slot="activator">{{ props.item.hostname }}</v-btn></td>
+      <td class="text-xs-right">{{ props.item.server  }}</td>
+      <td class="text-xs-right">{{ props.item.map }}</td>
+      <td class="text-xs-right">{{ props.item.needpass }}</td>
+      <td class="text-xs-right">{{ props.item.clients }}</td>
+      <td class="text-xs-right">{{ props.item.maxclients }}</td>
+    </template>
+  </v-data-table>
+</template>
+<template>
+  <v-footer class="pa-3">
+    <v-spacer></v-spacer>
+    <div>Gazwald &copy; {{ new Date().getFullYear() }}</div>
+  </v-footer>
+</template>
+</v-app>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
