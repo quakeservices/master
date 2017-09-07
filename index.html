@@ -7,102 +7,113 @@
 </head>
 <body>
   <v-app id="app" toolbar footer dark>
-    <v-navigation-drawer
-      persistent
-      v-model="drawer"
-      light
-      enable-resize-watcher
-      overflow
-      dark
-    >
-      <v-list>
-        <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon class="blue-grey">home</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Home</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+      <v-navigation-drawer
+        persistent
+        v-model="drawer"
+        light
+        enable-resize-watcher
+        overflow
+        dark
+      >
+        <v-list>
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-icon class="blue-grey">home</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Home</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-        <v-list-tile @click="">
-          <v-list-tile-action>
-            <v-icon class="blue-grey">settings</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Options</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-icon class="blue-grey">settings</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Options</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-        <v-divider class="blue-grey" dark></v-divider>
+          <v-divider class="blue-grey" dark></v-divider>
 
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-checkbox v-model="hide_empty"></v-checkbox>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Hide Empty</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-select
+            v-bind:items="gameTypes"
+            v-model="gameType"
+            label="Gametype"
+            dark
+            inset
+            item-value="text"
+          ></v-select>
 
-        <v-divider class="blue-grey" inset></v-divider>
+          <v-divider class="blue-grey" inset></v-divider>
 
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-checkbox v-model="hide_full"></v-checkbox>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Hide Full</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-checkbox v-model="hide_empty"></v-checkbox>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Hide Empty</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-        <v-divider class="blue-grey" inset></v-divider>
+          <v-divider class="blue-grey" inset></v-divider>
 
-        <v-list-tile>
-          <v-list-tile-action>
-            <v-checkbox v-model="hide_protected"></v-checkbox>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Hide Password Protected</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-checkbox v-model="hide_full"></v-checkbox>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Hide Full</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-        <v-divider class="blue-grey" inset></v-divider>
+          <v-divider class="blue-grey" inset></v-divider>
 
-      </v-list>
-    </v-navigation-drawer>
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-checkbox v-model="hide_protected"></v-checkbox>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Hide Password Protected</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
 
-    <v-toolbar class="blue-grey">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Server List</v-toolbar-title>
-    </v-toolbar>
+          <v-divider class="blue-grey" inset></v-divider>
 
-    <main>
-      <v-container fluid>
-        <v-data-table
-          v-bind:headers="headers"
-          :items="items"
-          hide-actions
-          class="elevation-1"
-        >
-        <template slot="items" scope="props">
-          <td><v-btn flat dark slot="activator">{{ props.item.hostname }}</v-btn></td>
-          <td class="text-xs-right">{{ props.item.server }}</td>
-          <td class="text-xs-right">{{ props.item.map }}</td>
-          <td class="text-xs-right"><template v-if="props.item.needpass == 0">No</template>
-                                    <template v-else>Yes</template></td>
-          <td class="text-xs-right">{{ props.item.clients }}/{{ props.item.maxclients }}</td>
-        </template>
-        </v-data-table>
-        <v-footer class="pa-3">
-          <v-spacer></v-spacer>
-        </v-footer>
-      </v-container>
-    </main>
+        </v-list>
+      </v-navigation-drawer>
 
-    <v-footer class="blue-grey">
-      <span>Gazwald &copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+      <v-toolbar class="blue-grey">
+        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-title>Server List</v-toolbar-title>
+      </v-toolbar>
+
+      <main>
+        <v-container fluid>
+          <v-data-table
+            v-bind:headers="headers"
+            :items="items"
+            hide-actions
+            class="elevation-1"
+          >
+          <template slot="items" scope="props">
+            <td>{{ props.item.hostname }}</td>
+            <td class="text-xs-right">{{ props.item.server }}</td>
+            <td class="text-xs-right">{{ props.item.map }}</td>
+            <td class="text-xs-right"><template v-if="props.item.needpass == 0">No</template>
+                                      <template v-else>Yes</template></td>
+            <td class="text-xs-right">{{ props.item.clients }}/{{ props.item.maxclients }}</td>
+          </template>
+          </v-data-table>
+          <v-footer class="pa-3">
+            <v-spacer></v-spacer>
+          </v-footer>
+        </v-container>
+      </main>
+
+      <v-footer class="blue-grey">
+        <span>Gazwald &copy; {{ new Date().getFullYear() }}</span>
+      </v-footer>
   </v-app>
   </div>
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
