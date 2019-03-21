@@ -1,0 +1,7 @@
+---
+game: quake1
+headers:
+  ack: '\22\22ack\n'
+  wololo: '\22\22wolol\n'
+  ping: '\22\22ping\n'
+

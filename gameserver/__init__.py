@@ -1,0 +1,2 @@
+class GameServer(object):
+    pass
