@@ -1,7 +1,16 @@
 ---
 game: quake2
-headers:
-  ack: '\22\22ack\n'
-  wololo: '\22\22wolol\n'
-  ping: '\22\22ping\n'
+active: true
+prefix: '\xff\xff\xff\xff'
 
+headers:
+  ping: 'ping'
+  ping_response: 'ack'
+  server_heartbeat: 'heartbeat'
+  server_shutdown: 'shutdown'
+  server_query: 'status 23\x0a'
+  server_print: 'print'
+
+
+headers_ex_prefix:
+  list_servers: 'query'

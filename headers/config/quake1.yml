@@ -1,5 +1,6 @@
 ---
 game: quake1
+active: true
 headers:
   ack: '\22\22ack\n'
   wololo: '\22\22wolol\n'

@@ -16,8 +16,9 @@ class Headers(object):
         for config_file in config_files:
             config_file_path = os.path.join(config_path, config_file)
             with open(config_file_path, 'rb') as config_file_handle:
-                config = yaml.load(config_file_handle)
-                headers.append(GameHeaders(config))
+                config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
+                if config.get('active', False):
+                    headers.append(GameHeaders(config))
 
         return headers
 
