@@ -2,13 +2,12 @@ from gameserver import GameServer
 
 
 class MasterServer(object):
-  def __init__(self, storage, transport, headers):
+  def __init__(self, storage, headers):
     self.storage = storage
-    self.transport = transport
     self.headers = headers
 
   def connection_made(self, transport):
-    self.conn = transport
+    self.transport = transport
 
   def datagram_received(self, data, address):
     response = None
@@ -27,4 +26,4 @@ class MasterServer(object):
       pass
 
     if response:
-      self.conn.sendto(response, address)
+      self.transport.sendto(response, address)
