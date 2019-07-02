@@ -29,6 +29,26 @@ class Headers(object):
 
         return False
 
+    def is_server(self, header):
+        """
+        Should these call a simplified find_header()?
+        """
+        for game in self.headers:
+            if game.match_byte_headers(header):
+                return True
+
+        return False
+
+    def is_client(self, header):
+        """
+        Should these call a simplified find_header()?
+        """
+        for game in self.headers:
+            if game.match_byte_headers(header):
+                return True
+
+        return False
+
 
 class GameHeaders(object):
     def __init__(self, headers):

@@ -1,32 +1,30 @@
 #!/usr/bin/env python3
+
+from headers import Headers
 from storage import Storage
 from transport import Transport
-from headers import Headers
-
 from masterserver import MasterServer
 
-
-# Socket example:
-my_socket_server = MasterServer(Storage('dynamodb'), Transport('socket'), Headers())
-# HTTP Example
-my_lambda_function = MasterServer(Storage('dynamodb'), Transport('http'), Headers())
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import patch_all
 
 
-print("Starting...")
-storage_backend = Storage('dynamodb')
-transport_backend = Transport('http')
-packet_headers = Headers()
+xray_recorder.configure(aws_xray_tracing_name='master')
+plugins = ('ECSPlugin')
+xray_recorder.configure(plugins=plugins)
+patch_all()
 
-print(storage_backend)
-print(transport_backend)
-print(packet_headers)
 
-storage_backend.store(my_object='Hello Storage')
-transport_backend.send(my_object='Hello Transport')
-result = packet_headers.find_header(b'\xff\xff\xff\xffping')
-print(f"Looking for wololo, found {result}")
+def main():
+  storage = Storage()
+  master = MasterServer(Headers())
+  transport = Transport(master)
 
-#print(f"True? {packet_headers.match(header='wol')}")
-#print(f"False? {packet_headers.match(header='lol')}")
+  try:
+    transport.loop.run_forever()
+  finally:
+    transport.loop.close()
+    storage.close()
 
-print("Done")
+if __name__ == '__main__':
+  main()

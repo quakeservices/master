@@ -2,55 +2,32 @@ import asyncio
 import signal
 import functools
 
+
 class Transport(object):
-    def __new__(self, backend):
-        if backend is 'http':
-            return HTTP()
-        elif backend is 'socket':
-            return Socket()
-        else:
-            return MockTransport()
+  def __init__(self, master):
+    self.bind = ('0.0.0.0', 27900)
+    self.master = master
+    self.loop = asyncio.get_event_loop()
+    self.signal()
+    self.listener()
+    self.run_until()
 
+  def signal(self):
+    signals = ('SIGINT', 'SIGTERM')
+    for signame in signals:
+      self.loop.add_signal_handler(getattr(signal, signame),
+                                   functools.partial(self.shutdown, signame))
 
-class HTTP(object):
-    def send(self, my_object):
-        print(my_object)
+  def listener(self):
+    self.listen = self.loop.create_datagram_endpoint(self.master,
+                                                     local_addr=self.bind)
 
+  def run_until(self):
+    self.transport, self.protocol = self.loop.run_until_complete(self.listen)
 
-def async_loop(f):
-    loop = asyncio.get_event_loop()
-    def decorated(*args, **kwargs):
-        loop.run_until_complete(f(*args, **kwargs))
-    return decorated
+  def shutdown(self):
+    self.transport.close()
+    self.loop.stop()
 
-class Socket(object):
-    def __init__(self, server, bind_address='127.0.0.1', bind_port=29700):
-        self.bind_address = bind_address
-        self.bind_port = bind_port
-        self.bind = (self.bind_address, self.bind_port)
-        self.loop = self.create_loop()
-        self.listener = self.loop.create_datagram_endpoint(server,
-                                                           local_addr=self.bind)
-
-    def create_loop():
-        loop = asyncio.get_event_loop()
-        for signame in ('SIGINT', 'SIGTERM'):
-            loop.add_signal_handler(getattr(signal, signame),
-                                    functools.partial(shutdown, signame))
-        return loop
-
-    def connection_made(self, transport):
-        self.transport = transport
-
-    def datagram_received(self, data, address):
-        # Do something with data...
-        # Then reply
-        self.transport.sendto(data, address)
-
-    @property
-    def has_loop(self):
-        return True
-
-
-class MockTransport(object):
-    pass
+  def __del__(self):
+    self.shutdown()
