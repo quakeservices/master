@@ -1,5 +1,6 @@
 import yaml
 import os
+import binascii
 
 # TODO: Store in Hex, use binascii.hexlify/binasxii.unhexlify
 
@@ -56,8 +57,12 @@ class GameHeaders(object):
     def __init__(self, headers):
         self.game_name = headers.get('game')
         self.headers = headers.get('headers')
-        for k, v in self.str_headers.items():
+        for k, v in self.headers.items():
+          try:
             self.headers[k] = binascii.unhexlify(v)
+          except:
+            self.headers[k] = v
+
    
     def __repr__(self):
         return self.game_name

@@ -3,7 +3,7 @@ import boto3
 
 class Storage(object):
   def __init__(self):
-    self.client = boto3.client('dynamodb')
+    self.client = boto3.resource('dynamodb')
     self.table = self.client.Table('master')
 
   def get_server(self, server):

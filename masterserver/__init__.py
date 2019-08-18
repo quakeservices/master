@@ -1,7 +1,7 @@
 from gameserver import GameServer
 
 
-class MasterServer(object):
+class MasterServer:
   def __init__(self, storage, headers):
     self.storage = storage
     self.headers = headers

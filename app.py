@@ -9,16 +9,16 @@ from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 
 
-xray_recorder.configure(aws_xray_tracing_name='master')
-plugins = ('ECSPlugin')
-xray_recorder.configure(plugins=plugins)
-patch_all()
+#xray_recorder.configure(aws_xray_tracing_name='master')
+#plugins = ('ECSPlugin')
+#xray_recorder.configure(plugins=plugins)
+#patch_all()
 
 
 def main():
+  headers = Headers()
   storage = Storage()
-  master = MasterServer(Headers())
-  transport = Transport(master)
+  transport = Transport(storage, headers)
 
   try:
     transport.loop.run_forever()
