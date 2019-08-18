@@ -4,18 +4,50 @@ import boto3
 class Storage(object):
   def __init__(self):
     self.client = boto3.client('dynamodb')
+    self.table = self.client.Table('master')
 
   def get_server(self, server):
-    pass
+    return self.table.get_item(
+        Key={
+          'ServerAddress': server.address,
+          'ServerPort': server.port
+          }
+        )
 
-  def list_servers(self):
-    pass
+  def list_servers(self, game):
+    return self.table.scan(
+        FilterExpression=Attr('game').eq(game)
+    )
 
   def create_server(self, server):
-    pass
-
-  def delete_server(self, server):
-    pass
+    try:
+      self.table.put_item(server)
+    except:
+      return False
+    else:
+      return True
 
   def update_server(self, server):
-    pass
+    update_expression = []
+    expression_attributes = {}
+
+    for idx, (k, v) in enumerate(server.items()):
+      val = f'val{idx}'
+      update_expression.append(f'SET {k} = :{val}')
+      expression_attributes[f':{val}'] = v
+
+    update_expression = ', '.join(update_expression)
+
+    try:
+      self.table.update_item(
+          Key={
+            'ServerAddress': server.address,
+            'ServerPort': server.port
+            },
+          UpdateExpression=update_expression,
+          ExpressionAttributeValues=expression_attributes
+          )
+    except:
+      return False
+    else: 
+      return True
