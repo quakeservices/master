@@ -18,7 +18,10 @@ class MasterServer(object):
     elif self.headers.is_server(packet_headers):
       server = GameServer(self.headers, address, server_status)
       if server.is_valid:
-        storage.store(server)
+        if storage.get_server(server):
+          storage.update_server(server)
+        else:
+          storage.create_server(server)
 
         if server.has_response:
           response = server.response

@@ -1,6 +1,8 @@
 import yaml
 import os
 
+# TODO: Store in Hex, use binascii.hexlify/binasxii.unhexlify
+
 # TODO: Header object
 #       Headers of header objects
 
@@ -53,10 +55,9 @@ class Headers(object):
 class GameHeaders(object):
     def __init__(self, headers):
         self.game_name = headers.get('game')
-        self.str_headers = headers.get('headers')
-        self.byte_headers = {}
+        self.headers = headers.get('headers')
         for k, v in self.str_headers.items():
-            self.byte_headers[k] = v.encode('ascii')
+            self.headers[k] = binascii.unhexlify(v)
    
     def __repr__(self):
         return self.game_name
@@ -65,16 +66,8 @@ class GameHeaders(object):
     def name(self):
         return self.game_name
 
-    def match_byte_headers(self, header):
-        for k, v in self.byte_headers.items():
-            print(v)
-            if v.startswith(header):
-                return True
-
-        return False
-
-    def match_str_headers(self, header):
-        for k, v in self.str_headers.items():
+    def match_headers(self, header):
+        for k, v in self.headers.items():
             if v.startswith(header):
                 return True
 
