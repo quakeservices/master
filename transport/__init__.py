@@ -32,6 +32,5 @@ class Transport(object):
 
   def shutdown(self, signal):
     logging.debug(f"{__class__.__name__ } - Caught {signal}")
-    logging.info(f"{__class__.__name__ } - Shutting down master server")
     self.transport.close()
     self.loop.stop()

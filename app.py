@@ -36,6 +36,8 @@ def main():
     pass
 
 if __name__ == '__main__':
-  setup_logging('DEBUG')
+  setup_logging()
 
+  logging.info(f"Starting master server.")
   main()
+  logging.info(f"Master server stopped.")
