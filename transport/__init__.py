@@ -1,4 +1,5 @@
 import asyncio
+import socket
 import signal
 import functools
 import logging
@@ -26,6 +27,8 @@ class Transport(object):
   def listener(self):
     logging.debug(f"{__class__.__name__ } - Setting up listener")
     self.listen = self.loop.create_datagram_endpoint(lambda: MasterServer(self.storage, self.headers),
+                                                     family=socket.AF_INET6,
+                                                     flags=socket.AI_V4MAPPED,
                                                      local_addr=self.bind)
 
     self.transport, self.protocol = self.loop.run_until_complete(self.listen)
