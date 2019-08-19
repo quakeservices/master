@@ -1,6 +1,7 @@
 import yaml
 import os
 import binascii
+import logging
 
 # TODO: Store in Hex, use binascii.hexlify/binasxii.unhexlify
 
@@ -9,9 +10,11 @@ import binascii
 
 class Headers(object):
     def __init__(self):
+        logging.debug(f"{__class__.__name__ } - Initialising headers.")
         self.headers = self.load_headers()
 
     def load_headers(self):
+        logging.debug(f"{__class__.__name__ } - Loading headers...")
         headers = []
         module_path = os.path.abspath(os.path.dirname(__file__))
         config_path = os.path.join(module_path, 'config')
@@ -22,6 +25,7 @@ class Headers(object):
                 config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
                 if config.get('active', False):
                     headers.append(GameHeaders(config))
+                    logging.debug(f"{__class__.__name__ } - Loaded {config}")
 
         return headers
 

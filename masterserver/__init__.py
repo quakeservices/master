@@ -1,8 +1,11 @@
+import logging
+
 from gameserver import GameServer
 
 
 class MasterServer:
   def __init__(self, storage, headers):
+    logging.debug(f"{__class__.__name__ } - Initialising master server.")
     self.storage = storage
     self.headers = headers
 

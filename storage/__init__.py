@@ -1,8 +1,10 @@
 import boto3
+import logging
 
 
 class Storage(object):
   def __init__(self):
+    logging.debug(f"{__class__.__name__ } - Initialising storage.")
     self.client = boto3.resource('dynamodb')
     self.table = self.client.Table('master')
 
