@@ -11,10 +11,8 @@ from masterserver import MasterServer
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 
-#xray_recorder.configure(aws_xray_tracing_name='master')
-#plugins = ('ECSPlugin')
-#xray_recorder.configure(plugins=plugins)
-#patch_all()
+xray_recorder.configure()
+patch_all()
 
 def gather_args():
   parser = argparse.ArgumentParser(description='Master Server for idTech servers.')
