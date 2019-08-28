@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from pynamodb.models import Model
 from pynamodb.attributes import (
@@ -24,8 +25,8 @@ class Server(Model):
   players = UnicodeSetAttribute()
 
   active = BooleanAttribute()
-  first_seen = UTCDateTimeAttribute(default=datetime.utcname())
-  last_seen = UTCDateTimeAttribute(default=datetime.utcname())
+  first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
+  last_seen = UTCDateTimeAttribute(default=datetime.utcnow())
 
   country_short = UnicodeAttribute()
   country_long = UnicodeAttribute()
@@ -34,8 +35,6 @@ class Server(Model):
 class Storage(object):
   def __init__(self):
     logging.debug(f"{__class__.__name__ } - Initialising storage.")
-    self.client = boto3.resource('dynamodb')
-    self.table = self.client.Table('master')
 
   def get_server(self, server):
     """
