@@ -1,16 +1,23 @@
 ---
 game: quake2
+engine: idtech2
 active: true
-prefix: '\xff\xff\xff\xff'
 
-headers:
-  ping: 'ping'
-  ping_response: 'ack'
-  server_heartbeat: 'heartbeat'
-  server_shutdown: 'shutdown'
-  server_query: 'status 23\x0a'
-  server_print: 'print'
+server:
+  ping:
+    recv: !!binary /////3Bpbmc=
+    resp: !!binary /////2Fjaw==
+  heartbeat:
+    recv: !!binary /////2hlYXJ0YmVhdA==
+    resp: !!binary /////2Fjaw==
+  shutdown:
+    recv: !!binary /////3NodXRkb3du
+  
+client:
+  query:
+    recv: !!binary cXVlcnk=
+    resp: !!binary /////3NlcnZlcnM=
 
-
-headers_ex_prefix:
-  list_servers: 'query'
+misc:
+  server_query: !!binary c3RhdHVzIDIzCg==
+  server_print: !!binary cHJpbnQ=

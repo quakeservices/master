@@ -1,18 +1,22 @@
 ---
 # Sample configuration for defining game headers.
-# Headers are hex encoded binary
+# Headers are base64 encoded binary
+# yaml.dump(b'\xff\xff\xff\xffping') ~= !!binary /////3Bpbmc=
+#
 precedence: true|false              # Used for games that use the same engine.
                                     # eg, Quake 2 has precidence over all other idtech2 games
                                     # If they do not differentiate themselves
-engine: idtech2                     # Which iD engine the game uses
+engine: idtech2                     # (Optional) Which iD engine the game uses
 game: quake2                        # The name of the game
 active: true|false                  # Whether or not these headers should be loaded
 server:                             # Headers that a server will send to a master server
   ping:
-    recv: '\xff\xff\xff\xffping'    # The header that the master server will recieve
-    resp: '\xff\xff\xff\xffack'     # (Optional) The header that the master server will return
-  
+    recv: !!binary /////3Bpbmc=     # The header that the master server will recieve 
+    resp: !!binary /////2Fjaw==     # (Optional) The header that the master server will return
+  shutdown:
+    recv: !!binary /////3NodXRkb3du
+
 client:                             # Headers that a client will send to a master server
   query:
-    recv: 'query'                   # The header that the master server will recieve
-    resp: '\xff\xff\xff\xffservers' # (Optional) The header that the master server will return
+    recv: !!binary cXVlcnk=         # The header that the master server will recieve
+    resp: !!binary /////3NlcnZlcnM= # (Optional) The header that the master server will return
