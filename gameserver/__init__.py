@@ -1,6 +1,8 @@
+import logging
+
 class GameServer(object):
     def __init__(self, address, data):
-      self.address = address[0]
+      self.address = str(address[0])
       self.port = address[1]
       self.status = self.dictify(data)
       self.is_valid = True #????
@@ -20,12 +22,11 @@ class GameServer(object):
       Example: <score> <ping> <player>\n
       """
       status = dict()
-
       if data[1:]:
         status['clients'] = len(data[2:])
 
       if data[0]:
-        str_status = data[0].decode('ascii')
+        str_status = data[0].decode('latin1')
         list_status = str_status.split('\\')[1:]
         if len(list_status) % 2 != 0:
           list_status = list_status[:-1]

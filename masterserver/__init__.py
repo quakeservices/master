@@ -15,7 +15,7 @@ class MasterServer:
   def datagram_received(self, data, address):
     response = None
     if b'\n' in data:
-      headers, server_status = data.split(b'\n')
+      headers, *server_status = data.split(b'\n')
       logging.debug(f"{__class__.__name__ } - Recieved {headers} from {address[0]}:{address[1]}")
     else:
       logging.debug(f"{__class__.__name__ } - Recieved {data}")
