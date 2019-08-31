@@ -3,7 +3,7 @@ import logging
 import sys
 import argparse
 
-from headers import Headers
+from protocols import Protocols
 from storage import Storage
 from transport import Transport
 from masterserver import MasterServer
@@ -30,9 +30,9 @@ def setup_logging(level='INFO'):
 
 
 def main():
-  headers = Headers()
+  protocols = Protocols()
   storage = Storage()
-  transport = Transport(storage, headers)
+  transport = Transport(storage, protocols)
 
   try:
     transport.loop.run_forever()

@@ -1,28 +1,11 @@
 class GameServer(object):
-    def __init__(self, headers, address, data):
-      self.headers = headers
-      self.ip = address[0]
+    def __init__(self, address, data):
+      self.address = address[0]
       self.port = address[1]
       self.status = self.dictify(data)
-      self.is_valid = False
-      self.has_response = False
+      self.is_valid = True #????
 
-    def server_ping(self):
-      pass
-
-    def server_heartbeat(self):
-      pass
-
-    def server_shutdown(self):
-      pass
-
-    def server_query(self):
-      pass
-
-    def server_print(self):
-      pass
-
-    def dictify(self):
+    def dictify(self, data):
       """
       Input:
           b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
@@ -38,11 +21,11 @@ class GameServer(object):
       """
       status = dict()
 
-      if self.data[1:]:
-        status['clients'] = len(self.data[2:])
+      if data[1:]:
+        status['clients'] = len(data[2:])
 
-      if self.data[0]:
-        str_status = self.data[0].decode('ascii')
+      if data[0]:
+        str_status = data[0].decode('ascii')
         list_status = str_status.split('\\')[1:]
         if len(list_status) % 2 != 0:
           list_status = list_status[:-1]
