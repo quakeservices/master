@@ -68,7 +68,7 @@ class Storage(object):
 
   def get_server(self, server):
     logging.debug(f"{__class__.__name__ } - get_server {server.address}")
-    for server in Server.server_index.query(address=server.address):
+    for server in Server.server_index.query(server.address):
       logging.debug(f"{__class__.__name__ } - {server}")
       return True
     return False

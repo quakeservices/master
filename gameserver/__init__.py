@@ -15,8 +15,9 @@ Example: <score> <ping> <player>\n
 import logging
 import re
 
-from geoip import geolite2
+import GeoIP
 
+gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
 
 class GameServer(object):
     def __init__(self, address, data, encoding):
@@ -33,26 +34,28 @@ class GameServer(object):
       Returns two letter country code for a particular IP
       If none exists then ZZ is returned as unknown.
       """
-      result = geolite2.lookup(self.ip)
+      result = gi.country_code_by_addr(self.ip)
       if result is not None:
-        return result.country
+        return result
       else:
         return 'ZZ'
 
-    def format_address(address):
+    def format_address(self, address):
       self.ip = address[0]
       self.port = address[1]
-      self.address = ':'.join(self.ip, str(self.port))
+      self.address = ':'.join([self.ip, str(self.port)])
 
     def dictify_players(self, data):
+      self.players = []
       player_regex = re.compile('(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
       for player in data:
         player = re.match(player_regex, player.decode(self.encoding))
-        self.players.append(dict(
-          score=int(player.group('score')),
-          ping=int(player.group('ping')),
-          name=player.group('name')
-        ))
+        if player:
+          self.players.append(dict(
+            score=int(player.group('score', 0)),
+            ping=int(player.group('ping', '0')),
+            name=player.group('name', '')
+          ))
 
     def dictify_status(self, data):
       self.status = dict()
