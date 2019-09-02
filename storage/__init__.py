@@ -15,6 +15,10 @@ from pynamodb.attributes import (
         JSONAttribute
 )
 
+"""
+TODO: Grab first_seen before it's overridden
+"""
+
 
 class ServerIndex(GlobalSecondaryIndex):
   class Meta:
@@ -46,8 +50,7 @@ class Server(Model):
   first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
   last_seen = UTCDateTimeAttribute(default=datetime.utcnow())
 
-  # country_short = UnicodeAttribute()
-  # country_long = UnicodeAttribute()
+  country_code = UnicodeAttribute()
 
 
 class Storage(object):
@@ -58,6 +61,8 @@ class Storage(object):
 
   def new_server_object(self, server):
     return Server(server.address,
+                  player_count=server.player_count,
+                  country_code=server.country,
                   status=json.dumps(server.status),
                   players=json.dumps(server.players))
 

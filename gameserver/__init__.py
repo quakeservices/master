@@ -13,28 +13,49 @@ Example: <score> <ping> <player>\n
 """
 
 import logging
+import re
+
+from geoip import geolite2
 
 
 class GameServer(object):
     def __init__(self, address, data, encoding):
-      self.address = ':'.join(address[0], str(address[1]))
+      self.format_address(address)
       self.encoding = encoding
-      self.players = self.dictify_players(data[1:])
-      self.status = self.dictify_status(data[0])
-      self.dictify(data)
+      self.country = self.get_country()
+      self.dictify_status(data[0])
+      self.dictify_players(data[1:])
+      self.player_count = len(self.players)
       self.is_valid = True
 
-    def dictify_players(self, data):
+    def get_country(self):
       """
-      WIP
+      Returns two letter country code for a particular IP
+      If none exists then ZZ is returned as unknown.
       """
-      if data:
-        return len(data[2:])
+      result = geolite2.lookup(self.ip)
+      if result is not None:
+        return result.country
       else:
-        return dict()
+        return 'ZZ'
+
+    def format_address(address):
+      self.ip = address[0]
+      self.port = address[1]
+      self.address = ':'.join(self.ip, str(self.port))
+
+    def dictify_players(self, data):
+      player_regex = re.compile('(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
+      for player in data:
+        player = re.match(player_regex, player.decode(self.encoding))
+        self.players.append(dict(
+          score=int(player.group('score')),
+          ping=int(player.group('ping')),
+          name=player.group('name')
+        ))
 
     def dictify_status(self, data):
-      status = dict()
+      self.status = dict()
 
       if data:
         str_status = data.decode(self.encoding)
@@ -52,5 +73,3 @@ class GameServer(object):
             self.status[status_k] = int(status_v)
           except ValueError:
             self.status[status_k] = status_v
-
-      return status 
