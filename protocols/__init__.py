@@ -36,7 +36,8 @@ class Protocols(object):
             result = game.match_header(category, header)
             if result:
               return {'game': game.name,
-                      'resp': result.get('resp', None)}
+                      'resp': result.get('resp', None),
+                      'encoding': result.get('encoding', None)}
 
         return False
 
@@ -54,6 +55,7 @@ class GameProtocol(object):
         self.protocols = protocols
         self.game_name = self.protocols.get('game')
         self.game_engine = self.protocols.get('engine', None)
+        self.encoding = self.protocols.get('encoding', None)
         logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.game_name}")
 
     def __repr__(self):
@@ -62,6 +64,10 @@ class GameProtocol(object):
     @property
     def name(self):
         return self.game_name
+
+    @property
+    def encoding(self):
+        return self.encoding
 
     def match_header(self, category, header):
         if self.protocols.get(category, False):

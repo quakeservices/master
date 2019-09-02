@@ -1,4 +1,6 @@
 import logging
+import json
+
 from datetime import datetime
 
 from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
@@ -13,6 +15,7 @@ from pynamodb.attributes import (
         JSONAttribute
 )
 
+
 class ServerIndex(GlobalSecondaryIndex):
   class Meta:
     read_capacity_units = 5
@@ -21,7 +24,7 @@ class ServerIndex(GlobalSecondaryIndex):
     projection = AllProjection()
 
   address = UnicodeAttribute(hash_key=True)
-  port = NumberAttribute(range_key=True)
+
 
 class Server(Model):
   class Meta:
@@ -33,11 +36,11 @@ class Server(Model):
   server_index = ServerIndex()
 
   address = UnicodeAttribute(hash_key=True)
-  port = NumberAttribute(range_key=True)
 
   status = JSONAttribute()
 
-  players = UnicodeSetAttribute()
+  player_count = NumberAttribute(default=0)
+  players = JSONAttribute()
 
   active = BooleanAttribute(default=True)
   first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
@@ -53,9 +56,14 @@ class Storage(object):
     if not Server.exists():
       Server.create_table(wait=True)
 
+  def new_server_object(self, server):
+    return Server(server.address,
+                  status=json.dumps(server.status),
+                  players=json.dumps(server.players))
+
   def get_server(self, server):
-    logging.debug(f"{__class__.__name__ } - get_server {server.address}:{server.port}")
-    for server in Server.server_index.query(address=server.address, port=server.port):
+    logging.debug(f"{__class__.__name__ } - get_server {server.address}")
+    for server in Server.server_index.query(address=server.address):
       logging.debug(f"{__class__.__name__ } - {server}")
       return True
     return False
@@ -65,14 +73,14 @@ class Storage(object):
     return Server.scan()
 
   def create_server(self, server):
-    logging.debug(f"{__class__.__name__ } - create_server {server.address}:{server.port}")
-    server_obj = Server(server.address, server.port, status=server.status)
+    logging.debug(f"{__class__.__name__ } - create_server {server.address}")
+    server_obj = self.new_server_object(server)
     server_obj.save()
 
   def update_server(self, server):
     """
     TODO: Flesh this out so it actually updates a server
     """
-    logging.debug(f"{__class__.__name__ } - update_server {server.address}:{server.port}")
-    server_obj = Server(server.address, server.port, status=server.status)
+    logging.debug(f"{__class__.__name__ } - update_server {server.address}")
+    server_obj = self.new_server_object(server)
     server_obj.save()

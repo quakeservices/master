@@ -15,7 +15,7 @@ class MasterServer:
   def datagram_received(self, data, address):
     response = None
     if b'\n' in data:
-      headers, *server_status = data.split(b'\n')
+      headers, *status = data.split(b'\n')
       logging.debug(f"{__class__.__name__ } - Recieved {headers} from {address[0]}:{address[1]}")
     else:
       logging.debug(f"{__class__.__name__ } - Recieved {data}")
@@ -25,11 +25,12 @@ class MasterServer:
     result = self.protocols.is_client(headers)
     if result:
       logging.debug(f"{__class__.__name__ } - Header belongs to client")
-      response = self.create_response(result, self.storage.list_servers)
+      response_header = result.get('resp', None)
+      response = self.create_response(response_header, self.storage.list_servers)
     else:
       result = self.protocols.is_server(headers)
       if result:
-        server = GameServer(address, server_status)
+        server = GameServer(address, status, result.get('encoding', 'latin1'))
         logging.debug(f"{__class__.__name__ } - Header belongs to server")
         if server.is_valid:
           if self.storage.get_server(server):
@@ -42,9 +43,9 @@ class MasterServer:
     if response:
       self.transport.sendto(response, address)
 
-  def create_reponse(self, protocol, response):
+  def create_response(self, header, response):
     # TODO: Clean up, add type conparison for if we ever need to return non-bytes (???)
-    if protocol[1].get('resp', None):
-      return b'\n'.join(protocol[1].get('resp'), response)
+    if header:
+      return b'\n'.join(header, response)
     else:
       return response
