@@ -70,20 +70,16 @@ class Storage(object):
     """
     return Server(server.address,
                   country_code=server.country,
-                  status=json.dumps(server.status),
-                  players=json.dumps(server.players),
+                  status=server.status,
+                  players=server.players,
                   player_count=server.player_count)
 
   def get_server(self, server):
-    logging.debug(f"{__class__.__name__ } - get_server {server.address}")
-    for server in Server.server_index.query(server.address):
-      logging.debug(f"{__class__.__name__ } - {server}")
-      return server
-    return False
+    return Server(server.address).exists()
 
   def list_servers(self, game):
     logging.debug(f"{__class__.__name__ } - list_servers for {game}")
-    return Server.scan()
+    return [_.address.encode('latin1') for _ in Server.scan()]
 
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
@@ -96,6 +92,7 @@ class Storage(object):
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
     server_obj = self.server_object(server)
+    server_obj.active = True
     server_obj.save()
 
   def server_shutdown(self, server):

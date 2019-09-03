@@ -18,15 +18,13 @@ class MasterServer:
       headers, *status = data.split(b'\n')
       logging.debug(f"{__class__.__name__ } - Recieved {headers} from {address[0]}:{address[1]}")
     else:
-      logging.debug(f"{__class__.__name__ } - Recieved {data}")
-      return b'Hi'
-
+      headers = data
 
     result = self.protocols.is_client(headers)
     if result:
       logging.debug(f"{__class__.__name__ } - Header belongs to client")
       response_header = result.get('resp', None)
-      response = self.create_response(response_header, self.storage.list_servers)
+      response = self.create_response(response_header, self.storage.list_servers(result.get('game')))
     else:
       result = self.protocols.is_server(headers)
       if result:
@@ -38,7 +36,7 @@ class MasterServer:
           else:
             self.storage.create_server(server)
 
-        if result.active is not True:
+        if result.get('active', True) is False:
           self.storage.server_shutdown(server)
 
         response = result.get('resp', None)
@@ -49,6 +47,9 @@ class MasterServer:
   def create_response(self, header, response):
     # TODO: Clean up, add type conparison for if we ever need to return non-bytes (???)
     if header:
-      return b'\n'.join(header, response)
+      x = [header]
+      y = [_ for _ in response]
+
+      return b'\n'.join(x + y)
     else:
       return response
