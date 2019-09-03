@@ -47,6 +47,8 @@ class Server(Model):
   players = JSONAttribute()
 
   active = BooleanAttribute(default=True)
+  scraped = BooleanAttribute(default=False) # Whether the server was scraped from other master servers
+
   first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
   last_seen = UTCDateTimeAttribute(default=datetime.utcnow())
 
