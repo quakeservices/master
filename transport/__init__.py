@@ -4,15 +4,12 @@ import signal
 import functools
 import logging
 
-from masterserver import MasterServer
-
 
 class Transport(object):
-  def __init__(self, storage, protocols):
+  def __init__(self, master):
     logging.debug(f"{__class__.__name__ } - Initialising transport.")
     self.bind = ('0.0.0.0', 27900)
-    self.storage = storage
-    self.protocols = protocols
+    self.master = master
     self.loop = asyncio.get_event_loop()
     self.signal()
     self.listener()
@@ -26,7 +23,7 @@ class Transport(object):
 
   def listener(self):
     logging.debug(f"{__class__.__name__ } - Setting up listener")
-    self.listen = self.loop.create_datagram_endpoint(lambda: MasterServer(self.storage, self.protocols),
+    self.listen = self.loop.create_datagram_endpoint(lambda: self.master,
                                                      family=socket.AF_INET6,
                                                      flags=socket.AI_V4MAPPED,
                                                      local_addr=self.bind)

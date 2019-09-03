@@ -58,8 +58,13 @@ class Server(Model):
 class Storage(object):
   def __init__(self):
     logging.debug(f"{__class__.__name__ } - Initialising storage.")
-    if not Server.exists():
+    self.create_table()
+
+  def create_table(self):
+    try:
       Server.create_table(wait=True)
+    except:
+      pass
 
   def new_server_object(self, server):
     return Server(server.address,
