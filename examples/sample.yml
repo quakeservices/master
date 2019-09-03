@@ -7,9 +7,13 @@ precedence: true|false              # Used for games that use the same engine.
                                     # eg, Quake 2 has precidence over all other idtech2 games
                                     # If they do not differentiate themselves
 engine: idtech2                     # (Optional) Which iD engine the game uses
+encoding: latin1                    # (Optional) Which encoding to use when decoding bytes
 game: quake2                        # The name of the game
 active: true|false                  # Whether or not these headers should be loaded
 server:                             # Headers that a server will send to a master server
+                                    # All named headers - eg, ping assume the server is 'active'
+                                    # At the time of writing 'shutdown' header is assumed to set
+                                    # server as 'inactive'
   ping:
     recv: !!binary /////3Bpbmc=     # The header that the master server will recieve 
     resp: !!binary /////2Fjaw==     # (Optional) The header that the master server will return

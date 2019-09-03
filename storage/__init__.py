@@ -15,9 +15,6 @@ from pynamodb.attributes import (
         JSONAttribute
 )
 
-"""
-TODO: Grab first_seen before it's overridden
-"""
 
 
 class ServerIndex(GlobalSecondaryIndex):
@@ -66,18 +63,22 @@ class Storage(object):
     except:
       pass
 
-  def new_server_object(self, server):
+  def server_object(self, server):
+    """
+    TODO: Grab first_seen before it's overridden
+          Update active
+    """
     return Server(server.address,
-                  player_count=server.player_count,
                   country_code=server.country,
                   status=json.dumps(server.status),
-                  players=json.dumps(server.players))
+                  players=json.dumps(server.players),
+                  player_count=server.player_count)
 
   def get_server(self, server):
     logging.debug(f"{__class__.__name__ } - get_server {server.address}")
     for server in Server.server_index.query(server.address):
       logging.debug(f"{__class__.__name__ } - {server}")
-      return True
+      return server
     return False
 
   def list_servers(self, game):
@@ -86,7 +87,7 @@ class Storage(object):
 
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
-    server_obj = self.new_server_object(server)
+    server_obj = self.server_object(server)
     server_obj.save()
 
   def update_server(self, server):
@@ -94,5 +95,14 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-    server_obj = self.new_server_object(server)
+    server_obj = self.server_object(server)
+    server_obj.save()
+
+  def server_shutdown(self, server):
+    """
+    TODO: Flesh this out so it actually updates a server
+    """
+    logging.debug(f"{__class__.__name__ } - update_server {server.address}")
+    server_obj = self.server_object(server)
+    server_obj.active = False
     server_obj.save()

@@ -37,7 +37,8 @@ class Protocols(object):
             if result:
               return {'game': game.name,
                       'resp': result.get('resp', None),
-                      'encoding': game.encoding}
+                      'encoding': game.encoding,
+                      'active': result.get('active', True)}
 
         return False
 
@@ -73,6 +74,9 @@ class GameProtocol(object):
         if self.protocols.get(category, False):
             for k, v in self.protocols[category].items():
                 if v.get('recv', '').startswith(header):
+                    if k == 'shutdown':
+                      v['active'] = False
+
                     return v
 
         return False

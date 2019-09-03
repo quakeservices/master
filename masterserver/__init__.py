@@ -38,7 +38,10 @@ class MasterServer:
           else:
             self.storage.create_server(server)
 
-          response = result.get('resp', None)
+        if result.active is not True:
+          self.storage.server_shutdown(server)
+
+        response = result.get('resp', None)
 
     if response:
       self.transport.sendto(response, address)
