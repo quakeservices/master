@@ -3,20 +3,20 @@
 This project as an attempt to replicate the idSoftware master server for Quake 2 (satan.idsoftware.com) in Python 3.
 
 Core goals:
-  Respond to queries from clients such as qstat
-  Respond to queries and updates from Quake 2 servers
-  Support for protocol 35, 36, and 37
-  Be extensible enough to support other idTech engines/games
-  GraphQL powered Web UI
-  Completely automated deployments
-  Run as a serverless service
+-  Respond to queries from clients such as qstat
+-  Respond to queries and updates from Quake 2 servers
+-  Support for protocol 35, 36, and 37
+-  Be extensible enough to support other idTech engines/games
+-  GraphQL powered Web UI
+-  Completely automated deployments
+-  Run as a serverless service
 
 Stretch goals:
-  QuakeWorld support
-  Quake 3 support
-  Support all common Quake, Quake 2, and Quake 3 derived servers and clients
-  Aggregation of existing master server lists
-  Multiregion support
+-  QuakeWorld support
+-  Quake 3 support
+-  Support all common Quake, Quake 2, and Quake 3 derived servers and clients
+-  Aggregation of existing master server lists
+-  Multiregion support
 
 # Requirements
 

@@ -1,0 +1,10 @@
+version: '3.3'
+
+services:
+   master:
+     image: masterserver:latest
+     ports:
+       - target: 27900
+         published: 27900
+         protocol: udp
+         mode: host
