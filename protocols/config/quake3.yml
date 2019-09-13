@@ -1,16 +1,16 @@
 ---
-game: quake2
-engine: idtech2
+game: quake3
+engine: idtech3
 encoding: latin1
-active: true
-version: 34
+active: false
+version: 68
 
 server:
   ping:
     recv: !!binary /////3Bpbmc=
     resp: !!binary /////2Fjaw==
   heartbeat:
-    recv: !!binary /////2hlYXJ0YmVhdA==
+    recv: 'heartbeat QuakeArena-1\n'
     resp: !!binary /////2Fjaw==
   shutdown:
     recv: !!binary /////3NodXRkb3du
