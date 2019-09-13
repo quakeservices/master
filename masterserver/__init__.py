@@ -13,6 +13,7 @@ class MasterServer:
     self.transport = transport
 
   def datagram_received(self, data, address):
+    # TODO: Assumes split on \n
     response = None
     if b'\n' in data:
       headers, *status = data.split(b'\n')
@@ -28,7 +29,7 @@ class MasterServer:
     else:
       result = self.protocols.is_server(headers)
       if result:
-        server = GameServer(address, status, result.get('encoding', 'latin1'))
+        server = GameServer(address, status, result.get('encoding'))
         logging.debug(f"{__class__.__name__ } - Header belongs to server")
         if server.is_valid:
           if self.storage.get_server(server):

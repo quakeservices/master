@@ -1,25 +1,26 @@
-"""
-Input:
-    b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
-Split the above byte-string into list of strings resulting in:
-    ['cheats', '0', 'deathmatch', '1', 'dmflags', '16', 'fraglimit', '0']
-If the number of keys/values isn't equal truncate the last value
-Zip the above list of strings and then convert zip object into a dict:
-    {'cheats': 0, 'deathmatch': 1, 'dmflags': 16, 'fraglimit': 0]
-For each key/value try to convert it to an int ahead of time.
-
-At the end of the heartbeat is the player list split by \n
-Example: <score> <ping> <player>\n
-"""
-
 import logging
 import re
 
 import GeoIP
 
+# TODO: Where is this in scope?
 gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
 
 class GameServer(object):
+    """
+    Input:
+        b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
+    Split the above byte-string into list of strings resulting in:
+        ['cheats', '0', 'deathmatch', '1', 'dmflags', '16', 'fraglimit', '0']
+    If the number of keys/values isn't equal truncate the last value
+    Zip the above list of strings and then convert zip object into a dict:
+        {'cheats': 0, 'deathmatch': 1, 'dmflags': 16, 'fraglimit': 0]
+    For each key/value try to convert it to an int ahead of time.
+
+    At the end of the heartbeat is the player list split by \n
+    Example: <score> <ping> <player>\n
+    """
+
     def __init__(self, address, data, encoding):
       self.format_address(address)
       self.encoding = encoding
@@ -58,6 +59,7 @@ class GameServer(object):
           ))
 
     def dictify_status(self, data):
+      # TODO: Assumes split on \\
       self.status = dict()
 
       if data:

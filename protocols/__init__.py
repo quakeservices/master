@@ -23,6 +23,7 @@ class Protocols(object):
         logging.debug(f"{__class__.__name__ } - Loading protocols...")
         protocols = []
         for config_file in self.gather_protocol_files():
+            logging.debug(f"{__class__.__name__ } - Reading {config_file}")
             with open(config_file, 'rb') as config_file_handle:
                 config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
                 if config.get('active', False):
@@ -52,27 +53,24 @@ class Protocols(object):
 
 
 class GameProtocol(object):
-    def __init__(self, protocols):
-        self.protocols = protocols
-        self.game_name = protocols.get('game')
-        self.game_engine = protocols.get('engine', None)
-        self.game_encoding = protocols.get('encoding', None) 
+    def __init__(self, protocol):
+        self.protocol = protocol
         logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.game_name}")
 
     def __repr__(self):
-        return self.game_name
+        return self.name
 
     @property
     def name(self):
-        return self.game_name
+        return self.protocol.get('game', '')
 
     @property
     def encoding(self):
-        return self.game_encoding
+        return self.protocol.get('encoding', 'latin1')
 
     def match_header(self, category, header):
-        if self.protocols.get(category, False):
-            for k, v in self.protocols[category].items():
+        if self.protocol.get(category, False):
+            for k, v in self.protocol[category].items():
                 if v.get('recv', '').startswith(header):
                     if k == 'shutdown':
                       v['active'] = False
