@@ -55,7 +55,7 @@ class Protocols(object):
 class GameProtocol(object):
     def __init__(self, protocol):
         self.protocol = protocol
-        logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.game_name}")
+        logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.name}")
 
     def __repr__(self):
         return self.name
