@@ -1,7 +1,9 @@
 import logging
 import json
+import redis
+import pickle
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
 
@@ -55,6 +57,7 @@ class Server(Model):
 class Storage(object):
   def __init__(self):
     logging.debug(f"{__class__.__name__ } - Initialising storage.")
+    self.cache = Cache()
     self.create_table()
 
   def create_table(self):
@@ -79,10 +82,16 @@ class Storage(object):
 
   def list_servers(self, game):
     logging.debug(f"{__class__.__name__ } - list_servers for {game}")
-    return [_.address.encode('latin1') for _ in Server.scan()]
+    servers = self.cache.get('servers')
+    if not servers:
+      servers = [_.address.encode('latin1') for _ in Server.scan()]
+      self.cache.set('servers', servers)
+
+    return servers
 
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
+    self.cache.invalidate('servers')
     server_obj = self.server_object(server)
     server_obj.save()
 
@@ -91,6 +100,7 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
+    self.cache.invalidate('servers')
     server_obj = self.server_object(server)
     server_obj.active = True
     server_obj.save()
@@ -103,3 +113,36 @@ class Storage(object):
     server_obj = self.server_object(server)
     server_obj.active = False
     server_obj.save()
+
+
+class Cache(object):
+  def __init__(self):
+    logging.debug(f"{__class__.__name__ } - Initialising cache.")
+    self.redis = redis.Redis(host='redis', port=6379, db=0)
+
+  def get(self, key):
+    value = self.redis.get(key)
+    if value:
+      try:
+        result = pickle.loads(value)
+      except KeyError:
+        logging.debug(f"{__class__.__name__ } - key error: possibly unpickled object?")
+        result = value
+      else:
+        return result
+    else:
+      return False
+
+  def set(self, key, value):
+    logging.debug(f"{__class__.__name__ } - caching {value} as {key}.")
+    value = picke.dumps(value)
+    try:
+      self.redis.setex(key, timedelta(minutes=30),value)
+    except:
+      return False
+    else:
+      return True
+
+  def invalidate(self, key):
+    logging.debug(f"{__class__.__name__ } - forcing {key} to expire.")
+    self.redis.expire(key, 0)

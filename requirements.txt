@@ -2,3 +2,4 @@ aws-xray-sdk==2.4.2
 pynamodb==4.0.0
 PyYAML==5.1.2
 GeoIP==1.3.2
+redis==3.3.8
