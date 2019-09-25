@@ -19,7 +19,8 @@ class MasterServer:
       headers, *status = data.split(b'\n')
       logging.debug(f"{__class__.__name__ } - Recieved {headers} from {address[0]}:{address[1]}")
     else:
-      headers = data
+      logging.debug(f"{__class__.__name__ } - Recieved {data} from {address[0]}:{address[1]}")
+      headers, status = data, None
 
     result = self.protocols.is_client(headers)
     if result:
@@ -43,6 +44,7 @@ class MasterServer:
         response = result.get('resp', None)
 
     if response:
+      logging.debug(f"{__class__.__name__ } - Sending {response} to {address}")
       self.transport.sendto(response, address)
 
   def create_response(self, header, response):

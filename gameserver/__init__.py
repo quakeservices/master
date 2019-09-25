@@ -25,9 +25,10 @@ class GameServer(object):
       self.format_address(address)
       self.encoding = encoding
       self.country = self.get_country()
-      self.dictify_status(data[0])
-      self.dictify_players(data[1:])
-      self.player_count = len(self.players)
+      if data:
+          self.dictify_status(data[0])
+          self.dictify_players(data[1:])
+          self.player_count = len(self.players)
       self.is_valid = True
 
     def get_country(self):
