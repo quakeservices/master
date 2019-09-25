@@ -1,4 +1,5 @@
 import logging
+import os
 import json
 import redis
 import pickle
@@ -32,7 +33,9 @@ class ServerIndex(GlobalSecondaryIndex):
 class Server(Model):
   class Meta:
     table_name = 'server'
-    region = 'ap-southeast-2' # Note: Not needed in production
+    if os.environ.get('STAGE', 'PRODUCTION') == 'TESTING':
+      host = 'http://dynamodb:8000'
+      region = 'ap-southeast-2'
     read_capacity_units = 5
     write_capacity_units = 5
 

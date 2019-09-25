@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import logging
 import sys
-import argparse
 
 from protocols import Protocols
 from storage import Storage
@@ -13,12 +12,6 @@ from aws_xray_sdk.core import patch_all
 
 xray_recorder.configure()
 patch_all()
-
-def gather_args():
-  parser = argparse.ArgumentParser(description='Master Server for idTech servers.')
-  parser.add_argument('--debug', dest='debug', action="store_true")
-  return parser.parse_args()
-
 
 def setup_logging(level='INFO'):
   log_level = getattr(logging, level.upper())
@@ -41,9 +34,9 @@ def main():
     pass
 
 if __name__ == '__main__':
-  args = gather_args()
+  os.environ['STAGE'] = os.environ.get('STAGE', 'PRODUCTION')
 
-  if args.debug:
+  if os.environ.get('STAGE') == 'TESTING':
     setup_logging('DEBUG')
   else:
     setup_logging()

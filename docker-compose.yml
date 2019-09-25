@@ -10,6 +10,12 @@ services:
       mode: host
     depends_on:
     - redis
+    - dynamodb
+    environment:
+    - STAGE=TESTING
 
   redis:
     image: redis:alpine
+
+  dynamodb:
+    image: amazon/dynamodb-local
