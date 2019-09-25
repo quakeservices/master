@@ -22,6 +22,7 @@ from pynamodb.attributes import (
 
 class ServerIndex(GlobalSecondaryIndex):
   class Meta:
+    host = 'localhost:8000'
     read_capacity_units = 5
     write_capacity_units = 5
     index_name = 'server_index'
@@ -32,10 +33,8 @@ class ServerIndex(GlobalSecondaryIndex):
 
 class Server(Model):
   class Meta:
+    host = 'localhost:8000'
     table_name = 'server'
-    if os.environ.get('STAGE', 'PRODUCTION') == 'TESTING':
-      host = 'http://dynamodb:8000'
-      region = 'ap-southeast-2'
     read_capacity_units = 5
     write_capacity_units = 5
 
@@ -65,9 +64,13 @@ class Storage(object):
 
   def create_table(self):
     try:
+      logging.debug(f"{__class__.__name__ } - Creating table...")
       Server.create_table(wait=True)
     except:
+      logging.debug(f"{__class__.__name__ } - Failed to create table.")
       pass
+    else:
+      logging.debug(f"{__class__.__name__ } - Table created.")
 
   def server_object(self, server):
     """
@@ -95,8 +98,12 @@ class Storage(object):
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
     self.cache.invalidate('servers')
-    server_obj = self.server_object(server)
-    server_obj.save()
+    try:
+      server_obj = self.server_object(server)
+      server_obj.save()
+    except:
+      logging.debug(f"{__class__.__name__ } - failed for some reason {server.address}")
+      pass
 
   def update_server(self, server):
     """
@@ -104,9 +111,13 @@ class Storage(object):
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
     self.cache.reduce_expire('servers')
-    server_obj = self.server_object(server)
-    server_obj.active = True
-    server_obj.save()
+    try:
+        server_obj = self.server_object(server)
+        server_obj.active = True
+        server_obj.save()
+    except:
+      logging.debug(f"{__class__.__name__ } - failed for some reason {server.address}")
+      pass
 
   def server_shutdown(self, server):
     """
