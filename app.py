@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
 import sys
+import os
 
 from protocols import Protocols
 from storage import Storage
