@@ -19,3 +19,7 @@ services:
 
   dynamodb:
     image: amazon/dynamodb-local
+    ulimits:
+      nofile:
+        soft: "122880"
+        hard: "122880"
