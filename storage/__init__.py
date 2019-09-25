@@ -100,7 +100,7 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-    self.cache.invalidate('servers')
+    self.cache.reduce_expire('servers')
     server_obj = self.server_object(server)
     server_obj.active = True
     server_obj.save()
@@ -110,6 +110,7 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
+    self.cache.invalidate('servers')
     server_obj = self.server_object(server)
     server_obj.active = False
     server_obj.save()
@@ -137,7 +138,7 @@ class Cache(object):
     logging.debug(f"{__class__.__name__ } - caching {value} as {key}.")
     value = picke.dumps(value)
     try:
-      self.redis.setex(key, timedelta(minutes=30),value)
+      self.redis.setex(key, timedelta(hours=1),value)
     except:
       return False
     else:
@@ -146,3 +147,8 @@ class Cache(object):
   def invalidate(self, key):
     logging.debug(f"{__class__.__name__ } - forcing {key} to expire.")
     self.redis.expire(key, 0)
+
+  def reduce_expire(self, key):
+    logging.debug(f"{__class__.__name__ } - reducing ttl for {key}.")
+    new_ttl = self.redis.ttl(key) // 2
+    self.redis.expire(key, new_ttl)
