@@ -8,13 +8,10 @@ from storage import Storage
 from transport import Transport
 from masterserver import MasterServer
 
-from aws_xray_sdk.core import xray_recorder
-from aws_xray_sdk.core import patch_all
-
-xray_recorder.configure()
-patch_all()
-
 def setup_logging(level='INFO'):
+  logging.getLogger('boto3').propagate = False
+  logging.getLogger('botocore').propagate = False
+
   log_level = getattr(logging, level.upper())
 
   logging.basicConfig(stream=sys.stdout,
