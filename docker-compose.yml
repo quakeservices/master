@@ -8,7 +8,8 @@ services:
       published: 27900
       protocol: udp
       mode: host
-    depends_on: redis
+    depends_on:
+    - redis
 
   redis:
     image: redis:alpine
