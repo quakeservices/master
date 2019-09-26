@@ -3,4 +3,4 @@ set -euo pipefail
 
 cd $(dirname $0)/..
 
-docker build -t masterserver:latest -t masterserver:${BUILDKITE_BUILD_NUMBER:-1} .
+docker build --network host -t masterserver:latest -t masterserver:${BUILDKITE_BUILD_NUMBER:-1} .
