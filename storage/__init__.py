@@ -88,7 +88,7 @@ class Storage(object):
 
   def list_servers(self, game):
     logging.debug(f"{__class__.__name__ } - list_servers for {game}")
-    servers = self.cache.get('servers')
+    servers = self.cache.get(f'{game}_servers')
     if not servers:
       servers = [_.address.encode('latin1') for _ in Server.scan()]
       self.cache.set('servers', servers)
@@ -97,7 +97,7 @@ class Storage(object):
 
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
-    self.cache.invalidate('servers')
+    self.cache.invalidate(f'{server.game}_servers')
     try:
       server_obj = self.server_object(server)
       server_obj.save()
@@ -110,7 +110,6 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-    self.cache.reduce_expire('servers')
     try:
         server_obj = self.server_object(server)
         server_obj.active = True
@@ -124,7 +123,7 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-    self.cache.invalidate('servers')
+    self.cache.invalidate(f'{server.game}_servers')
     server_obj = self.server_object(server)
     server_obj.active = False
     server_obj.save()
@@ -161,8 +160,3 @@ class Cache(object):
   def invalidate(self, key):
     logging.debug(f"{__class__.__name__ } - forcing {key} to expire.")
     self.redis.expire(key, 0)
-
-  def reduce_expire(self, key):
-    logging.debug(f"{__class__.__name__ } - reducing ttl for {key}.")
-    new_ttl = self.redis.ttl(key) // 2
-    self.redis.expire(key, new_ttl)
