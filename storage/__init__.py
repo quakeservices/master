@@ -42,6 +42,8 @@ class Server(Model):
 
   address = UnicodeAttribute(hash_key=True)
 
+  protocol = NumberAttribute(default=0)
+
   status = JSONAttribute()
 
   player_count = NumberAttribute(default=0)
@@ -53,7 +55,7 @@ class Server(Model):
   first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
   last_seen = UTCDateTimeAttribute(default=datetime.utcnow())
 
-  country_code = UnicodeAttribute()
+  country_code = UnicodeAttribute(default='ZZ')
 
 
 class Storage(object):
