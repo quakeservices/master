@@ -51,7 +51,8 @@ class MasterServer:
     return response
 
   def create_response(self, header, response):
-    # TODO: Clean up, add type conparison for if we ever need to return non-bytes (???)
+    # TODO: Clean this up - it isn't obvious what it's doing
+    #       or why it's doing it...
     if header:
       x = [header]
       y = [_ for _ in response]
