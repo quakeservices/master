@@ -22,7 +22,7 @@ from pynamodb.attributes import (
 
 class ServerIndex(GlobalSecondaryIndex):
   class Meta:
-    host = 'localhost:8000'
+    host = 'http://dynamodb:8000'
     read_capacity_units = 5
     write_capacity_units = 5
     index_name = 'server_index'
@@ -33,7 +33,7 @@ class ServerIndex(GlobalSecondaryIndex):
 
 class Server(Model):
   class Meta:
-    host = 'localhost:8000'
+    host = 'http://dynamodb:8000'
     table_name = 'server'
     read_capacity_units = 5
     write_capacity_units = 5
@@ -70,7 +70,7 @@ class Storage(object):
       Server.create_table(wait=True)
     except:
       logging.debug(f"{__class__.__name__ } - Failed to create table.")
-      pass
+      raise
     else:
       logging.debug(f"{__class__.__name__ } - Table created.")
 
