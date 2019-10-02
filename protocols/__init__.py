@@ -44,12 +44,10 @@ class Protocols(object):
         return False
 
     def is_server(self, header):
-        result = self.find_protocol('server', header)
-        return result
+        return self.find_protocol('server', header)
 
     def is_client(self, header):
-        result = self.find_protocol('client', header)
-        return result
+        return self.find_protocol('client', header)
 
 
 class GameProtocol(object):
