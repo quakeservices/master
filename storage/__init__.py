@@ -22,7 +22,8 @@ from pynamodb.attributes import (
 
 class ServerIndex(GlobalSecondaryIndex):
   class Meta:
-    host = 'http://dynamodb:8000'
+    if os.getenv('STAGE', 'PRODUCTION') == 'TESTING':
+      host = 'http://dynamodb:8000'
     read_capacity_units = 5
     write_capacity_units = 5
     index_name = 'server_index'
@@ -33,7 +34,8 @@ class ServerIndex(GlobalSecondaryIndex):
 
 class Server(Model):
   class Meta:
-    host = 'http://dynamodb:8000'
+    if os.getenv('STAGE', 'PRODUCTION') == 'TESTING':
+      host = 'http://dynamodb:8000'
     table_name = 'server'
     read_capacity_units = 5
     write_capacity_units = 5
@@ -134,7 +136,12 @@ class Storage(object):
 class Cache(object):
   def __init__(self):
     logging.debug(f"{__class__.__name__ } - Initialising cache.")
-    self.redis = redis.Redis(host='redis', port=6379, db=0)
+    self.redis = redis.Redis(host='redis',
+                             port=6379,
+                             db=0,
+                             socket_timeout=3,
+                             socket_connect_timeout=5,
+                             socket_keepalive=True)
 
   def get(self, key):
     value = self.redis.get(key)

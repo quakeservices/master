@@ -32,9 +32,9 @@ def main():
     pass
 
 if __name__ == '__main__':
-  os.environ['STAGE'] = os.environ.get('STAGE', 'PRODUCTION')
+  os.environ['STAGE'] = os.getenv('STAGE', 'PRODUCTION')
 
-  if os.environ.get('STAGE') == 'TESTING':
+  if os.getenv('STAGE') == 'TESTING':
     setup_logging('DEBUG')
   else:
     setup_logging()
