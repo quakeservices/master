@@ -22,20 +22,20 @@ class MasterServer:
       response = self.handle_client(result)
     else:
       result = self.protocols.is_server(headers)
-      response = self.handle_server(result)
+      response = self.handle_server(result, status, address)
 
     if response:
       logging.debug(f"{__class__.__name__ } - Sending {response} to {address}")
       self.transport.sendto(response, address)
 
-  def handle_client(self):
+  def handle_client(self, result):
     logging.debug(f"{__class__.__name__ } - Header belongs to client")
     response_header = result.get('resp', None)
     server_list = self.storage.list_servers(result.get('game'))
     response = self.create_response(response_header, server_list)
     return response
 
-  def handle_server(self):
+  def handle_server(self, result, status, address):
     logging.debug(f"{__class__.__name__ } - Header belongs to server")
     server = GameServer(address, status, result.get('encoding'))
     if server.is_valid:
