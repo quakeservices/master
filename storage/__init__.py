@@ -81,10 +81,11 @@ class Storage(object):
     TODO: Grab first_seen before it's overridden
           Update active
     """
+    logging.debug(f"{__class__.__name__ } - {server.list_players()}.")
     return Server(server.address,
                   country_code=server.country,
                   status=server.status,
-                  players=server.players,
+                  players=0,
                   player_count=server.player_count)
 
   def get_server(self, server):
@@ -92,7 +93,7 @@ class Storage(object):
 
   def list_servers(self, game):
     logging.debug(f"{__class__.__name__ } - list_servers for {game}")
-    servers = self.cache.get(f'{game}_servers')
+    servers = self.cache.get(f'servers')
     if not servers:
       servers = [_.address.encode('latin1') for _ in Server.scan()]
       self.cache.set('servers', servers)
@@ -101,7 +102,7 @@ class Storage(object):
 
   def create_server(self, server):
     logging.debug(f"{__class__.__name__ } - create_server {server.address}")
-    self.cache.invalidate(f'{server.game}_servers')
+    self.cache.invalidate(f'servers')
     try:
       server_obj = self.server_object(server)
       server_obj.save()
@@ -127,7 +128,7 @@ class Storage(object):
     TODO: Flesh this out so it actually updates a server
     """
     logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-    self.cache.invalidate(f'{server.game}_servers')
+    self.cache.invalidate(f'servers')
     server_obj = self.server_object(server)
     server_obj.active = False
     server_obj.save()

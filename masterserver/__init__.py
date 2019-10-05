@@ -37,7 +37,7 @@ class MasterServer:
 
   def handle_server(self, result, status, address):
     logging.debug(f"{__class__.__name__ } - Header belongs to server")
-    server = GameServer(address, status, result.get('encoding'))
+    server = GameServer(address, status, result)
     if server.is_valid:
       if self.storage.get_server(server):
         self.storage.update_server(server)

@@ -1,5 +1,6 @@
 import logging
 import re
+import json
 
 import GeoIP
 
@@ -21,15 +22,27 @@ class GameServer(object):
     Example: <score> <ping> <player>\n
     """
 
-    def __init__(self, address, data, encoding):
+    def __init__(self, address, data, result):
       self.format_address(address)
-      self.encoding = encoding
+      self.result = result
+      self.encoding = self.result.get('encoding')
+      self.status = self.result.get('active')
       self.country = self.get_country()
+      self.players = list()
+      self.status = dict()
       if data:
           self.dictify_status(data[0])
           self.dictify_players(data[1:])
-          self.player_count = len(self.players)
       self.is_valid = True
+
+    def status(self):
+        return self.result.get('active')
+
+    def list_players(self):
+        return json.dumps(self.players)
+
+    def player_count(self):
+        return len(self.players)
 
     def get_country(self):
       """
@@ -48,7 +61,6 @@ class GameServer(object):
       self.address = ':'.join([self.ip, str(self.port)])
 
     def dictify_players(self, data):
-      self.players = []
       player_regex = re.compile('(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
       for player in data:
         player = re.match(player_regex, player.decode(self.encoding))
@@ -61,7 +73,6 @@ class GameServer(object):
 
     def dictify_status(self, data):
       # TODO: Assumes split on \\
-      self.status = dict()
 
       if data:
         str_status = data.decode(self.encoding)
