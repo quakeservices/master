@@ -32,7 +32,7 @@ Please raise issues via the GitHub issue tracker
 
 This license for this project is GNU General Public License v3.0
 
-Tab = 2 spaces
+Tab = 4 spaces
 
 # Documentation
 
