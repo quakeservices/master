@@ -64,7 +64,8 @@ class Storage(object):
     def __init__(self):
         logging.debug(f"{__class__.__name__ } - Initialising storage.")
         self.cache = Cache()
-        self.create_table()
+        if not os.getenv('SKIP_TABLE_CREATE', True):
+            self.create_table()
 
     def create_table(self):
         try:
