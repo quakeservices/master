@@ -19,7 +19,6 @@ from pynamodb.attributes import (
 )
 
 
-
 class ServerIndex(GlobalSecondaryIndex):
     class Meta:
         if os.getenv('STAGE', 'PRODUCTION') == 'TESTING':
@@ -66,6 +65,8 @@ class Storage(object):
         self.cache = Cache()
         if not os.getenv('SKIP_TABLE_CREATE', True):
             self.create_table()
+        else:
+            logging.debug(f"{__class__.__name__ } - Skipping table creation.")
 
     def create_table(self):
         try:

@@ -54,13 +54,14 @@ class GameProtocol(object):
     def __init__(self, protocol):
         self.protocol = protocol
         logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.name}")
+        self.process_headers()
 
     def __repr__(self):
         return self.name
 
     @property
     def name(self):
-        return self.protocol.get('game', '')
+        return self.protocol.get('game', 'Unknown')
 
     @property
     def encoding(self):
@@ -76,3 +77,22 @@ class GameProtocol(object):
                     return v
 
         return False
+
+    def process_headers(self):
+        for category in ['server', 'client']:
+            for k, v in self.protocol[category].items():
+                self.protocol[category][k] = self.encode_headers(v)
+    
+    def encode_headers(self, headers):
+        for _ in ['recv', 'resp']:
+            logging.debug(f"{__class__.__name__ } - {headers}")
+            if _ in headers:
+                headers[_] = self.encoder(headers[_])
+            logging.debug(f"{__class__.__name__ } - {headers}")
+        return headers
+
+    def encoder(self, data):
+        return bytes(data, 'raw_unicode_escape', errors='backslashreplace')
+
+    def decoder(self, data):
+        return data.decode(self.encoding, errors='backslashreplace')
