@@ -1,22 +1,20 @@
+from datetime import datetime, timedelta
+
 import logging
 import os
 import json
-import redis
 import pickle
-
-from datetime import datetime, timedelta
+import redis
 
 from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
 
 from pynamodb.models import Model
-from pynamodb.attributes import (
-                UnicodeAttribute,
-                UnicodeSetAttribute,
-                NumberAttribute,
-                UTCDateTimeAttribute,
-                BooleanAttribute,
-                JSONAttribute
-)
+from pynamodb.attributes import (UnicodeAttribute,
+                                 UnicodeSetAttribute,
+                                 NumberAttribute,
+                                 UTCDateTimeAttribute,
+                                 BooleanAttribute,
+                                 JSONAttribute)
 
 
 class ServerIndex(GlobalSecondaryIndex):
@@ -51,7 +49,7 @@ class Server(Model):
     players = JSONAttribute()
 
     active = BooleanAttribute(default=True)
-    scraped = BooleanAttribute(default=False) # Whether the server was scraped from other master servers
+    scraped = BooleanAttribute(default=False)
 
     first_seen = UTCDateTimeAttribute(default=datetime.utcnow())
     last_seen = UTCDateTimeAttribute(default=datetime.utcnow())
@@ -59,11 +57,11 @@ class Server(Model):
     country_code = UnicodeAttribute(default='ZZ')
 
 
-class Storage(object):
+class Storage():
     def __init__(self):
         logging.debug(f"{__class__.__name__ } - Initialising storage.")
         self.cache = Cache()
-        if not os.getenv('SKIP_TABLE_CREATE', True):
+        if not os.getenv('SKIP_TABLE_CREATE', 'True'):
             self.create_table()
         else:
             logging.debug(f"{__class__.__name__ } - Skipping table creation.")
@@ -161,9 +159,9 @@ class Cache(object):
 
     def set(self, key, value):
         logging.debug(f"{__class__.__name__ } - caching {value} as {key}.")
-        value = picke.dumps(value)
+        value = pickle.dumps(value)
         try:
-            self.redis.setex(key, timedelta(hours=1),value)
+            self.redis.setex(key, timedelta(hours=1), value)
         except:
             return False
         else:

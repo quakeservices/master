@@ -3,7 +3,7 @@ game: quake2
 engine: idtech2
 encoding: latin1
 active: true
-version: 34
+version: 34 # Vanilla
 
 server:
   ping:

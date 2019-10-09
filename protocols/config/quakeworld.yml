@@ -1,4 +1,5 @@
 ---
+# Source: QW/client/protocol.h
 game: quakeworld
 engine: idtech1
 encoding: latin1
@@ -7,19 +8,15 @@ version: 28
 
 server:
   ping:                           # A2A_PING
-    recv: "k\n"
-    resp: "l\n"
+    recv: "k"
+    resp: "l"
   heartbeat:                      # S2M_HEARTBEAT
-    recv: "a\n" 
-    resp: !!binary /////2Fjaw==
+    recv: "a"
+    resp: "l"
   shutdown:                       # S2M_SHUTDOWN
-    recv: "C\n"
+    recv: "C"
   
 client:
   query:
-    recv: !!binary cXVlcnk=
-    resp: !!binary /////3NlcnZlcnM=
-
-misc:
-  server_query: !!binary c3RhdHVzIDIzCg==
-  server_print: !!binary cHJpbnQ=
+    recv: "c"
+    resp: "d"

@@ -7,7 +7,7 @@ import GeoIP
 # TODO: Where is this in scope?
 gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
 
-class GameServer(object):
+class GameServer():
     """
     Input:
         b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
@@ -44,7 +44,7 @@ class GameServer(object):
         If none exists then ZZ is returned as unknown.
         """
         result = gi.country_code_by_addr(self.ip)
-        if result is not None:
+        if result:
             return result
         else:
             return 'ZZ'

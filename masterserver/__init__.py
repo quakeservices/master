@@ -58,5 +58,5 @@ class MasterServer:
             y = [_ for _ in response]
 
             return b'\n'.join(x + y)
-        else:
-            return response
+
+        return response

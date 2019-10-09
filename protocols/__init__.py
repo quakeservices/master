@@ -1,6 +1,6 @@
-import yaml
 import os
 import logging
+import yaml
 
 
 class Protocols(object):
@@ -50,7 +50,7 @@ class Protocols(object):
         return self.find_protocol('client', header)
 
 
-class GameProtocol(object):
+class GameProtocol():
     def __init__(self, protocol):
         self.protocol = protocol
         logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.name}")
@@ -82,7 +82,7 @@ class GameProtocol(object):
         for category in ['server', 'client']:
             for k, v in self.protocol[category].items():
                 self.protocol[category][k] = self.encode_headers(v)
-    
+
     def encode_headers(self, headers):
         for _ in ['recv', 'resp']:
             if _ in headers:

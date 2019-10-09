@@ -5,7 +5,7 @@ import functools
 import logging
 
 
-class Transport(object):
+class Transport():
     def __init__(self, master):
         logging.debug(f"{__class__.__name__ } - Initialising transport.")
         self.bind = ('0.0.0.0', 27900)
@@ -30,7 +30,7 @@ class Transport(object):
 
         self.transport, self.protocol = self.loop.run_until_complete(self.listen)
 
-    def shutdown(self, signal):
-        logging.debug(f"{__class__.__name__ } - Caught {signal}")
+    def shutdown(self, sig):
+        logging.debug(f"{__class__.__name__ } - Caught {sig}")
         self.transport.close()
         self.loop.stop()
