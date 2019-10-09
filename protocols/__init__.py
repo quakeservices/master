@@ -85,14 +85,9 @@ class GameProtocol(object):
     
     def encode_headers(self, headers):
         for _ in ['recv', 'resp']:
-            logging.debug(f"{__class__.__name__ } - {headers}")
             if _ in headers:
                 headers[_] = self.encoder(headers[_])
-            logging.debug(f"{__class__.__name__ } - {headers}")
         return headers
 
     def encoder(self, data):
-        return bytes(data, 'raw_unicode_escape', errors='backslashreplace')
-
-    def decoder(self, data):
-        return data.decode(self.encoding, errors='backslashreplace')
+        return bytes(data, self.encoding, errors='backslashreplace')

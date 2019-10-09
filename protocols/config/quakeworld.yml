@@ -7,13 +7,13 @@ version: 28
 
 server:
   ping:                           # A2A_PING
-    recv: 'k\n'
-    resp: 'l\n'
+    recv: "k\n"
+    resp: "l\n"
   heartbeat:                      # S2M_HEARTBEAT
-    recv: 'a\n' 
+    recv: "a\n" 
     resp: !!binary /////2Fjaw==
   shutdown:                       # S2M_SHUTDOWN
-    recv: 'C\n'
+    recv: "C\n"
   
 client:
   query:

@@ -10,7 +10,7 @@ server:
     recv: !!binary /////3Bpbmc=
     resp: !!binary /////2Fjaw==
   heartbeat:
-    recv: 'heartbeat QuakeArena-1\n'
+    recv: "heartbeat QuakeArena-1\n"
     resp: !!binary /////2Fjaw==
   shutdown:
     recv: !!binary /////3NodXRkb3du

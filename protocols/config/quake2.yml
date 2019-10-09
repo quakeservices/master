@@ -7,18 +7,18 @@ version: 34
 
 server:
   ping:
-    recv: '\xff\xff\xff\xffping'
-    resp: '\xff\xff\xff\xffack'
+    recv: "\xff\xff\xff\xffping"
+    resp: "\xff\xff\xff\xffack"
   heartbeat:
-    recv: '\xff\xff\xff\xffheartbeat'
-    resp: '\xff\xff\xff\xffack'
+    recv: "\xff\xff\xff\xffheartbeat"
+    resp: "\xff\xff\xff\xffack"
   shutdown:
-    recv: '\xff\xff\xff\xffshutdown'
+    recv: "\xff\xff\xff\xffshutdown"
   
 client:
   query:
-    recv: 'query'
-    resp: '\xff\xff\xff\xffservers'
+    recv: "query"
+    resp: "\xff\xff\xff\xffservers"
 
 misc:
   server_query: !!binary c3RhdHVzIDIzCg==
