@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+pylint app.py gameserver/__init__.py masterserver/__init__.py storage/{cache,model,__init__}.py transport/__init__.py protocols/__init__.py
