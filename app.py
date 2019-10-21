@@ -28,7 +28,7 @@ def main():
 
     try:
         transport.loop.run_forever()
-    except:
+    except KeyboardInterrupt:
         pass
 
 if __name__ == '__main__':
