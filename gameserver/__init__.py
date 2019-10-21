@@ -35,18 +35,23 @@ class GameServer():
         self.players = json.dumps(self.players)
         self.status = json.dumps(self.status)
 
+    @property
     def ip(self): # pylint: disable=invalid-name
         return self.server_address[0]
 
+    @property
     def port(self):
         return self.server_address[1]
 
+    @property
     def address(self):
         return ':'.join([self.ip, str(self.port)])
 
+    @property
     def encoding(self):
         return self.result.get('encoding')
 
+    @property
     def active(self):
         return self.result.get('active')
 
