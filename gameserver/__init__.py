@@ -5,7 +5,7 @@ import json
 import GeoIP
 
 # TODO: Where is this in scope?
-gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
+GI = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
 
 class GameServer():
     """
@@ -23,10 +23,8 @@ class GameServer():
     """
 
     def __init__(self, address, data, result):
-        self.format_address(address)
+        self.server_address = address
         self.result = result
-        self.encoding = self.result.get('encoding')
-        self.active = self.result.get('active')
         self.country = self.get_country()
         self.players = list()
         self.status = dict()
@@ -37,21 +35,31 @@ class GameServer():
         self.players = json.dumps(self.players)
         self.status = json.dumps(self.status)
 
+    def ip(self): # pylint: disable=invalid-name
+        return self.server_address[0]
+
+    def port(self):
+        return self.server_address[1]
+
+    def address(self):
+        return ':'.join([self.ip, str(self.port)])
+
+    def encoding(self):
+        return self.result.get('encoding')
+
+    def active(self):
+        return self.result.get('active')
+
     def get_country(self):
         """
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
         """
-        result = gi.country_code_by_addr(self.ip)
+        result = GI.country_code_by_addr(self.ip)
         if result:
             return result
 
         return 'ZZ'
-
-    def format_address(self, address):
-        self.ip = address[0] # pylint: disable=invalid-name
-        self.port = address[1]
-        self.address = ':'.join([self.ip, str(self.port)])
 
     def dictify_players(self, data):
         player_regex = re.compile(r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
