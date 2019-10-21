@@ -66,7 +66,8 @@ class Storage():
         else:
             logging.debug(f"{__class__.__name__ } - Skipping table creation.")
 
-    def create_table(self):
+    @staticmethod
+    def create_table():
         try:
             logging.debug(f"{__class__.__name__ } - Creating table...")
             Server.create_table(wait=True)
@@ -76,7 +77,8 @@ class Storage():
         else:
             logging.debug(f"{__class__.__name__ } - Table created.")
 
-    def server_object(self, server):
+    @staticmethod
+    def server_object(server):
         """
         TODO: Grab first_seen before it's overridden
                     Update active
@@ -88,7 +90,8 @@ class Storage():
                       players=server.players,
                       player_count=server.player_count)
 
-    def get_server(self, server):
+    @staticmethod
+    def get_server(server):
         return Server(server.address).exists()
 
     def list_servers(self, game):
@@ -102,13 +105,12 @@ class Storage():
 
     def create_server(self, server):
         logging.debug(f"{__class__.__name__ } - create_server {server.address}")
-        self.cache.invalidate(f'servers')
+        self.cache.invalidate('servers')
         try:
             server_obj = self.server_object(server)
             server_obj.save()
         except:
             logging.debug(f"{__class__.__name__ } - failed for some reason {server.address}")
-            pass
 
     def update_server(self, server):
         """
@@ -121,20 +123,19 @@ class Storage():
             server_obj.save()
         except:
             logging.debug(f"{__class__.__name__ } - failed for some reason {server.address}")
-            pass
 
     def server_shutdown(self, server):
         """
         TODO: Flesh this out so it actually updates a server
         """
         logging.debug(f"{__class__.__name__ } - update_server {server.address}")
-        self.cache.invalidate(f'servers')
+        self.cache.invalidate('servers')
         server_obj = self.server_object(server)
         server_obj.active = False
         server_obj.save()
 
 
-class Cache(object):
+class Cache():
     def __init__(self):
         logging.debug(f"{__class__.__name__ } - Initialising cache.")
         self.redis = redis.Redis(host='redis',

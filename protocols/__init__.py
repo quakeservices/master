@@ -3,12 +3,13 @@ import logging
 import yaml
 
 
-class Protocols(object):
+class Protocols():
     def __init__(self):
         logging.debug(f"{__class__.__name__ } - Initialising protocols.")
         self.protocols = self.load_protocols()
 
-    def gather_protocol_files(self):
+    @staticmethod
+    def gather_protocol_files():
         logging.debug(f"{__class__.__name__ } - Gathering protocols...")
         config_files = []
         module_path = os.path.abspath(os.path.dirname(__file__))
@@ -69,7 +70,7 @@ class GameProtocol():
 
     def match_header(self, category, header):
         if self.protocol.get(category, False):
-            for k, v in self.protocol[category].items():
+            for k, v in self.protocol[category].items():  # pylint: disable=invalid-name
                 if v.get('recv', '').startswith(header):
                     if k == 'shutdown':
                         v['active'] = False
@@ -80,7 +81,7 @@ class GameProtocol():
 
     def process_headers(self):
         for category in ['server', 'client']:
-            for k, v in self.protocol[category].items():
+            for k, v in self.protocol[category].items():   # pylint: disable=invalid-name
                 self.protocol[category][k] = self.encode_headers(v)
 
     def encode_headers(self, headers):

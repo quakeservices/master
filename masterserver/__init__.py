@@ -6,6 +6,7 @@ from gameserver import GameServer
 class MasterServer:
     def __init__(self, storage, protocols):
         logging.debug(f"{__class__.__name__ } - Initialising master server.")
+        self.transport = None
         self.storage = storage
         self.protocols = protocols
 
@@ -38,25 +39,21 @@ class MasterServer:
     def handle_server(self, result, status, address):
         logging.debug(f"{__class__.__name__ } - Header belongs to server")
         server = GameServer(address, status, result)
-        if server.is_valid:
-            if self.storage.get_server(server):
-                self.storage.update_server(server)
-            else:
-                self.storage.create_server(server)
+        if self.storage.get_server(server):
+            self.storage.update_server(server)
+        else:
+            self.storage.create_server(server)
 
-            if not server.active:
-                self.storage.server_shutdown(server)
+        if not server.active:
+            self.storage.server_shutdown(server)
 
         response = result.get('resp', None)
         return response
 
-    def create_response(self, header, response):
-        # TODO: Clean this up - it isn't obvious what it's doing
-        #       or why it's doing it...
+    @staticmethod
+    def create_response(header, response):
         if header:
-            x = [header]
-            y = [_ for _ in response]
-
-            return b'\n'.join(x + y)
+            response.insert(0, header)
+            return b'\n'.join(response)
 
         return response

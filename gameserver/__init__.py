@@ -36,7 +36,6 @@ class GameServer():
         self.player_count = len(self.players)
         self.players = json.dumps(self.players)
         self.status = json.dumps(self.status)
-        self.is_valid = True
 
     def get_country(self):
         """
@@ -46,16 +45,16 @@ class GameServer():
         result = gi.country_code_by_addr(self.ip)
         if result:
             return result
-        else:
-            return 'ZZ'
+
+        return 'ZZ'
 
     def format_address(self, address):
-        self.ip = address[0]
+        self.ip = address[0] # pylint: disable=invalid-name
         self.port = address[1]
         self.address = ':'.join([self.ip, str(self.port)])
 
     def dictify_players(self, data):
-        player_regex = re.compile('(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
+        player_regex = re.compile(r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
         for player in data:
             player = re.match(player_regex, player.decode(self.encoding))
             if player:
