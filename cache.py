@@ -1,6 +1,10 @@
 import logging
 import pickle
-import redis
+
+try:
+    import redis
+except ModuleNotFoundError:
+    pass
 
 
 class Cache():
