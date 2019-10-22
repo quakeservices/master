@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  master:
+    image: masterapi:latest
+    ports:
+    - target: 80
+      published: 80
+      protocol: tcp
+      mode: host
+    depends_on:
+    - dynamodb
+    environment:
+    - STAGE=TESTING
+    - FLASK_ENV=development
+    - AWS_ACCESS_KEY_ID=0
+    - AWS_SECRET_ACCESS_KEY=1
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    ulimits:
+      nofile:
+        soft: "122880"
+        hard: "122880"
