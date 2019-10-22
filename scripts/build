@@ -3,6 +3,6 @@ set -euo pipefail
 
 cd $(dirname $0)/..
 
-scripts/lint || exit
+APP=masterserver
 
-docker build --network host -t masterserver:latest -t masterserver:${BUILDKITE_BUILD_NUMBER:-1} .
+docker build --network host -t ${APP}:latest -t ${APP}:${BUILDKITE_BUILD_NUMBER:-1} .

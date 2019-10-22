@@ -7,7 +7,7 @@ import logging
 
 class Transport():
     def __init__(self, master):
-        logging.debug(f"{__class__.__name__ } - Initialising transport.")
+        logging.debug(f"{self.__class__.__name__ } - Initialising transport.")
         self.bind = ('0.0.0.0', 27900)
         self.master = master
         self.loop = asyncio.get_event_loop()
@@ -15,14 +15,14 @@ class Transport():
         self.listener()
 
     def signal(self):
-        logging.debug(f"{__class__.__name__ } - Setting up signals")
+        logging.debug(f"{self.__class__.__name__ } - Setting up signals")
         signals = ('SIGINT', 'SIGTERM')
         for signame in signals:
             self.loop.add_signal_handler(getattr(signal, signame),
                                          functools.partial(self.shutdown, signame))
 
     def listener(self):
-        logging.debug(f"{__class__.__name__ } - Setting up listener")
+        logging.debug(f"{self.__class__.__name__ } - Setting up listener")
         self.listen = self.loop.create_datagram_endpoint(lambda: self.master,
                                                          family=socket.AF_INET6,
                                                          flags=socket.AI_V4MAPPED,
@@ -31,6 +31,6 @@ class Transport():
         self.transport, self.protocol = self.loop.run_until_complete(self.listen)
 
     def shutdown(self, sig):
-        logging.debug(f"{__class__.__name__ } - Caught {sig}")
+        logging.debug(f"{self.__class__.__name__ } - Caught {sig}")
         self.transport.close()
         self.loop.stop()

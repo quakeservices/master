@@ -143,8 +143,7 @@ disable=print-statement,
         missing-module-docstring,
         missing-class-docstring,
         missing-function-docstring,
-        too-few-public-methods,
-        undefined-variable
+        too-few-public-methods
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

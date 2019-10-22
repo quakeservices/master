@@ -5,7 +5,7 @@ import redis
 
 class Cache():
     def __init__(self):
-        logging.debug(f"{__class__.__name__ } - Initialising cache.")
+        logging.debug(f"{self.__class__.__name__ } - Initialising cache.")
         self.redis = redis.Redis(host='redis',
                                  port=6379,
                                  db=0,
@@ -19,7 +19,7 @@ class Cache():
             try:
                 result = pickle.loads(value)
             except KeyError:
-                logging.debug(f"{__class__.__name__ } - key error: possibly unpickled object?")
+                logging.debug(f"{self.__class__.__name__ } - key error: possibly unpickled object?")
                 result = value
             else:
                 return result
@@ -27,7 +27,7 @@ class Cache():
             return False
 
     def set(self, key, value):
-        logging.debug(f"{__class__.__name__ } - caching {value} as {key}.")
+        logging.debug(f"{self.__class__.__name__ } - caching {value} as {key}.")
         value = pickle.dumps(value)
         try:
             self.redis.setex(key, timedelta(hours=1), value)
@@ -37,5 +37,5 @@ class Cache():
             return True
 
     def invalidate(self, key):
-        logging.debug(f"{__class__.__name__ } - forcing {key} to expire.")
+        logging.debug(f"{self.__class__.__name__ } - forcing {key} to expire.")
         self.redis.expire(key, 0)

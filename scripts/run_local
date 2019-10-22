@@ -3,6 +3,7 @@ set -euo pipefail
 
 cd $(dirname $0)/..
 
+./scripts/lint
 ./scripts/build
 
 docker-compose up

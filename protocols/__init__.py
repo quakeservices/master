@@ -5,12 +5,11 @@ import yaml
 
 class Protocols():
     def __init__(self):
-        logging.debug(f"{__class__.__name__ } - Initialising protocols.")
+        logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
         self.protocols = self.load_protocols()
 
     @staticmethod
     def gather_protocol_files():
-        logging.debug(f"{__class__.__name__ } - Gathering protocols...")
         config_files = []
         module_path = os.path.abspath(os.path.dirname(__file__))
         config_path = os.path.join(module_path, 'config')
@@ -21,15 +20,15 @@ class Protocols():
         return config_files
 
     def load_protocols(self):
-        logging.debug(f"{__class__.__name__ } - Loading protocols...")
+        logging.debug(f"{self.__class__.__name__ } - Loading protocols...")
         protocols = []
         for config_file in self.gather_protocol_files():
-            logging.debug(f"{__class__.__name__ } - Reading {config_file}")
+            logging.debug(f"{self.__class__.__name__ } - Reading {config_file}")
             with open(config_file, 'rb') as config_file_handle:
                 config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
                 if config.get('active', False):
                     protocols.append(GameProtocol(config))
-                    logging.debug(f"{__class__.__name__ } - Loaded {config}")
+                    logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
 
         return protocols
 
@@ -54,7 +53,7 @@ class Protocols():
 class GameProtocol():
     def __init__(self, protocol):
         self.protocol = protocol
-        logging.debug(f"{__class__.__name__ } - Initialising protocols for {self.name}")
+        logging.debug(f"{self.__class__.__name__ } - Initialising protocols for {self.name}")
         self.process_headers()
 
     def __repr__(self):
