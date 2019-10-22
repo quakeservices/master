@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-cd $(dirname $0)/..
-
-APP=masterapi
-
-docker build --network host -t ${APP}:latest -t ${APP}:${BUILDKITE_BUILD_NUMBER:-1} .

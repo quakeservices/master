@@ -3,4 +3,3 @@ Flask==1.1.1
 flask-pynamodb-resource==0.2.1
 Flask-RESTful==0.3.7
 pynamodb==4.1.0
-redis==3.3.11
