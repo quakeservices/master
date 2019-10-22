@@ -4,7 +4,6 @@ import logging
 import os
 import json
 import pickle
-import redis
 
 from .model import Server
 from .cache import Cache
