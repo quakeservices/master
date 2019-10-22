@@ -1,11 +1,11 @@
 version: "3.7"
 
 services:
-  master:
-    image: masterapi:latest
+  web-backend:
+    image: web-backend:latest
     ports:
-    - target: 80
-      published: 80
+    - target: 5000
+      published: 5000
       protocol: tcp
       mode: host
     depends_on:

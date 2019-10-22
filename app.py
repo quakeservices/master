@@ -15,6 +15,5 @@ app.before_first_request(create_table)
 # Register auto-generated routes for the model, under the '/api/v1/server' prefix
 modelresource_factory(Server).register(app, '/api/v1/server')
 
-# Print rules
-for rule in app.url_map.iter_rules():
-    print('{} => {}'.format(rule.rule, rule.endpoint))
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')

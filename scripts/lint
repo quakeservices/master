@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd $(dirname $0)/..
+
+pylint --errors-only \
+       app.py \
+       gameserver/__init__.py \
+       masterserver/__init__.py \
+       storage/{cache,model,__init__}.py \
+       transport/__init__.py \
+       protocols/__init__.py
