@@ -5,7 +5,7 @@ encoding: latin1
 active: false
 version: 68
 
-server:
+S2M:
   ping:
     recv: !!binary /////3Bpbmc=
     resp: !!binary /////2Fjaw==
@@ -15,7 +15,7 @@ server:
   shutdown:
     recv: !!binary /////3NodXRkb3du
   
-client:
+B2M:
   query:
     recv: !!binary cXVlcnk=
     resp: !!binary /////3NlcnZlcnM=

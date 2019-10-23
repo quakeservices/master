@@ -43,11 +43,17 @@ class Protocols():
 
         return False
 
-    def is_server(self, header):
-        return self.find_protocol('server', header)
+    def is_S2M(self, header):
+        """
+        Game server is communicating with Master server
+        """
+        return self.find_protocol('S2M', header)
 
-    def is_client(self, header):
-        return self.find_protocol('client', header)
+    def is_B2M(self, header):
+        """
+        Server browser client is communicating with Mater server
+        """
+        return self.find_protocol('B2M', header)
 
 
 class GameProtocol():
@@ -79,7 +85,7 @@ class GameProtocol():
         return False
 
     def process_headers(self):
-        for category in ['server', 'client']:
+        for category in ['S2M', 'B2M']:
             for k, v in self.protocol[category].items():   # pylint: disable=invalid-name
                 self.protocol[category][k] = self.encode_headers(v)
 

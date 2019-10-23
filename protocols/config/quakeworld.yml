@@ -6,7 +6,7 @@ encoding: latin1
 active: false
 version: 28
 
-server:
+S2M:
   ping:                           # A2A_PING
     recv: "k"
     resp: "l"
@@ -16,7 +16,7 @@ server:
   shutdown:                       # S2M_SHUTDOWN
     recv: "C"
   
-client:
+B2M:
   query:
     recv: "c"
     resp: "d"

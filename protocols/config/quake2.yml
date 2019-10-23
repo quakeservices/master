@@ -5,7 +5,7 @@ encoding: latin1
 active: true
 version: 34 # Vanilla
 
-server:
+S2M:
   ping:
     recv: "\xff\xff\xff\xffping"
     resp: "\xff\xff\xff\xffack"
@@ -15,7 +15,7 @@ server:
   shutdown:
     recv: "\xff\xff\xff\xffshutdown"
   
-client:
+B2M:
   query:
     recv: "query"
     resp: "\xff\xff\xff\xffservers"

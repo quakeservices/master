@@ -10,7 +10,7 @@ encoding: latin1                    # (Optional) Which encoding to use when deco
                                     # 'latin1' is default.
 game: quake2                        # The name of the game
 active: true|false                  # Whether or not these headers should be loaded
-server:                             # Headers that a server will send to a master server
+S2M:                                # Headers that a game server will send to a master server
                                     # All named headers - eg, ping assume the server is 'active'
                                     # At the time of writing 'shutdown' header is assumed to set
                                     # server as 'inactive'
@@ -20,7 +20,12 @@ server:                             # Headers that a server will send to a maste
   shutdown:
     recv: "\xff\xff\xff\xffshutdown"
 
-client:                             # Headers that a client will send to a master server
+B2M:                                # Headers that a server browser client will send to a master server
   query:
     recv: "query"                   # The header that the master server will recieve
     resp: "\xff\xff\xff\xffservers" # (Optional) The header that the master server will return
+
+S2C:                                # (Optional) Game server to game client
+                                    # To by used for synthetic tests
+
+misc:                               # Headers you want to define that won't be used
