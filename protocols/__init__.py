@@ -4,9 +4,17 @@ import yaml
 
 
 class Protocols():
-    def __init__(self):
+    def __init__(self, header_order='master'):
         logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
-        self.protocols = self.load_protocols()
+        if header_order == 'server':
+            self.header_order = ['B2M', 'S2M']
+        elif header_order == 'client':
+            self.header_order = ['B2M', 'S2M']
+        else:
+            self.header_order = ['B2M', 'S2M']
+
+        self.protocols = list()
+        self.load_protocols()
 
     @staticmethod
     def gather_protocol_files():
@@ -21,39 +29,28 @@ class Protocols():
 
     def load_protocols(self):
         logging.debug(f"{self.__class__.__name__ } - Loading protocols...")
-        protocols = []
         for config_file in self.gather_protocol_files():
-            logging.debug(f"{self.__class__.__name__ } - Reading {config_file}")
-            with open(config_file, 'rb') as config_file_handle:
-                config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
-                if config.get('active', False):
-                    protocols.append(GameProtocol(config))
-                    logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
+            self.load_protocol(config_file)
 
-        return protocols
+    def load_protocol(self, config_file):
+        logging.debug(f"{self.__class__.__name__ } - Reading {config_file}")
+        with open(config_file, 'rb') as config_file_handle:
+            config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
+            if config.get('active', False):
+                self.protocols.append(GameProtocol(config))
+                logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
 
-    def find_protocol(self, category, header):
+    def find_protocol(self, header):
         for game in self.protocols:
-            result = game.match_header(category, header)
+            result = game.match_header(self.header_order, header)
             if result:
                 return {'game': game.name,
                         'resp': result.get('resp', None),
                         'encoding': game.encoding,
-                        'active': result.get('active', True)}
+                        'active': result.get('active', True),
+                        'class': result.get('class', self.header_order[0])}
 
         return False
-
-    def is_S2M(self, header): # pylint: disable=invalid-name
-        """
-        Game server is communicating with Master server
-        """
-        return self.find_protocol('S2M', header)
-
-    def is_B2M(self, header): # pylint: disable=invalid-name
-        """
-        Server browser client is communicating with Mater server
-        """
-        return self.find_protocol('B2M', header)
 
 
 class GameProtocol():
@@ -73,10 +70,11 @@ class GameProtocol():
     def encoding(self):
         return self.protocol.get('encoding', 'latin1')
 
-    def match_header(self, category, header):
-        if self.protocol.get(category, False):
-            for k, v in self.protocol[category].items():  # pylint: disable=invalid-name
+    def match_header(self, header_order, header):
+        for header_class in [_ for _ in header_order if _ in self.protocol.keys()]:
+            for k, v in self.protocol[header_class].items():  # pylint: disable=invalid-name
                 if v.get('recv', '').startswith(header):
+                    v['class'] = header_class
                     if k == 'shutdown':
                         v['active'] = False
 
@@ -85,9 +83,9 @@ class GameProtocol():
         return False
 
     def process_headers(self):
-        for category in ['S2M', 'B2M']:
-            for k, v in self.protocol[category].items():   # pylint: disable=invalid-name
-                self.protocol[category][k] = self.encode_headers(v)
+        for header_class in ['S2M', 'B2M']:
+            for k, v in self.protocol[header_class].items():   # pylint: disable=invalid-name
+                self.protocol[header_class][k] = self.encode_headers(v)
 
     def encode_headers(self, headers):
         for _ in ['recv', 'resp']:

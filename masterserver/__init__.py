@@ -15,15 +15,16 @@ class MasterServer:
 
     def datagram_received(self, data, address):
         response = None
-        logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address[0]}:{address[1]}")
+        logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
         headers, *status = data.splitlines()
 
-        result = self.protocols.is_B2M(headers)
-        if result:
+        result = self.protocols.find_protocol(headers)
+        if result.get('class') == 'B2M':
             response = self.handle_client(result)
-        else:
-            result = self.protocols.is_S2M(headers)
+        elif result.get('class') == 'S2M':
             response = self.handle_server(result, status, address)
+        else:
+            pass
 
         if response:
             logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")

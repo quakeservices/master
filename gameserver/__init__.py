@@ -74,11 +74,11 @@ class GameServer():
                 self.players.append(player.groupdict())
 
     def dictify_status(self, data):
-        # TODO: Assumes split on \\
+        split_on = self.result.get('split_on', '\\')
 
         if data:
             str_status = data.decode(self.encoding)
-            list_status = str_status.split('\\')[1:]
+            list_status = str_status.split(split_on)[1:]
             if len(list_status) % 2 != 0:
                 list_status = list_status[:-1]
 
