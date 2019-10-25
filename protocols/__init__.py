@@ -43,13 +43,13 @@ class Protocols():
 
         return False
 
-    def is_S2M(self, header):
+    def is_S2M(self, header): # pylint: disable=invalid-name
         """
         Game server is communicating with Master server
         """
         return self.find_protocol('S2M', header)
 
-    def is_B2M(self, header):
+    def is_B2M(self, header): # pylint: disable=invalid-name
         """
         Server browser client is communicating with Mater server
         """

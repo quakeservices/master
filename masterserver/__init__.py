@@ -18,11 +18,11 @@ class MasterServer:
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address[0]}:{address[1]}")
         headers, *status = data.splitlines()
 
-        result = self.protocols.is_client(headers)
+        result = self.protocols.is_B2M(headers)
         if result:
             response = self.handle_client(result)
         else:
-            result = self.protocols.is_server(headers)
+            result = self.protocols.is_S2M(headers)
             response = self.handle_server(result, status, address)
 
         if response:
