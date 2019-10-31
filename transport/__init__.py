@@ -55,5 +55,5 @@ class HealthCheck(asyncio.Protocol):
         self.transport = transport #pylint: disable=attribute-defined-outside-init
 
     def data_received(self, data):
-        self.transport.write(b'HTTP/1.1 200 Success')
+        self.transport.write(b'HTTP/1.1 200 Success\n')
         self.transport.close()
