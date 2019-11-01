@@ -16,6 +16,7 @@ class Transport():
         self.v6_udp_transport, self.v6_udp_protocol = self.listener(master,
                                                                     socket.AF_INET6,
                                                                     ('::', 27900))
+        self.healt_check_transport = self.health_check(HealthCheck())
 
     def signal(self):
         logging.debug(f"{self.__class__.__name__ } - Setting up signals")
@@ -25,7 +26,7 @@ class Transport():
                                          functools.partial(self.shutdown, signame))
 
     def listener(self, server, socket_family, bind):
-        logging.debug(f"{self.__class__.__name__ } - Setting up listener on {bind}")
+        logging.debug(f"{self.__class__.__name__ } - Setting up master listener on {bind[0]}:{bind[1]}")
 
         listen = self.loop.create_datagram_endpoint(lambda: server,
                                                     family=socket_family,
@@ -35,8 +36,27 @@ class Transport():
 
         return transport, protocol
 
+    def health_check(self,
+                     server,
+                     socket_family=socket.AF_INET,
+                     host='0.0.0.0',
+                     port=8080):
+
+        logging.debug(f"{self.__class__.__name__ } - Setting up health check listener on {host}:{port}")
+        listen = self.loop.create_server(lambda: server,
+                                         family=socket_family,
+                                         host=host,
+                                         port=port)
+        transport = self.loop.run_until_complete(listen)
+
+        return transport
+
     def shutdown(self, sig):
         logging.debug(f"{self.__class__.__name__ } - Caught {sig}")
+        if self.healt_check_transport:
+            logging.debug(f"{self.__class__.__name__ } - Closing health check listener")
+            self.healt_check_transport.close()
+
         if self.v4_udp_transport:
             logging.debug(f"{self.__class__.__name__ } - Closing IPv4 UDP transport")
             self.v4_udp_transport.close()
