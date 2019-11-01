@@ -10,8 +10,12 @@ class Transport():
         logging.debug(f"{self.__class__.__name__ } - Initialising transport")
         self.loop = asyncio.get_event_loop()
         self.signal()
-        self.v4_udp_transport, self.v4_udp_protocol = self.listener(master, ipv=4)
-        self.v6_udp_transport, self.v6_udp_protocol = self.listener(master, ipv=6)
+        self.v4_udp_transport, self.v4_udp_protocol = self.listener(master,
+                                                                    socket.AF_INET,
+                                                                    ('0.0.0.0', 27900))
+        self.v6_udp_transport, self.v6_udp_protocol = self.listener(master,
+                                                                    socket.AF_INET6,
+                                                                    ('::', 27900))
 
     def signal(self):
         logging.debug(f"{self.__class__.__name__ } - Setting up signals")
@@ -20,15 +24,8 @@ class Transport():
             self.loop.add_signal_handler(getattr(signal, signame),
                                          functools.partial(self.shutdown, signame))
 
-    def listener(self, server, ipv=4, port=27900):
-        if ipv == 6:
-            logging.debug(f"{self.__class__.__name__ } - Setting up IPv6 listener")
-            socket_family = socket.AF_INET6
-            bind = ('::', port)
-        else:
-            logging.debug(f"{self.__class__.__name__ } - Setting up IPv4 listener")
-            socket_family = socket.AF_INET
-            bind = ('0.0.0.0', port)
+    def listener(self, server, socket_family, bind):
+        logging.debug(f"{self.__class__.__name__ } - Setting up listener on {bind}")
 
         listen = self.loop.create_datagram_endpoint(lambda: server,
                                                     family=socket_family,
