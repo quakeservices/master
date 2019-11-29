@@ -6,4 +6,10 @@ cd $(dirname $0)/..
 ./scripts/lint
 ./scripts/build
 
-docker-compose up
+if which docker 2>/dev/null; then
+  cmd="docker"
+else
+  cmd="podman"
+fi
+
+${cmd}-compose up
