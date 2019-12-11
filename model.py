@@ -39,9 +39,8 @@ class Server(Model):
     protocol = NumberAttribute(default=0)
 
     status = JSONAttribute()
-
-    player_count = NumberAttribute(default=0)
     players = JSONAttribute()
+    player_count = NumberAttribute(default=0)
 
     active = BooleanAttribute(default=True)
     scraped = BooleanAttribute(default=False)

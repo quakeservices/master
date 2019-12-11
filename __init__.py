@@ -29,13 +29,9 @@ class Storage():
 
     @staticmethod
     def server_object(server):
-        """
-        TODO: Grab first_seen before it's overridden
-                    Update active
-        """
         return Server(server.address,
                       country_code=server.country,
-                      active=server.active,
+                      active=True,
                       status=server.status,
                       players=server.players,
                       player_count=server.player_count)
@@ -43,6 +39,20 @@ class Storage():
     @staticmethod
     def get_server(server):
         return Server(server.address).exists()
+
+    @staticmethod
+    def get_server_obj(server):
+        """
+        Replace with this?
+        server = None
+        try:
+            server = Server.server_index.query(server.address).__next__()
+        except StopIteration:
+            pass
+        finally:
+            return Server
+        """
+        return Server.get(server.address)
 
     def list_servers(self, game):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
@@ -63,23 +73,27 @@ class Storage():
             logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
 
     def update_server(self, server):
-        """
-        TODO: Flesh this out so it actually updates a server
-        """
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
         try:
-            server_obj = self.server_object(server)
-            server_obj.active = True
-            server_obj.save()
+            server_obj = self.get_server_obj(server)
+            server_obj.update(actions=[
+              Server.active.set(True),
+              Server.last_seen.set(datetime.utcnow()),
+              Server.status.set(server.status),
+              Server.players.set(server.players),
+              Server.player_count.set(server.player_count)
+            ])
         except:
             logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
 
     def server_shutdown(self, server):
-        """
-        TODO: Flesh this out so it actually updates a server
-        """
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
         self.cache.invalidate('servers')
-        server_obj = self.server_object(server)
-        server_obj.active = False
-        server_obj.save()
+        try:
+            server_obj = self.get_server_obj(server)
+            server_obj.update(actions=[
+              Server.active.set(False),
+              Server.last_seen.set(datetime.utcnow())
+            ])
+        except:
+            logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
