@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-cd $(dirname $0)/..
-
-docker run --name web-frontend -v $(pwd)::/usr/share/nginx/html:ro -d nginx:alpine
