@@ -1,5 +1,7 @@
 # web-frontend
 
+Static site to communicate with [web-backend](https://github.com/quakeservices/web-backend)
+
 ## Project setup
 ```
 npm install
