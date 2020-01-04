@@ -1,0 +1,7 @@
+README.md
+setup.py
+master_deploy/master_deploy.egg-info/PKG-INFO
+master_deploy/master_deploy.egg-info/SOURCES.txt
+master_deploy/master_deploy.egg-info/dependency_links.txt
+master_deploy/master_deploy.egg-info/requires.txt
+master_deploy/master_deploy.egg-info/top_level.txt
