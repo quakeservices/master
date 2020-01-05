@@ -13,12 +13,9 @@ class Storage():
     def __init__(self):
         logging.debug(f"{self.__class__.__name__ } - Initialising storage.")
         self.cache = Cache()
-        if not os.getenv('SKIP_TABLE_CREATE', 'True'):
-            logging.debug(f"{self.__class__.__name__ } - Creating table...")
-            self.create_table()
-            logging.debug(f"{self.__class__.__name__ } - Table created.")
-        else:
-            logging.debug(f"{self.__class__.__name__ } - Skipping table creation.")
+        logging.debug(f"{self.__class__.__name__ } - Creating table...")
+        self.create_table()
+        logging.debug(f"{self.__class__.__name__ } - Table created.")
 
     @staticmethod
     def create_table():
