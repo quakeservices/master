@@ -8,6 +8,7 @@ from storage import Storage
 from transport import Transport
 from masterserver import MasterServer
 
+
 def setup_logging(level='INFO'):
     logging.getLogger('boto3').propagate = False
     logging.getLogger('botocore').propagate = False
