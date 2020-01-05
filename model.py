@@ -20,6 +20,7 @@ class ServerIndex(GlobalSecondaryIndex):
         write_capacity_units = 5
         index_name = 'server_index'
         projection = AllProjection()
+        region = 'us-west-2'
 
     address = UnicodeAttribute(hash_key=True)
 
@@ -31,6 +32,7 @@ class Server(Model):
         table_name = 'server'
         read_capacity_units = 5
         write_capacity_units = 5
+        region = 'us-west-2'
 
     server_index = ServerIndex()
 
