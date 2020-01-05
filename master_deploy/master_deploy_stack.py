@@ -32,9 +32,9 @@ class MasterDeployStack(core.Stack):
 
         self.cluster.add_capacity('DefaultAutoScalingGroupCapacity',
                                   instance_type=ec2.InstanceType('t3.micro'),
-                                  desired_capacity=1,
+                                  desired_capacity=2,
                                   max_capacity=6,
-                                  min_capacity=1)
+                                  min_capacity=2)
 
         """
         Create task
@@ -67,13 +67,10 @@ class MasterDeployStack(core.Stack):
 
         container_port_udp = ecs.PortMapping(container_port=master_port,
                                              protocol=ecs.Protocol.UDP)
-        container_port_tcp = ecs.PortMapping(container_port=master_port,
-                                             protocol=ecs.Protocol.TCP)
-        container_hc_tcp = ecs.PortMapping(container_port=80,
+        container_hc_tcp = ecs.PortMapping(container_port=8080,
                                            protocol=ecs.Protocol.TCP)
 
         container.add_port_mappings(container_port_udp)
-        container.add_port_mappings(container_port_tcp)
         container.add_port_mappings(container_hc_tcp)
 
         """
@@ -91,14 +88,25 @@ class MasterDeployStack(core.Stack):
             internet_facing=True,
             cross_zone_enabled=True)
 
-        listener = lb.add_listener('Listener',
+        listener = lb.add_listener('UDPListener',
             port=master_port,
             protocol=elb.Protocol.UDP)
 
-        healthcheck = elb.HealthCheck(port='80', protocol=elb.Protocol.HTTP)
+        # Required overrides as Protocol never gets set correctly
+        cfn_listener = listener.node.default_child
+        cfn_listener.add_override("Properties.Protocol", "UDP")
 
-        listener.add_targets('ECS',
-            port=master_port,
-            targets=[service],
-            proxy_protocol_v2=True,
-            health_check=healthcheck)
+        healthcheck = elb.HealthCheck(port='8080', protocol=elb.Protocol.HTTP)
+
+        target_group = listener.add_targets('ECS',
+                                            port=master_port,
+                                            targets=[service.load_balancer_target(
+                                                container_name='Master',
+                                                container_port=master_port,
+                                                protocol=ecs.Protocol.UDP)],
+                                            proxy_protocol_v2=True,
+                                            health_check=healthcheck)
+
+        # Required overrides as Protocol never gets set correctly
+        cfn_target_group = target_group.node.default_child
+        cfn_target_group.add_override("Properties.Protocol", "UDP")
