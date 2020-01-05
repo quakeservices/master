@@ -89,7 +89,8 @@ class MasterDeployStack(core.Stack):
         lb = elb.NetworkLoadBalancer(self, 'QuakeServicesNLB',
             vpc=self.vpc,
             internet_facing=True,
-            cross_zone_enabled=True)
+            cross_zone_enabled=True,
+            load_balancer_name='master')
 
         listener = lb.add_listener('UDPListener',
             port=master_port,
