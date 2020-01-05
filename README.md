@@ -7,16 +7,15 @@ Core goals:
 -  Respond to queries and updates from Quake 2 servers
 -  Support for protocol 35, 36, and 37
 -  Be extensible enough to support other idTech engines/games
--  Support IPv6
 -  REST powered Web UI
 -  Completely automated deployments
--  Run as a serverless service
 
 Stretch goals:
 -  Support all common Quake, Quake 2, and Quake 3 derived servers and clients
 -  Aggregation of existing master server lists
 -  Multiregion support
 -  GraphQL endpoint 
+-  Support IPv6
 
 # Requirements
 
@@ -24,6 +23,12 @@ Minimum requirements:
 - Python 3.6+
 - Docker
 - DynamodDB
+
+# Deployment
+
+Deploying to ECR is done manually at this point.
+
+All additional resources are handled by the [deployment repo](https://github.com/quakeservices/master_deploy)
 
 # Contributing
 
