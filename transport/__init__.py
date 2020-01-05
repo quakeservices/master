@@ -18,6 +18,7 @@ class Transport():
                                                                     socket.AF_INET6,
                                                                     ('::', 27900))
         """
+        self.v6_udp_transport = None
         self.healt_check_transport = self.health_check(HealthCheck())
 
     def signal(self):
@@ -42,7 +43,7 @@ class Transport():
                      server,
                      socket_family=socket.AF_INET,
                      host='0.0.0.0',
-                     port=80):
+                     port=8080):
 
         logging.debug(f"{self.__class__.__name__ } - Setting up health check listener on {host}:{port}")
         listen = self.loop.create_server(lambda: server,

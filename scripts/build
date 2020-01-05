@@ -12,3 +12,4 @@ else
 fi
 
 ${cmd} build --network host -t ${APP}:latest -t ${APP}:${BUILDKITE_BUILD_NUMBER:-1} .
+

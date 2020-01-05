@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd $(dirname $0)/..
+
+repo="ecrst-quake-v3hdrh4qq3e0"
+account=$1
+region=${2:-"us-west-2"}
+
+./scripts/build && \
+  podman tag masterserver:latest ${account}.dkr.ecr.${region}.amazonaws.com/${repo}:latest && \
+  podman push ${account}.dkr.ecr.${region}.amazonaws.com/${repo}:latest

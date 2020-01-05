@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if os.getenv('STAGE') == 'TESTING':
         setup_logging('DEBUG')
     else:
-        setup_logging()
+        setup_logging('DEBUG')
 
     logging.info(f"Starting master server.")
     main()

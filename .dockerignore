@@ -1,1 +1,3 @@
-nonfree/*
+nonfree
+.env
+venv
