@@ -1,4 +1,6 @@
 from aws_cdk import core
+from aws_cdk.aws_iam import PolicyStatement, ManagedPolicy
+
 import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ecr as ecr
 import aws_cdk.aws_ec2 as ec2
@@ -40,13 +42,39 @@ class MasterDeployStack(core.Stack):
         task = ecs.Ec2TaskDefinition(self, 'QuakeMasterTask',
             network_mode=ecs.NetworkMode.HOST)
 
+        policy = PolicyStatement(
+            resources=["*"],
+            actions=["dynamodb:Create*",
+                     "dynamodb:Delete*",
+                     "dynamodb:Get*",
+                     "dynamodb:PutItem",
+                     "dynamodb:Query",
+                     "dynamodb:Scan",
+                     "dynamodb:Update*",
+                     "dynamodb:Describe*",
+                     "dynamodb:List*"])
+
+        task.add_to_task_role_policy(policy)
+
+        """
+        Create container
+        """
+
         container = task.add_container('Master',
             image=ecs.ContainerImage.from_ecr_repository(self.ecr, tag='latest'),
+            logging=ecs.LogDrivers.aws_logs(stream_prefix="Master"),
             memory_reservation_mib=256)
 
-        container.add_port_mappings(ecs.PortMapping(container_port=master_port,
-                                                    host_port=master_port,
-                                                    protocol=ecs.Protocol.UDP))
+        container_port_udp = ecs.PortMapping(container_port=master_port,
+                                             protocol=ecs.Protocol.UDP)
+        container_port_tcp = ecs.PortMapping(container_port=master_port,
+                                             protocol=ecs.Protocol.TCP)
+        container_hc_tcp = ecs.PortMapping(container_port=80,
+                                           protocol=ecs.Protocol.TCP)
+
+        container.add_port_mappings(container_port_udp)
+        container.add_port_mappings(container_port_tcp)
+        container.add_port_mappings(container_hc_tcp)
 
         """
         Create service
@@ -67,11 +95,10 @@ class MasterDeployStack(core.Stack):
             port=master_port,
             protocol=elb.Protocol.UDP)
 
+        healthcheck = elb.HealthCheck(port='80', protocol=elb.Protocol.HTTP)
+
         listener.add_targets('ECS',
             port=master_port,
             targets=[service],
             proxy_protocol_v2=True,
-            health_check={
-                'healthy_http_codes': '200',
-                'port':  master_healthcheck,
-                'protocol': elb.Protocol.HTTP})
+            health_check=healthcheck)

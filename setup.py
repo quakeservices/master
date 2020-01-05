@@ -20,6 +20,7 @@ setuptools.setup(
 
     install_requires=[
         "aws-cdk.core",
+        "aws_cdk.aws_iam",
         "aws_cdk.aws_ecs",
         "aws_cdk.aws_ecr",
         "aws_cdk.aws_ec2",
