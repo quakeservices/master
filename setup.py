@@ -24,8 +24,10 @@ setuptools.setup(
         "aws_cdk.aws_ecs",
         "aws_cdk.aws_ecr",
         "aws_cdk.aws_ec2",
-        "aws_cdk.aws_elasticloadbalancingv2",
         "aws_cdk.aws_autoscaling",
+        "aws_cdk.aws_route53",
+        "aws_cdk.aws_route53_targets",
+        "aws_cdk.aws_elasticloadbalancingv2",
     ],
 
     python_requires=">=3.6",

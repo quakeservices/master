@@ -6,6 +6,8 @@ import aws_cdk.aws_ecr as ecr
 import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_elasticloadbalancingv2 as elb
 import aws_cdk.aws_autoscaling as autoscaling
+import aws_cdk.aws_route53 as route53
+import aws_cdk.aws_route53_targets as route53_targets
 
 
 class MasterDeployStack(core.Stack):
@@ -22,6 +24,7 @@ class MasterDeployStack(core.Stack):
         """
         self.vpc = ec2.Vpc.from_lookup(self, 'VPC', vpc_id='vpc-020d0618ebad0cdeb')
         self.ecr = ecr.Repository.from_repository_name(self, 'ECR', 'ecrst-quake-v3hdrh4qq3e0')
+        self.zone = route53.HostedZone.from_lookup(self, "quake_services", domain_name="quake.services")
 
         """
         Create Cluster
@@ -35,7 +38,7 @@ class MasterDeployStack(core.Stack):
                                   instance_type=ec2.InstanceType('t3.nano'),
                                   desired_capacity=cluster_size,
                                   max_capacity=6,
-                                  min_capacity=cluster_size)
+                                  min_capacity=1)
 
         """
         Create task
@@ -114,3 +117,12 @@ class MasterDeployStack(core.Stack):
         # Required overrides as Protocol never gets set correctly
         cfn_target_group = target_group.node.default_child
         cfn_target_group.add_override("Properties.Protocol", "UDP")
+
+        """
+        Create Route53 entries
+        """
+        route53.ARecord(self, "Alias",
+            zone=self.zone,
+            record_name='master',
+            target=route53.AddressRecordTarget.from_alias(route53_targets.LoadBalancerTarget(lb))
+        )
