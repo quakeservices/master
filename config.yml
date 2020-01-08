@@ -2,5 +2,5 @@
 stack_name: web-frontend
 domain: quake.services
 subdomain: www
-acm_id: 04fb379c-6873-45b5-9277-4ad37d61365e  # The ID of the AWS Certificate Manager certificate to use
+acm_id: 6744abde-0b71-4aa5-94b1-a9f554fb1116
 
