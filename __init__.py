@@ -6,13 +6,11 @@ import json
 import pickle
 
 from .model import Server
-from .cache import Cache
 
 
 class Storage():
     def __init__(self):
         logging.debug(f"{self.__class__.__name__ } - Initialising storage.")
-        self.cache = Cache()
         logging.debug(f"{self.__class__.__name__ } - Creating table...")
         self.create_table()
         logging.debug(f"{self.__class__.__name__ } - Table created.")
@@ -61,16 +59,12 @@ class Storage():
 
     def list_servers(self, game):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = self.cache.get(f'servers')
-        if not servers:
-            servers = [_.address.encode('latin1') for _ in Server.scan()]
-            self.cache.set('servers', servers)
+        servers = [_.address.encode('latin1') for _ in Server.scan()]
 
         return servers
 
     def create_server(self, server):
         logging.debug(f"{self.__class__.__name__ } - create_server {server.address}")
-        self.cache.invalidate('servers')
         try:
             server_obj = self.server_object(server)
             server_obj.save()
@@ -93,7 +87,6 @@ class Storage():
 
     def server_shutdown(self, server):
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
-        self.cache.invalidate('servers')
         try:
             server_obj = self.get_server_obj(server)
             server_obj.update(actions=[
