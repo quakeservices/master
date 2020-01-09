@@ -33,9 +33,17 @@ class Storage():
                       players=server.players,
                       player_count=server.player_count)
 
-    @staticmethod
-    def get_server(server):
-        return Server(server.address).exists()
+    def get_server(self, server):
+        logging.debug(f"{self.__class__.__name__ } - looking for {server.address}")
+
+        query = Server.server_index.query(server.address, limit=1)
+        result = False
+
+        for item in query:
+            logging.debug(f"{self.__class__.__name__ } - found {item}")
+            result = True
+
+        return result
 
     @staticmethod
     def get_server_obj(server):
