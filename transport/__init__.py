@@ -71,10 +71,12 @@ class Transport():
 
 
 class HealthCheck(asyncio.Protocol):
+    def __init__(self):
+        self.transport = None
+
     def connection_made(self, transport):
-        self.transport = transport #pylint: disable=attribute-defined-outside-init
+        self.transport = transport
 
     def data_received(self, data):
-        logging.debug(f"{self.__class__.__name__ } - Received health check ping")
+        # logging.debug(f"{self.__class__.__name__ } - Received health check ping")
         self.transport.write(b'HTTP/1.1 200 Success\n')
-        self.transport.close()
