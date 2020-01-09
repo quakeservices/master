@@ -111,7 +111,7 @@ class MasterDeployStack(core.Stack):
                                                 container_name='Master',
                                                 container_port=master_port,
                                                 protocol=ecs.Protocol.UDP)],
-                                            proxy_protocol_v2=True,
+                                            proxy_protocol_v2=False,
                                             health_check=healthcheck)
 
         # Required overrides as Protocol never gets set correctly
