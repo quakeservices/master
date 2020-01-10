@@ -22,15 +22,15 @@ class GameServer():
     Example: <score> <ping> <player>\n
     """
 
-    def __init__(self, address, data, result):
+    def __init__(self, address, result):
         self.server_address = address
         self.result = result
         self.country = self.get_country()
         self.players = list()
         self.status = dict()
-        if data:
-            self.dictify_status(data[0])
-            self.dictify_players(data[1:])
+        if result.get('status'):
+            self.dictify_status(result.get('status')[0])
+            self.dictify_players(result.get('status')[1:])
         self.player_count = len(self.players)
         self.players = json.dumps(self.players)
         self.status = json.dumps(self.status)

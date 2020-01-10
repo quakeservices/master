@@ -2,8 +2,12 @@ import os
 import logging
 import yaml
 
+from .proxy import ProxyProtocol
+
 
 class Protocols():
+    Request = namedtuple('Request', 'header', 'status', 'players')
+
     def __init__(self, header_order='master'):
         logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
         if header_order == 'server':
@@ -51,6 +55,20 @@ class Protocols():
                         'class': result.get('class', self.header_order[0])}
 
         return False
+
+    def parse_data(self, data):
+        logging.debug(f"{self.__class__.__name__ } - Parsing {data}")
+        sanitised_data = ProxyProtocol.parse_data(data)
+        logging.debug(f"{self.__class__.__name__ } - Sanitised as {sanitised_data}")
+        header, *status = sanitised_data.splitlines()
+        logging.debug(f"{self.__class__.__name__ } - Header is {header}")
+        result = self.protocols.find_protocol(header)
+        if result:
+            result['headers'] = headers
+            result['status'] = status
+            return result
+        else:
+            return False
 
 
 class GameProtocol():

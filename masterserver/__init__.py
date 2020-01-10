@@ -16,13 +16,12 @@ class MasterServer:
     def datagram_received(self, data, address):
         response = None
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
-        headers, *status = data.splitlines()
+        result = self.protocols.parse_data(data)
 
-        result = self.protocols.find_protocol(headers)
         if result.get('class') == 'B2M':
             response = self.handle_client(result)
         elif result.get('class') == 'S2M':
-            response = self.handle_server(result, status, address)
+            response = self.handle_server(result, address)
         else:
             pass
 
@@ -37,9 +36,9 @@ class MasterServer:
         response = self.create_response(response_header, server_list)
         return response
 
-    def handle_server(self, result, status, address):
+    def handle_server(self, result, address):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to server")
-        server = GameServer(address, status, result)
+        server = GameServer(address, result)
         if self.storage.get_server(server):
             self.storage.update_server(server)
         else:
