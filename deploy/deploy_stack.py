@@ -4,6 +4,8 @@ from aws_cdk import (
         aws_certificatemanager as certificatemanager,
         aws_apigateway as apigateway,
         aws_lambda as _lambda,
+        aws_s3 as s3,
+        aws_iam as iam
 )
 
 
@@ -23,6 +25,15 @@ class WebBackendDeployStack(core.Stack):
                                                                           arn)
 
 
+        policy = iam.PolicyStatement(
+            resources=["*"],
+            actions=["dynamodb:Get*",
+                     "dynamodb:Query",
+                     "dynamodb:Scan",
+                     "dynamodb:Describe*",
+                     "dynamodb:List*"])
+
+
         """
         Define domain name and certificate to use for API Gateway
         domain = apigateway.DomainNameOptions(certificate,
@@ -33,12 +44,22 @@ class WebBackendDeployStack(core.Stack):
         """
         Define Lambda function
         """
+        bucket = s3.Bucket.from_bucket_name(self,
+                                            'bucket',
+                                            bucket_name='web-backend-lambda-package')
+
+        code = _lambda.Code.from_bucket(bucket=bucket,
+                                        key='function.zip',
+                                        object_version='vCsm2bZfXZN0..Cg7vy00HAvWT_jnLmJ')
+
         backend = _lambda.Function(
             self, 'web-backend',
             runtime=_lambda.Runtime.PYTHON_3_8,
-            code=_lambda.Code.asset('web-backend'),
             handler='lambda.lambda_handler',
+            code=code,
         )
+
+        backend.add_to_role_policy(statement=policy)
 
         """
         Define API Gateway

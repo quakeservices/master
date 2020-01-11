@@ -9,12 +9,12 @@ if ! which cdk; then
 fi
 
 if test -d .env; then
-    source .env/bin/activate && \
-    pip install -r requirements.txt
+    source .env/bin/activate
 else
     python3 -m venv .env && \
-    source .env/bin/activate && \
-    pip install -r requirements.txt
+    source .env/bin/activate
 fi
+
+pip install -r requirements.txt
 
 cdk bootstrap && cdk deploy

@@ -1,3 +1,0 @@
-[submodule "web-backend"]
-	path = web-backend
-	url = https://github.com/quakeservices/web-backend.git
