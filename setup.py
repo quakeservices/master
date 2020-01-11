@@ -15,11 +15,14 @@ setuptools.setup(
 
     author="author",
 
-    package_dir={"": "web_backend_deploy"},
-    packages=setuptools.find_packages(where="web_backend_deploy"),
+    package_dir={"": "deploy"},
+    packages=setuptools.find_packages(where="deploy"),
 
     install_requires=[
         "aws-cdk.core",
+        "aws_cdk.aws_lambda",
+        "aws_cdk.aws_apigateway",
+        "aws_cdk.aws_certificatemanager",
     ],
 
     python_requires=">=3.6",
