@@ -3,7 +3,7 @@
     <v-app-bar
       app
     >
-      Quake Servers
+      Quake Services
       <v-spacer></v-spacer>
 
     </v-app-bar>

@@ -1,7 +1,6 @@
 <template>
   <div id="server-table">
     <v-data-table
-      v-bind:headers="headers"
       :items="servers"
       class="elevation-1"
     >
@@ -10,12 +9,20 @@
 </template>
 
 <script>
+  import axios from 'axios'
+
   export default {
     name: 'server-table',
-    props: {
-      headers: Array,
-      servers: Array,
+    data () {
+      return {
+        servers: null
+      }
     },
+    mounted () {
+      axios
+        .get('https://hfgvort671.execute-api.us-west-2.amazonaws.com/prod')
+        .then(response => (this.servers = response))
+    }
   }
 </script>
 
