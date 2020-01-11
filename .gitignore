@@ -1,0 +1,7 @@
+.env
+.venv
+*__pycache__*
+cdk.out
+cdk.context.json
+*.swp
+npm-debug.log
