@@ -57,9 +57,15 @@ class Storage():
         """
         return Server.get(server.address)
 
-    def list_servers(self, game):
+    def list_servers(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [_ for _ in Server.scan()]
+        servers = [server for server in Server.scan() if server.active]
+
+        return servers
+
+    def list_server_addressess(self, game=None):
+        logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
+        servers = [server.address for server in Server.scan() if server.active]
 
         return servers
 
