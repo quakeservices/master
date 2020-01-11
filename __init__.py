@@ -59,7 +59,7 @@ class Storage():
 
     def list_servers(self, game):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [_.address.encode('latin1') for _ in Server.scan()]
+        servers = [_ for _ in Server.scan()]
 
         return servers
 
