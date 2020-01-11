@@ -1,4 +1,6 @@
 import os
+import boto3
+
 from aws_cdk import (
         core,
         aws_certificatemanager as certificatemanager,
@@ -42,15 +44,24 @@ class WebBackendDeployStack(core.Stack):
         """
 
         """
-        Define Lambda function
+        Get latest version of code
+        There is probably a more elegant way of doing this
+        But for now this works
         """
+        s3_bucket_name = 'web-backend-lambda-package'
+        s3client = boto3.client('s3')
+        latest_version = s3client.get_object_tagging(Bucket=s3_bucket_name,
+                                                     Key='function.zip')
         bucket = s3.Bucket.from_bucket_name(self,
                                             'bucket',
-                                            bucket_name='web-backend-lambda-package')
+                                            bucket_name=s3_bucket_name)
 
+        """
+        Define Lambda function
+        """
         code = _lambda.Code.from_bucket(bucket=bucket,
                                         key='function.zip',
-                                        object_version='vCsm2bZfXZN0..Cg7vy00HAvWT_jnLmJ')
+                                        object_version=latest_version.get('VersionId'))
 
         backend = _lambda.Function(
             self, 'web-backend',

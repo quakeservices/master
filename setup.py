@@ -19,6 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="deploy"),
 
     install_requires=[
+        "boto3",
         "aws-cdk.core",
         "aws_cdk.aws_lambda",
         "aws_cdk.aws_apigateway",
