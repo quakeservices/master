@@ -63,7 +63,7 @@ class Storage():
 
         return servers
 
-    def list_server_addressess(self, game=None):
+    def list_server_addresses(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
         servers = [server.address for server in Server.scan() if server.active]
 
