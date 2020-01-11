@@ -32,7 +32,8 @@ class MasterServer:
     def handle_client(self, result):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get('resp', None)
-        server_list = self.storage.list_servers(result.get('game'))
+        server_list = [_.address.result.get('encoding') for _ in self.storage.list_server_addresses(result.get('game'))]
+        logging.debug(f"{self.__class__.__name__ } - server_list = {server_list}")
         response = self.create_response(response_header, server_list)
         return response
 
