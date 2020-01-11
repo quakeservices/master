@@ -4,9 +4,9 @@ import yaml
 
 from .proxy import ProxyProtocol
 
+# Request = namedtuple('Request', 'header', 'status', 'players')
 
 class Protocols():
-    Request = namedtuple('Request', 'header', 'status', 'players')
 
     def __init__(self, header_order='master'):
         logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
@@ -62,9 +62,9 @@ class Protocols():
         logging.debug(f"{self.__class__.__name__ } - Sanitised as {sanitised_data}")
         header, *status = sanitised_data.splitlines()
         logging.debug(f"{self.__class__.__name__ } - Header is {header}")
-        result = self.protocols.find_protocol(header)
+        result = self.find_protocol(header)
         if result:
-            result['headers'] = headers
+            result['header'] = header
             result['status'] = status
             return result
         else:
