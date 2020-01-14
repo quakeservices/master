@@ -1,8 +1,9 @@
 <template>
   <div id="server-table">
-    {{ servers }}
     <v-data-table
+      :headers="headers"
       :items="servers"
+      :items-per-page="20"
       class="elevation-1"
     >
     </v-data-table>
@@ -30,7 +31,7 @@
     mounted () {
       axios
         .get('https://api.quake.services')
-        .then(response => (this.servers = response))
+        .then(response.data => (this.servers = response.data))
     }
   }
 </script>
