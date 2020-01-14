@@ -1,5 +1,6 @@
 <template>
   <div id="server-table">
+    {{ servers }}
     <v-data-table
       :items="servers"
       class="elevation-1"
@@ -15,12 +16,20 @@
     name: 'server-table',
     data () {
       return {
-        servers: null
+        headers: [ {text: 'Address', value: 'address'},
+                   {text: 'Hostname', value: 'hostname'},
+                   {text: 'Map', value: 'mapname'},
+                   {text: 'Players', value: 'players'},
+                   {text: 'Max Players', value: 'maxplayers'},
+                   {text: 'Passworded', value: 'password'},
+                   {text: 'Country', value: 'country'},
+        ],
+        servers: [],
       }
     },
     mounted () {
       axios
-        .get('https://hfgvort671.execute-api.us-west-2.amazonaws.com/prod')
+        .get('https://api.quake.services')
         .then(response => (this.servers = response))
     }
   }
