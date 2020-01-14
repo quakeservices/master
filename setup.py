@@ -21,6 +21,8 @@ setuptools.setup(
     install_requires=[
         "boto3",
         "aws-cdk.core",
+        "aws-cdk.aws_route53",
+        "aws-cdk.aws_route53_targets",
         "aws_cdk.aws_lambda",
         "aws_cdk.aws_apigateway",
         "aws_cdk.aws_certificatemanager",
