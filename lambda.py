@@ -2,6 +2,9 @@
 import json
 from storage import Storage
 
+HEADERS = {'Content-Type': 'application/json',
+           'Access-Control-Allow-Origin': 'https://www.quake.services',
+           'Vary': 'Origin'}
 
 def lambda_handler(event, context):
     storage = Storage()
@@ -18,9 +21,7 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json'
-        },
+        'headers': HEADERS,
         'body': json.dumps(server_list)
     }
 
