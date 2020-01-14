@@ -19,4 +19,8 @@ else
       pip install -r requirements.txt
 fi
 
-cdk bootstrap && cdk deploy
+cd ../src \
+  && npm run build \
+  && cd ${OLDPWD} \
+  && cdk bootstrap \
+  && cdk deploy
