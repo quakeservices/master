@@ -1,4 +1,6 @@
 import logging
+import struct
+from ipaddress import ip_address
 
 from gameserver import GameServer
 
@@ -32,9 +34,15 @@ class MasterServer:
     def handle_client(self, result):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get('resp', None)
-        server_list = [_.address.result.get('encoding') for _ in self.storage.list_server_addresses(result.get('game'))]
-        logging.debug(f"{self.__class__.__name__ } - server_list = {server_list}")
-        response = self.create_response(response_header, server_list)
+        server_list = self.storage.list_server_addresses(result.get('game'))
+        processed_server_list = list()
+        for address in server_list:
+            ip, port = address.split(':')
+            ip = ip_address(ip).packed
+            port = struct.pack('!h', int(port))
+            processed_address = ip + port
+            processed_server_list.append(processed_address)
+        response = self.create_response(response_header, processed_server_list)
         return response
 
     def handle_server(self, result, address):
