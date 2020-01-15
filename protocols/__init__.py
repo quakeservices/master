@@ -58,7 +58,10 @@ class Protocols():
 
     def parse_data(self, data):
         logging.debug(f"{self.__class__.__name__ } - Parsing {data}")
-        sanitised_data = ProxyProtocol.parse_data(data)
+        if len(data) >= 16:
+            sanitised_data = ProxyProtocol.parse_data(data)
+        else:
+            sanitised_data = data
         logging.debug(f"{self.__class__.__name__ } - Sanitised as {sanitised_data}")
         header, *status = sanitised_data.splitlines()
         logging.debug(f"{self.__class__.__name__ } - Header is {header}")
