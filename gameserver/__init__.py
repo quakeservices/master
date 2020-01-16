@@ -74,6 +74,11 @@ class GameServer():
                 self.players.append(player.groupdict())
 
     def dictify_status(self, data):
+        """
+        TODO: Investigate replacing this with Construct
+              At the very least look at struct
+        """
+
         split_on = self.result.get('split_on', '\\')
 
         if data:
