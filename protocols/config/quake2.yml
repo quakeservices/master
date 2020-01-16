@@ -18,7 +18,6 @@ S2M:
 B2M:
   query:
     recv: "query"
-    resp: "\xff\xff\xff\xffservers"
 
 misc:
   server_query: !!binary c3RhdHVzIDIzCg==

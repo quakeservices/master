@@ -35,15 +35,8 @@ class MasterServer:
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get('resp', None)
         server_list = self.storage.list_server_addresses(result.get('game'))
-        processed_server_list = list()
-        for address in server_list:
-            ip, port = address.split(':')
-            ip = ip_address(ip).packed
-            port = struct.pack('!h', int(port))
-            processed_address = ip + port
-            processed_server_list.append(processed_address)
-        response = self.create_response(response_header, processed_server_list)
-        return response
+        processed_server_list = [self.pack_address(_) for _ in server_list]
+        return self.create_response(response_header, processed_server_list)
 
     def handle_server(self, result, address):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to server")
@@ -56,13 +49,26 @@ class MasterServer:
         if not server.active:
             self.storage.server_shutdown(server)
 
-        response = result.get('resp', None)
-        return response
+        return result.get('resp', None)
 
     @staticmethod
     def create_response(header, response):
+        seperator = b''
         if header:
             response.insert(0, header)
-            return b'\n'.join(response)
 
-        return response
+        return seperator.join(response)
+
+    @staticmethod
+    def pack_address(address):
+        """
+        Takes string formatted address;
+        eg, '192.168.0.1:27910'
+        Converts to 6 byte binary string.
+        H = unsigned short
+        """
+        port_format = '>H'
+        ip, port = address.split(':')
+        ip = ip_address(ip).packed
+        port = struct.pack(port_format, int(port))
+        return ip + port
