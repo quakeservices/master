@@ -16,27 +16,26 @@ class ServerIndex(GlobalSecondaryIndex):
     class Meta:
         if os.getenv('STAGE', 'PRODUCTION') == 'TESTING':
             host = 'http://dynamodb:8000'
-        read_capacity_units = 5
-        write_capacity_units = 5
         index_name = 'server_index'
+        billing_mode = 'PAY_PER_REQUEST'
         projection = AllProjection()
         region = 'us-west-2'
 
     address = UnicodeAttribute(hash_key=True)
-
+    game = UnicodeAttribute(range_key=True)
 
 class Server(Model):
     class Meta:
         if os.getenv('STAGE', 'PRODUCTION') == 'TESTING':
             host = 'http://dynamodb:8000'
         table_name = 'server'
-        read_capacity_units = 5
-        write_capacity_units = 5
+        billing_mode = 'PAY_PER_REQUEST'
         region = 'us-west-2'
 
     server_index = ServerIndex()
 
     address = UnicodeAttribute(hash_key=True)
+    game = UnicodeAttribute()
 
     protocol = NumberAttribute(default=0)
 
