@@ -1,11 +1,21 @@
 import logging
 import re
 import json
+import os
+import sys
 
-import GeoIP
+import geoip2.database
 
-# TODO: Where is this in scope?
-GI = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
+
+# TODO: Add logging around this instead of silently failing
+# TODO: Make less garbage
+try:
+    reader = geoip2.database.Reader('/usr/share/GeoIP/GeoIP.dat')
+except:
+    try:
+        reader = geoip2.database.Reader('./nonfree/GeoIP.dat')
+    except:
+        sys.exit(1)
 
 class GameServer():
     """
@@ -60,7 +70,7 @@ class GameServer():
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
         """
-        result = GI.country_code_by_addr(self.ip)
+        result = reader.city(self.ip).country.iso_code
         if result:
             return result
 
