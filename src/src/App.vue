@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-app-bar
       app
     >
@@ -19,7 +19,9 @@ import Servers from './components/Servers';
 
 export default {
   name: 'App',
-
+  theme: {
+    dark: true,
+  },
   components: {
     Servers,
   },
