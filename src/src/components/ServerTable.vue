@@ -10,6 +10,10 @@
       <template v-slot:item.players="{ item }">
         {{ item.players }} / {{ item.maxplayers }}
       </template>
+      <template v-slot:item.password="{ item }">
+        <template v-if="item.password == 1">True</template>
+        <template v-else>False</template>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -25,7 +29,7 @@
                    {text: 'Hostname', value: 'hostname'},
                    {text: 'Map', value: 'mapname'},
                    {text: 'Players', value: 'players'},
-                   {text: 'Passworded', value: 'password'},
+                   {text: 'Password', value: 'password'},
                    {text: 'Country', value: 'country'},
         ],
         servers: [],
