@@ -21,6 +21,7 @@ class Storage():
 
     @staticmethod
     def server_object(server):
+        logging.debug(f"{__class__.__name__ } - creating server for {server.address}")
         return Server(server.address,
                       country_code=server.country,
                       active=True,
