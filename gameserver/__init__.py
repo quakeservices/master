@@ -70,15 +70,13 @@ class GameServer():
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
         """
+        result = 'ZZ'
         try:
             result = reader.city(self.ip).country.iso_code
         except geoip2.errors.AddressNotFoundError:
             pass
 
-        if result:
-            return result
-
-        return 'ZZ'
+        return result
 
     def dictify_players(self, data):
         player_regex = re.compile(r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
