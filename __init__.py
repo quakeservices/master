@@ -23,33 +23,26 @@ class Storage():
     def server_object(server):
         logging.debug(f"{__class__.__name__ } - creating server for {server.address}")
         return Server(server.address,
+                      game=server.game,
                       country_code=server.country,
                       active=True,
                       status=server.status,
                       players=server.players,
                       player_count=server.player_count)
 
+    @staticmethod
+    def get_server_obj(server):
+        for server in Server.server_index.query(server.address, limit=1):
+            return server
+
     def get_server(self, server):
         logging.debug(f"{self.__class__.__name__ } - looking for {server.address}")
 
-        query = Server.server_index.query(server.address, limit=1)
-        result = False
-
-        for item in query:
-            logging.debug(f"{self.__class__.__name__ } - found {item}")
-            result = True
-
-        return result
-
-    @staticmethod
-    def get_server_obj(server):
-        server = None
-        try:
-            server = Server.server_index.query(server.address).__next__()
-        except StopIteration:
-            pass
-        finally:
-            return server
+        query = self.get_server_obj(server)
+        if query:
+            return True
+        else:
+            return False
 
     def list_servers(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
@@ -59,7 +52,7 @@ class Storage():
 
     def list_server_addresses(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [server.address for server in Server.scan() if server.active]
+        servers = [server.address for server in self.list_servers()]
 
         return servers
 
@@ -68,8 +61,8 @@ class Storage():
         try:
             server_obj = self.server_object(server)
             server_obj.save()
-        except:
-            logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
+        except ValueError:
+            raise
 
     def update_server(self, server):
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
@@ -77,13 +70,14 @@ class Storage():
             server_obj = self.get_server_obj(server)
             server_obj.update(actions=[
               Server.active.set(True),
+              Server.game.set(server.game),
               Server.last_seen.set(datetime.utcnow()),
               Server.status.set(server.status),
               Server.players.set(server.players),
               Server.player_count.set(server.player_count)
             ])
-        except:
-            logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
+        except ValueError:
+            raise
 
     def server_shutdown(self, server):
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
@@ -93,5 +87,5 @@ class Storage():
               Server.active.set(False),
               Server.last_seen.set(datetime.utcnow())
             ])
-        except:
-            logging.debug(f"{self.__class__.__name__ } - failed for some reason {server.address}")
+        except ValueError:
+            raise
