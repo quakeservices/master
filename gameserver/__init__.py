@@ -70,7 +70,11 @@ class GameServer():
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
         """
-        result = reader.city(self.ip).country.iso_code
+        try:
+            result = reader.city(self.ip).country.iso_code
+        except geoip2.errors.AddressNotFoundError:
+            pass
+
         if result:
             return result
 
