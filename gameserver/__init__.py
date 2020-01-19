@@ -34,6 +34,7 @@ class GameServer():
 
     def __init__(self, address, result):
         self.server_address = address
+        self.game = 'quake2'
         self.result = result
         self.country = self.get_country()
         self.players = list()
