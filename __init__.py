@@ -42,17 +42,13 @@ class Storage():
 
     @staticmethod
     def get_server_obj(server):
-        """
-        Replace with this?
         server = None
         try:
             server = Server.server_index.query(server.address).__next__()
         except StopIteration:
             pass
         finally:
-            return Server
-        """
-        return Server.get(server.address)
+            return server
 
     def list_servers(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
