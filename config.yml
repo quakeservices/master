@@ -6,3 +6,4 @@ acm_id: 8cf6dd16-eb52-4a8d-b973-e6b0c07e00f5
 source: src/dist/
 include_apex: true
 ipv6_support: true
+redirect_apex: true
