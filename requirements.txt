@@ -3,3 +3,4 @@ pynamodb>=4.0.0
 PyYAML>=5.1.2
 geoip2>=3.0.0
 redis>=3.3.8
+pytest>=5.3.5
