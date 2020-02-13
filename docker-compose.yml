@@ -9,7 +9,6 @@ services:
       protocol: udp
       mode: host
     depends_on:
-    - redis
     - dynamodb
     environment:
     - STAGE=TESTING
@@ -17,14 +16,10 @@ services:
     - AWS_SECRET_ACCESS_KEY=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 1m
+      interval: 1s
       timeout: 10s
       retries: 3
       start_period: 10s
-
-
-  redis:
-    image: redis:alpine
 
   dynamodb:
     image: amazon/dynamodb-local
