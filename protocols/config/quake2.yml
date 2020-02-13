@@ -19,6 +19,36 @@ B2M:
   query:
     recv: "query"
 
+status_keys:
+  - key: "cheats"
+    integer: True
+  - key: "deathmatch"
+    integer: True
+  - key: "dmflags"
+    integer: True
+  - key: "fraglimit"
+    integer: True
+  - key: "gamedate"
+    integer: False
+  - key: "gamename"
+    integer: False
+  - key: "hostname"
+    integer: False
+  - key: "mapname"
+    integer: False
+  - key: "maxclients"
+    integer: True
+  - key: "maxspectators"
+    integer: True
+  - key: "needpass"
+    integer: True
+  - key: "protocol"
+    integer: True
+  - key: "timelimit"
+    integer: True
+  - key: "version"
+    integer: False
+
 misc:
   server_query: !!binary c3RhdHVzIDIzCg==
   server_print: !!binary cHJpbnQ=
