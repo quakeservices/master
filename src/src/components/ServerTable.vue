@@ -31,7 +31,7 @@
     data () {
       return {
         headers: [ {text: 'Hostname', value: 'hostname'},
-                   {text: 'Mode', value: 'gametype'},
+                   {text: 'Mode', value: 'gamename'},
                    {text: 'Map', value: 'mapname'},
                    {text: 'Players', value: 'players'},
                    {text: 'Password', value: 'password'},
