@@ -15,6 +15,7 @@ def server_list(storage):
         status = json.loads(server.status)
         server_list.append(dict(address = server.address,
                                 hostname = status.get('hostname', 'unknown'),
+                                gametype = status.get('gamename', 'baseq2'),
                                 mapname = status.get('mapname', 'unknown'),
                                 players = server.player_count,
                                 maxplayers = status.get('maxclients', '-1'),
