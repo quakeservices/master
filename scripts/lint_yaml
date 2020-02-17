@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-COMMAND='pylint'
+COMMAND='yamllint'
 CODE=${1:-'/code'}
 
 if ! test -d ${CODE}; then
@@ -14,6 +14,6 @@ if ! $(which ${COMMAND}); then
   pip install ${COMMAND}
 fi
 
-for file in $(find -type f -name '*.py'); do
-    ${COMMAND} --errors-only $file;
+for file in $(find -type f -name '*.yaml'); do
+    ${COMMAND} $file;
 done
