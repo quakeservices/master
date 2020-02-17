@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 cd $(dirname $0)/..
 
-for file in $(find -type f -name '*.py' ! -path './venv/*'); do
-    pylint --errors-only $file;
-done
+CODE="/code"
+
+docker run -it \
+           --rm \
+           --mount source=pip-cache,target=/root/.cache/pip \
+           --mount type=bind,source="$(pwd)"/,target=${CODE} \
+           python:3 \
+           ${CODE}/scripts/lint_python ${CODE}

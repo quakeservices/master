@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+CODE=${1:-'/code'}
+
+if ! test -d ${CODE}; then
+  echo 'CODE directory is undefined'
+  exit 1
+fi
+
+cd ${CODE}
+
+if ! $(which pylint); then
+  pip install pylint
+fi
+
+for file in $(find -type f -name '*.py'); do
+    pylint --errors-only $file;
+done
