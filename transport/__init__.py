@@ -33,7 +33,8 @@ class Transport():
 
         listen = self.loop.create_datagram_endpoint(lambda: server,
                                                     family=socket_family,
-                                                    local_addr=bind)
+                                                    local_addr=bind,
+                                                    reuse_port=True)
 
         transport, protocol = self.loop.run_until_complete(listen)
 
