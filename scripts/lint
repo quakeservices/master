@@ -8,5 +8,6 @@ docker run -it \
            --rm \
            --mount source=pip-cache,target=/root/.cache/pip \
            --mount type=bind,source="$(pwd)"/,target=${CODE} \
+           -w ${CODE} \
            python:3 \
            ${CODE}/scripts/lint_python ${CODE}

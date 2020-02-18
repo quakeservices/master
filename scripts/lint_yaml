@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 
 COMMAND='yamllint'
-CODE=${1:-'/code'}
-
-if ! test -d ${CODE}; then
-  echo 'CODE directory is undefined'
-  exit 1
-fi
-
-cd ${CODE}
 
 if ! $(which ${COMMAND}); then
   pip install ${COMMAND}
