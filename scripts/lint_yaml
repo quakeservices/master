@@ -6,6 +6,6 @@ if ! $(which ${COMMAND}); then
   pip install ${COMMAND}
 fi
 
-for file in $(find -type f -name '*.yaml'); do
+for file in $(find -type f -name '*.yml'); do
     ${COMMAND} $file;
 done
