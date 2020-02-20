@@ -4,8 +4,9 @@ COMMAND='pylint'
 
 if ! $(which ${COMMAND}); then
   pip install ${COMMAND}
+  pip install -r requirements.txt
 fi
 
-for file in $(find -type f -name '*.py'); do
+for file in $(find -type f -name '*.py' | grep -iv '.env'); do
     ${COMMAND} --errors-only $file;
 done

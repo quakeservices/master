@@ -13,6 +13,7 @@ class ProxyProtocol:
 
     @staticmethod
     def parse_data(data):
+        # pylint: disable=undefined-variable
         header_format = '>12sccH'
         header_length = 16
         header_raw = data[:header_length]
