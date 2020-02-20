@@ -26,11 +26,13 @@ class MasterDeployStack(core.Stack):
         self.ecr = ecr.Repository.from_repository_name(self, 'ECR', 'ecrst-quake-v3hdrh4qq3e0')
         self.zone = route53.HostedZone.from_lookup(self, "quake_services", domain_name="quake.services")
 
+
         """
         Create Cluster
         """
 
-        self.cluster = ecs.Cluster(self, 'QuakeServices',
+        self.cluster = ecs.Cluster(self,
+                                   'QuakeServices',
                                    cluster_name='QuakeServicesECS',
                                    vpc=self.vpc)
 
@@ -38,33 +40,61 @@ class MasterDeployStack(core.Stack):
                                   instance_type=ec2.InstanceType('t3.nano'),
                                   desired_capacity=cluster_size,
                                   max_capacity=6,
-                                  min_capacity=1)
+                                  min_capacity=1,
+                                  task_drain_time=core.Duration.minutes(1))
 
         """
-        Create task
+        Create master task
         """
-        task = ecs.Ec2TaskDefinition(self, 'QuakeMasterTask',
-            network_mode=ecs.NetworkMode.HOST)
+        task = ecs.Ec2TaskDefinition(self,
+                                     'QuakeMasterTask',
+                                     network_mode=ecs.NetworkMode.HOST)
 
         policy = PolicyStatement(
             resources=["*"],
-            actions=["dynamodb:Create*",
-                     "dynamodb:Delete*",
-                     "dynamodb:Get*",
-                     "dynamodb:PutItem",
+            actions=["dynamodb:BatchGetItem",
+                     "dynamodb:GetRecords",
+                     "dynamodb:GetShardIterator",
                      "dynamodb:Query",
+                     "dynamodb:GetItem",
                      "dynamodb:Scan",
-                     "dynamodb:Update*",
-                     "dynamodb:Describe*",
-                     "dynamodb:List*"])
+                     "dynamodb:BatchWriteItem",
+                     "dynamodb:PutItem",
+                     "dynamodb:UpdateItem",
+                     "dynamodb:DeleteItem"]
+        )
 
         task.add_to_task_role_policy(policy)
 
         """
+        Create X-Ray task container
+        """
+        xray_task = ecs.Ec2TaskDefinition(self,
+                                     'xray-daemon-task',
+                                     network_mode=ecs.NetworkMode.HOST)
+
+        xray = xray_task.add_container('xray-daemon',
+            start_timeout=core.Duration.seconds(60),
+            stop_timeout=core.Duration.seconds(60),
+            image=ecs.ContainerImage.from_registry('amazon/aws-xray-daemon'),
+            memory_reservation_mib=256)
+
+        xray_port_udp = ecs.PortMapping(container_port=2000,
+                                        protocol=ecs.Protocol.UDP)
+
+        xray.add_port_mappings(xray_port_udp)
+
+
+        """
         Create container
         """
+        ecs_healthcheck = ecs.HealthCheck(command=["CMD", "curl", "-f", "http://localhost:8080"])
 
         container = task.add_container('Master',
+            hostname='master',
+            health_check=ecs_healthcheck,
+            start_timeout=core.Duration.seconds(15),
+            stop_timeout=core.Duration.seconds(15),
             image=ecs.ContainerImage.from_ecr_repository(self.ecr, tag='latest'),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="Master"),
             memory_reservation_mib=256)
@@ -103,7 +133,8 @@ class MasterDeployStack(core.Stack):
         cfn_listener = listener.node.default_child
         cfn_listener.add_override("Properties.Protocol", "UDP")
 
-        healthcheck = elb.HealthCheck(port='8080', protocol=elb.Protocol.HTTP)
+        elb_healthcheck = elb.HealthCheck(port='8080',
+                                          protocol=elb.Protocol.HTTP)
 
         target_group = listener.add_targets('ECS',
                                             port=master_port,
@@ -111,8 +142,8 @@ class MasterDeployStack(core.Stack):
                                                 container_name='Master',
                                                 container_port=master_port,
                                                 protocol=ecs.Protocol.UDP)],
-                                            proxy_protocol_v2=False,
-                                            health_check=healthcheck)
+                                            proxy_protocol_v2=True,
+                                            health_check=elb_healthcheck)
 
         # Required overrides as Protocol never gets set correctly
         cfn_target_group = target_group.node.default_child
