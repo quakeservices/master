@@ -61,7 +61,8 @@ class MasterDeployStack(core.Stack):
                      "dynamodb:BatchWriteItem",
                      "dynamodb:PutItem",
                      "dynamodb:UpdateItem",
-                     "dynamodb:DeleteItem"]
+                     "dynamodb:DeleteItem",
+                     "dynamodb:DescribeTable"]
         )
 
         task.add_to_task_role_policy(policy)
