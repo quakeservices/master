@@ -3,7 +3,7 @@ game: quake2
 engine: idtech2
 encoding: latin1
 active: true
-version: 34 # Vanilla
+version: 34   # Vanilla
 
 S2M:
   ping:
@@ -14,40 +14,40 @@ S2M:
     resp: "\xff\xff\xff\xffack"
   shutdown:
     recv: "\xff\xff\xff\xffshutdown"
-  
+
 B2M:
   query:
     recv: "query"
 
 status_keys:
   - key: "cheats"
-    integer: True
+    integer: true
   - key: "deathmatch"
-    integer: True
+    integer: true
   - key: "dmflags"
-    integer: True
+    integer: true
   - key: "fraglimit"
-    integer: True
+    integer: true
   - key: "gamedate"
-    integer: False
+    integer: false
   - key: "gamename"
-    integer: False
+    integer: false
   - key: "hostname"
-    integer: False
+    integer: false
   - key: "mapname"
-    integer: False
+    integer: false
   - key: "maxclients"
-    integer: True
+    integer: true
   - key: "maxspectators"
-    integer: True
+    integer: true
   - key: "needpass"
-    integer: True
+    integer: true
   - key: "protocol"
-    integer: True
+    integer: true
   - key: "timelimit"
-    integer: True
+    integer: true
   - key: "version"
-    integer: False
+    integer: false
 
 misc:
   server_query: !!binary c3RhdHVzIDIzCg==

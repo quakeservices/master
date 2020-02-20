@@ -14,7 +14,7 @@ S2M:
     resp: !!binary /////2Fjaw==
   shutdown:
     recv: !!binary /////3NodXRkb3du
-  
+
 B2M:
   query:
     recv: !!binary cXVlcnk=
