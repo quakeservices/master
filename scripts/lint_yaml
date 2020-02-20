@@ -1,8 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 COMMAND='yamllint'
 
+echo "+++ Installing dependencies +++"
 if ! $(which ${COMMAND}); then
+  pip install --upgrade pip > /dev/null
   pip install ${COMMAND} > /dev/null
 fi
 

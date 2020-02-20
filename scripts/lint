@@ -10,5 +10,5 @@ docker run -it \
            --mount type=volume,source=pip-cache,target=/root/.cache/pip \
            --mount type=bind,source="$(pwd)"/,target=${CODE} \
            -w ${CODE} \
-           python:3 \
+           python:3-alpine \
            ${CODE}/scripts/lint_${LINTER} ${CODE}

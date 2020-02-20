@@ -12,4 +12,5 @@ APP=masterserver
 
 docker run -it \
            --rm \
-           ${APP}:latest
+           ${APP}:latest \
+           python ./app.py

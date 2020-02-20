@@ -7,15 +7,13 @@ import sys
 import geoip2.database
 
 
-# TODO: Add logging around this instead of silently failing
-# TODO: Make less garbage
-try:
-    reader = geoip2.database.Reader('/usr/share/GeoIP/GeoIP.dat')
-except:
-    try:
-        reader = geoip2.database.Reader('./nonfree/GeoIP.dat')
-    except:
-        sys.exit(1)
+geoip_db = 'nonfree/GeoIP.dat'
+if os.path.isfile(geoip_db):
+    reader = geoip2.database.Reader(geoip_db)
+else:
+    print(f"Could not find {geoip_db}")
+    sys.exit(1)
+
 
 class GameServer():
     """
