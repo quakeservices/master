@@ -15,7 +15,7 @@ S2M:
     resp: "l"
   shutdown:                       # S2M_SHUTDOWN
     recv: "C"
-  
+
 B2M:
   query:
     recv: "c"

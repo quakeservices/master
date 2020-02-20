@@ -5,11 +5,7 @@ cd $(dirname $0)/..
 
 APP=masterserver
 
-if which docker 2>/dev/null; then
-  cmd="docker"
-else
-  cmd="podman"
-fi
-
-${cmd} build --network host -t ${APP}:latest -t ${APP}:${BUILDKITE_BUILD_NUMBER:-1} .
-
+echo "+++ Building ${APP} +++"
+docker build --network host \
+             -t ${APP}:latest \
+             -t ${APP}:${BUILDKITE_BUILD_NUMBER:-1} .
