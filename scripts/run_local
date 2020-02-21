@@ -12,5 +12,6 @@ APP=masterserver
 
 docker run -it \
            --rm \
+           -p 29700:27900/udp \
            ${APP}:latest \
            python ./app.py
