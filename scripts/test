@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/..
+
+CODE="/code"
+
+docker run -it \
+           --rm \
+           --mount type=volume,source=pip-cache,target=/root/.cache/pip \
+           --mount type=bind,source="$(pwd)"/,target=${CODE} \
+           -w ${CODE} \
+           python:3-alpine \
+           ${CODE}/scripts/tests_unit

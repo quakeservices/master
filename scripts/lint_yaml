@@ -2,13 +2,11 @@
 
 COMMAND='yamllint'
 
-echo "+++ Installing dependencies +++"
+echo "+++ Installing yamllint dependencies +++"
 if ! $(which ${COMMAND}); then
   pip install --upgrade pip > /dev/null
   pip install ${COMMAND} > /dev/null
 fi
 
 echo "+++ Running YAML linter +++"
-for file in $(find -type f -name '*.yml' | awk '!/docker/ && !/sample/'); do
-    ${COMMAND} $file;
-done
+${COMMAND} protocols/config/

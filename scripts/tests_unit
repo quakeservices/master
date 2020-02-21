@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
 
-cd $(dirname $0)/..
+COMMAND='pytest'
 
-pytest --cache-clear tests/unit_tests/
+echo "+++ Installing test dependencies +++"
+if ! $(which ${COMMAND}); then
+  pip install --upgrade pip > /dev/null
+  pip install ${COMMAND} > /dev/null
+  pip install -r requirements.txt > /dev/null
+fi
+
+echo "+++ Running unit tests +++"
+${COMMAND} --cache-clear tests/unit_tests/

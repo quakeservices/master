@@ -6,6 +6,8 @@ cd $(dirname $0)/..
 ./scripts/lint yaml
 ./scripts/lint python
 
+./scripts/test
+
 ./scripts/build
 
 APP=masterserver

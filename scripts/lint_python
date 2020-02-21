@@ -2,7 +2,7 @@
 
 COMMAND='pylint'
 
-echo "+++ Installing dependencies +++"
+echo "+++ Installing pylint dependencies +++"
 if ! $(which ${COMMAND}); then
   pip install --upgrade pip > /dev/null
   pip install ${COMMAND} > /dev/null
@@ -10,6 +10,4 @@ if ! $(which ${COMMAND}); then
 fi
 
 echo "+++ Running Python linter +++"
-for file in $(find -type f -name '*.py' | grep -iv '.env'); do
-    ${COMMAND} --errors-only $file;
-done
+${COMMAND} --errors-only $(find -type f -name '*.py' | awk '!/.venv/ && !/.env/ && !/venv/')
