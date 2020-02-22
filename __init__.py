@@ -21,7 +21,7 @@ class Storage():
 
     @staticmethod
     def server_object(server):
-        logging.debug(f"{__class__.__name__ } - creating server for {server.address}") # pylint disable=undefined-variable
+        logging.debug(f"{__class__.__name__ } - creating server for {server.address}") # pylint: disable=undefined-variable
         return Server(server.address,
                       game=server.game,
                       country_code=server.country,
