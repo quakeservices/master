@@ -15,7 +15,7 @@ class MasterDeployStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        cluster_size = 2
+        cluster_size = 1
         master_port = 27900
         master_healthcheck = '8080'
 
@@ -37,7 +37,7 @@ class MasterDeployStack(core.Stack):
                                    vpc=self.vpc)
 
         self.cluster.add_capacity('DefaultAutoScalingGroupCapacity',
-                                  instance_type=ec2.InstanceType('t3.nano'),
+                                  instance_type=ec2.InstanceType('t3.micro'),
                                   desired_capacity=cluster_size,
                                   max_capacity=6,
                                   min_capacity=1,
@@ -50,7 +50,7 @@ class MasterDeployStack(core.Stack):
                                      'QuakeMasterTask',
                                      network_mode=ecs.NetworkMode.HOST)
 
-        policy = PolicyStatement(
+        dynamo_policy = PolicyStatement(
             resources=["*"],
             actions=["dynamodb:BatchGetItem",
                      "dynamodb:GetRecords",
@@ -65,26 +65,19 @@ class MasterDeployStack(core.Stack):
                      "dynamodb:DescribeTable"]
         )
 
-        task.add_to_task_role_policy(policy)
+        xray_policy = PolicyStatement(
+            resources=["*"],
+            actions=["xray:GetGroup",
+                     "xray:GetGroups",
+                     "xray:GetSampling*",
+                     "xray:GetTime*",
+                     "xray:GetService*",
+                     "xray:PutTelemetryRecords",
+                     "xray:PutTraceSegments"]
+        )
 
-        """
-        Create X-Ray task container
-        """
-        xray_task = ecs.Ec2TaskDefinition(self,
-                                     'xray-daemon-task',
-                                     network_mode=ecs.NetworkMode.HOST)
-
-        xray = xray_task.add_container('xray-daemon',
-            start_timeout=core.Duration.seconds(60),
-            stop_timeout=core.Duration.seconds(60),
-            image=ecs.ContainerImage.from_registry('amazon/aws-xray-daemon'),
-            memory_reservation_mib=256)
-
-        xray_port_udp = ecs.PortMapping(container_port=2000,
-                                        protocol=ecs.Protocol.UDP)
-
-        xray.add_port_mappings(xray_port_udp)
-
+        task.add_to_task_role_policy(dynamo_policy)
+        task.add_to_task_role_policy(xray_policy)
 
         """
         Create container
