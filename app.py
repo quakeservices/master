@@ -15,7 +15,8 @@ from aws_xray_sdk.core import patch_all
 try:
     xray_recorder.configure(
         service='MasterServer',
-        context_missing='LOG_ERROR'
+        context_missing='LOG_ERROR',
+        plugins=('ECSPlugin', 'EC2Plugin', 'ElasticBeanstalkPlugin'),
     )
     patch_all()
 except:

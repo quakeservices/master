@@ -14,13 +14,14 @@ class MasterServer:
         self.storage = storage
         self.protocols = protocols
 
+    @xray_recorder.capture('connection_made')
     def connection_made(self, transport):
         self.transport = transport
 
+    @xray_recorder.capture('datagram_recieved')
     def datagram_received(self, data, address):
         response = None
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
-        xray_recorder.begin_segment('datagram_recieved')
         result = self.protocols.parse_data(data)
 
         if result.get('class') == 'B2M':
@@ -33,8 +34,8 @@ class MasterServer:
         if response:
             logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
             self.transport.sendto(response, address)
-        xray_recorder.end_segment()
 
+    @xray_recorder.capture('handle_client')
     def handle_client(self, result):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get('resp', None)
@@ -42,6 +43,7 @@ class MasterServer:
         processed_server_list = [self.pack_address(_) for _ in server_list]
         return self.create_response(response_header, processed_server_list)
 
+    @xray_recorder.capture('handle_server')
     def handle_server(self, result, address):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to server")
         server = GameServer(address, result)
