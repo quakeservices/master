@@ -4,6 +4,8 @@ from ipaddress import ip_address
 
 from gameserver import GameServer
 
+from aws_xray_sdk.core import xray_recorder
+
 
 class MasterServer:
     def __init__(self, storage, protocols):
@@ -18,6 +20,7 @@ class MasterServer:
     def datagram_received(self, data, address):
         response = None
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
+        xray_recorder.begin_segment('datagram_recieved')
         result = self.protocols.parse_data(data)
 
         if result.get('class') == 'B2M':
@@ -30,6 +33,7 @@ class MasterServer:
         if response:
             logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
             self.transport.sendto(response, address)
+        xray_recorder.end_segment()
 
     def handle_client(self, result):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")

@@ -8,6 +8,19 @@ from storage import Storage
 from transport import Transport
 from masterserver import MasterServer
 
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import patch_all
+
+
+try:
+    xray_recorder.configure(
+        service='MasterServer',
+        context_missing='LOG_ERROR'
+    )
+    patch_all()
+except:
+    logging.exception('Failed to import X-ray')
+
 
 def setup_logging(level='INFO'):
     logging.getLogger('boto3').propagate = False
