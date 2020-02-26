@@ -8,6 +8,7 @@ import aws_cdk.aws_elasticloadbalancingv2 as elb
 import aws_cdk.aws_autoscaling as autoscaling
 import aws_cdk.aws_route53 as route53
 import aws_cdk.aws_route53_targets as route53_targets
+import aws_cdk.aws_logs as logs
 
 
 class MasterDeployStack(core.Stack):
@@ -83,6 +84,10 @@ class MasterDeployStack(core.Stack):
         Create container
         """
         ecs_healthcheck = ecs.HealthCheck(command=["CMD", "curl", "-f", "http://localhost:8080"])
+        log_settings = ecs.LogDrivers.aws_logs(
+                stream_prefix="Master",
+                log_retention=logs.RetentionDays.TWO_WEEKS,
+        )
 
         container = task.add_container('Master',
             hostname='master',
@@ -90,7 +95,7 @@ class MasterDeployStack(core.Stack):
             start_timeout=core.Duration.seconds(15),
             stop_timeout=core.Duration.seconds(15),
             image=ecs.ContainerImage.from_ecr_repository(self.ecr, tag='latest'),
-            logging=ecs.LogDrivers.aws_logs(stream_prefix="Master"),
+            logging=log_settings,
             memory_reservation_mib=256)
 
         container_port_udp = ecs.PortMapping(container_port=master_port,
