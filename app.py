@@ -16,7 +16,7 @@ try:
     xray_recorder.configure(
         service='MasterServer',
         context_missing='LOG_ERROR',
-        plugins=('ECSPlugin', 'EC2Plugin', 'ElasticBeanstalkPlugin'),
+        plugins=('ECSPlugin', 'EC2Plugin'),
     )
     patch_all()
 except:
@@ -24,8 +24,8 @@ except:
 
 
 def setup_logging(level='INFO'):
-    logging.getLogger('boto3').propagate = False
-    logging.getLogger('botocore').propagate = False
+    # logging.getLogger('boto3').propagate = False
+    # logging.getLogger('botocore').propagate = False
 
     log_level = getattr(logging, level.upper())
 

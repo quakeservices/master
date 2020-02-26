@@ -24,16 +24,20 @@ class MasterServer:
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
         result = self.protocols.parse_data(data)
 
-        if result.get('class') == 'B2M':
+        if result.get('class', '') == 'B2M':
             response = self.handle_client(result)
-        elif result.get('class') == 'S2M':
+        elif result.get('class', '') == 'S2M':
             response = self.handle_server(result, address)
         else:
             pass
 
         if response:
-            logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
-            self.transport.sendto(response, address)
+            self.send_response(response, address)
+
+    @xray_recorder.capture('send_response')
+    def send_response(self, response, address):
+        logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
+        self.transport.sendto(response, address)
 
     @xray_recorder.capture('handle_client')
     def handle_client(self, result):
