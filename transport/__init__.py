@@ -9,7 +9,7 @@ class Transport():
     def __init__(self, master):
         logging.debug(f"{self.__class__.__name__ } - Initialising transport")
         self.loop = asyncio.get_event_loop()
-        self.signal()
+        # self.signal()
         self.v4_udp_transport, self.v4_udp_protocol = self.listener(master,
                                                                     socket.AF_INET,
                                                                     ('0.0.0.0', 27900))
