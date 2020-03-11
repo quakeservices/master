@@ -1,6 +1,7 @@
 import logging
 import struct
 from ipaddress import ip_address
+from typing import List, Tuple, NoReturn
 
 from gameserver import GameServer
 
@@ -15,11 +16,13 @@ class MasterServer:
         self.protocols = protocols
 
     @xray_recorder.capture('connection_made')
-    def connection_made(self, transport):
+    def connection_made(self, transport) -> NoReturn:
         self.transport = transport
 
     @xray_recorder.capture('datagram_recieved')
-    def datagram_received(self, data, address):
+    def datagram_received(self,
+                          data: bytes,
+                          address: Tuple[str, int]) -> NoReturn:
         response = None
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
         result = self.protocols.parse_data(data)
@@ -35,12 +38,15 @@ class MasterServer:
             self.send_response(response, address)
 
     @xray_recorder.capture('send_response')
-    def send_response(self, response, address):
+    def send_response(self,
+                      response,
+                      address: Tuple[str, int]) -> NoReturn:
         logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
         self.transport.sendto(response, address)
 
     @xray_recorder.capture('handle_client')
-    def handle_client(self, result):
+    def handle_client(self,
+                     result) -> bytes:
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get('resp', None)
         server_list = self.storage.list_server_addresses(result.get('game'))
@@ -48,7 +54,9 @@ class MasterServer:
         return self.create_response(response_header, processed_server_list)
 
     @xray_recorder.capture('handle_server')
-    def handle_server(self, result, address):
+    def handle_server(self,
+                      result,
+                      address: Tuple[str, int]):
         logging.debug(f"{self.__class__.__name__ } - Header belongs to server")
         server = GameServer(address, result)
         if self.storage.get_server(server):
@@ -62,7 +70,8 @@ class MasterServer:
         return result.get('resp', None)
 
     @staticmethod
-    def create_response(header, response):
+    def create_response(header: bytes,
+                        response: List[bytes]) -> bytes:
         seperator = b''
         if header:
             response.insert(0, header)
@@ -70,7 +79,7 @@ class MasterServer:
         return seperator.join(response)
 
     @staticmethod
-    def pack_address(address):
+    def pack_address(address: str) -> bytes:
         """
         Takes string formatted address;
         eg, '192.168.0.1:27910'
