@@ -3,6 +3,7 @@ import re
 import json
 import os
 import sys
+from typing import Tuple, NoReturn
 
 import geoip2.database
 
@@ -30,7 +31,9 @@ class GameServer():
     Example: <score> <ping> <player>\n
     """
 
-    def __init__(self, address, result):
+    def __init__(self,
+                 address: Tuple[str, int],
+                 result):
         self.server_address = address
         self.game = 'quake2'
         self.result = result
@@ -45,26 +48,26 @@ class GameServer():
         self.status = json.dumps(self.status)
 
     @property
-    def ip(self): # pylint: disable=invalid-name
+    def ip(self) -> str: # pylint: disable=invalid-name
         return self.server_address[0]
 
     @property
-    def port(self):
+    def port(self) -> int:
         return self.server_address[1]
 
     @property
-    def address(self):
+    def address(self) -> str:
         return ':'.join([self.ip, str(self.port)])
 
     @property
-    def encoding(self):
+    def encoding(self) -> str:
         return self.result.get('encoding')
 
     @property
-    def active(self):
+    def active(self) -> bool:
         return self.result.get('active')
 
-    def get_country(self):
+    def get_country(self) -> str:
         """
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
@@ -77,17 +80,14 @@ class GameServer():
 
         return result
 
-    def dictify_players(self, data):
+    def dictify_players(self, data: str) -> NoReturn:
         player_regex = re.compile(r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
         for player in data:
             player = re.match(player_regex, player.decode(self.encoding))
             if player:
                 self.players.append(player.groupdict())
 
-    def dictify_status(self, data):
-        # TODO: Investigate replacing this with Construct
-        #       At the very least look at struct
-
+    def dictify_status(self, data: str) -> NoReturn:
         split_on = self.result.get('split_on', '\\')
 
         if data:
