@@ -37,13 +37,19 @@ class MasterDeployStack(core.Stack):
                                    cluster_name='QuakeServicesECS',
                                    vpc=self.vpc)
 
-        self.cluster.add_capacity('DefaultAutoScalingGroupCapacity',
-                                  instance_type=ec2.InstanceType('t3.micro'),
-                                  max_capacity=6,
-                                  min_capacity=1,
-                                  task_drain_time=core.Duration.minutes(1),
-                                  spot_price="0.0104",
-                                  spot_instance_draining=True)
+        self.asg = self.cluster.add_capacity(
+            'DefaultAutoScalingGroupCapacity',
+            instance_type=ec2.InstanceType('t3.micro'),
+            max_capacity=6,
+            min_capacity=1,
+            task_drain_time=core.Duration.minutes(1),
+            spot_price="0.0104",
+            spot_instance_draining=True
+        )
+
+        self.asg.scale_on_cpu_utilization("KeepCpuHalfwayLoaded",
+            target_utilization_percent=50
+        )
 
         """
         Create master task
