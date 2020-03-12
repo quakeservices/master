@@ -41,7 +41,7 @@ class MasterDeployStack(core.Stack):
             'DefaultAutoScalingGroupCapacity',
             instance_type=ec2.InstanceType('t3.micro'),
             max_capacity=6,
-            min_capacity=1,
+            min_capacity=3,
             task_drain_time=core.Duration.minutes(1),
             spot_price="0.0104",
             spot_instance_draining=True
