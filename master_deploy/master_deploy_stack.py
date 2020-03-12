@@ -39,10 +39,11 @@ class MasterDeployStack(core.Stack):
 
         self.cluster.add_capacity('DefaultAutoScalingGroupCapacity',
                                   instance_type=ec2.InstanceType('t3.micro'),
-                                  desired_capacity=cluster_size,
                                   max_capacity=6,
                                   min_capacity=1,
-                                  task_drain_time=core.Duration.minutes(1))
+                                  task_drain_time=core.Duration.minutes(1),
+                                  spot_price="0.0104",
+                                  spot_instance_draining=True)
 
         """
         Create master task
