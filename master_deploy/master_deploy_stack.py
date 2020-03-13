@@ -16,7 +16,7 @@ class MasterDeployStack(core.Stack):
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        cluster_size = 1
+        cluster_size = 3
         master_port = 27900
         master_healthcheck = '8080'
 
@@ -41,7 +41,7 @@ class MasterDeployStack(core.Stack):
             'DefaultAutoScalingGroupCapacity',
             instance_type=ec2.InstanceType('t3.micro'),
             max_capacity=6,
-            min_capacity=3,
+            min_capacity=cluster_size,
             task_drain_time=core.Duration.minutes(1),
             spot_price="0.0104",
             spot_instance_draining=True
@@ -119,8 +119,8 @@ class MasterDeployStack(core.Stack):
         service = ecs.Ec2Service(self, 'QuakeMasterService',
             cluster=self.cluster,
             task_definition=task,
-            desired_count=cluster_size,
-            placement_strategies=[ecs.PlacementStrategy.spread_across_instances()])
+            daemon=True
+        )
 
         """
         Create Network Load Balancer

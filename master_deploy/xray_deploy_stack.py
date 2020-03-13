@@ -62,5 +62,5 @@ class XrayDeployStack(core.Stack):
         service = ecs.Ec2Service(self, 'XRayService',
             cluster=self.cluster,
             task_definition=xray_task,
-            desired_count=1
+            daemon=True
         )
