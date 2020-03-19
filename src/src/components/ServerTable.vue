@@ -4,10 +4,10 @@
       :loading="servers_loading"
       :headers="headers"
       :items="servers"
+      :item-key="address"
       :items-per-page="20"
+      :multi-sort="true"
       class="elevation-1"
-      show-expand
-      single-expand
     >
       <template v-slot:item.players="{ item }">
         {{ item.players }} / {{ item.maxplayers }}
@@ -15,9 +15,6 @@
       <template v-slot:item.password="{ item }">
         <template v-if="item.password == 1">Yes</template>
         <template v-else>No</template>
-      </template>
-      <template v-slot:expanded-item="{ item }">
-        <td :colspan="headers.length">{{ item.address }}</td>
       </template>
     </v-data-table>
   </div>
@@ -30,12 +27,15 @@
     name: 'server-table',
     data () {
       return {
-        headers: [ {text: 'Hostname', value: 'hostname'},
-                   {text: 'Mode', value: 'gamename'},
-                   {text: 'Map', value: 'mapname'},
-                   {text: 'Players', value: 'players'},
-                   {text: 'Password', value: 'password'},
-                   {text: 'Country', value: 'country'},
+        headers:
+        [
+          {text: 'Hostname', value: 'hostname'},
+          {text: 'Address', value: 'address'},
+          {text: 'Mode', value: 'gamename'},
+          {text: 'Map', value: 'mapname'},
+          {text: 'Players', value: 'players'},
+          {text: 'Password', value: 'password'},
+          {text: 'Country', value: 'country'},
         ],
         servers: [],
         servers_loading: true
