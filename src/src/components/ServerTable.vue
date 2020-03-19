@@ -9,6 +9,12 @@
       :multi-sort="true"
       class="elevation-1"
     >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Servers</v-toolbar-title>
+          <v-spacer></v-spacer>
+        </v-toolbar>
+      </template>
       <template v-slot:item.players="{ item }">
         {{ item.players }} / {{ item.maxplayers }}
       </template>

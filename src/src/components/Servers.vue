@@ -1,7 +1,5 @@
 <template>
   <div id="server">
-    <h1>Servers</h1>
-
     <server-table />
   </div>
 </template>
