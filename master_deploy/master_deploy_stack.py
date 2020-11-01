@@ -1,11 +1,10 @@
 from aws_cdk import core
-from aws_cdk.aws_iam import PolicyStatement, ManagedPolicy
+import aws_cdk.aws_iam as iam
 
 import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ecr as ecr
 import aws_cdk.aws_elasticloadbalancingv2 as elb
-import aws_cdk.aws_autoscaling as autoscaling
 import aws_cdk.aws_route53 as route53
 import aws_cdk.aws_route53_targets as route53_targets
 import aws_cdk.aws_logs as logs
@@ -47,7 +46,7 @@ class MasterDeployStack(core.Stack):
         return task
 
     def create_dynamodb_access_policy(self):
-        return PolicyStatement(
+        return iam.PolicyStatement(
             resources=["*"],
             actions=[
                 "dynamodb:BatchGetItem",
@@ -65,7 +64,7 @@ class MasterDeployStack(core.Stack):
         )
 
     def create_xray_access_policy(self):
-        return PolicyStatement(
+        return iam.PolicyStatement(
             resources=["*"],
             actions=[
                 "xray:GetGroup",
@@ -77,7 +76,6 @@ class MasterDeployStack(core.Stack):
                 "xray:PutTraceSegments"
             ]
         )
-
 
     def define_container_image(self):
         master_ecr = ecr.Repository.from_repository_name(

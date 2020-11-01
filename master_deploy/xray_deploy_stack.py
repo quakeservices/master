@@ -1,6 +1,6 @@
 from aws_cdk import core
-from aws_cdk.aws_iam import PolicyStatement, ManagedPolicy
 
+import aws_cdk.aws_iam as iam
 import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_ecs as ecs
 
@@ -21,11 +21,11 @@ class XrayDeployStack(core.Stack):
         """
         xray_task = ecs.Ec2TaskDefinition(
             self,
-            'xray-daemon-task',
+            'task',
             network_mode=ecs.NetworkMode.HOST
         )
 
-        xray_policy = PolicyStatement(
+        xray_policy = iam.PolicyStatement(
             resources=["*"],
             actions=[
                 "xray:GetGroup",
@@ -60,7 +60,9 @@ class XrayDeployStack(core.Stack):
         xray.add_port_mappings(xray_port_udp)
         xray.add_port_mappings(xray_port_tcp)
 
-        service = ecs.Ec2Service(self, 'XRayService',
+        service = ecs.Ec2Service(
+            self,
+            'XRayService',
             cluster=self.cluster,
             task_definition=xray_task,
             daemon=True
