@@ -1,21 +1,20 @@
 from aws_cdk import core
 from aws_cdk.aws_iam import PolicyStatement, ManagedPolicy
 
-import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ec2 as ec2
+import aws_cdk.aws_ecs as ecs
 
 
 class XrayDeployStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+    def __init__(self,
+                 scope: core.Construct,
+                 id: str,
+                 vpc_id,
+                 **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        """
-        Gather shared resourcs
-        """
-        self.vpc = ec2.Vpc.from_lookup(self, 'VPC', vpc_id='vpc-020d0618ebad0cdeb')
-        self.sg = ec2.SecurityGroup.from_security_group_id(self, 'SecurityGroup', security_group_id='sg-00f092d1351e01713')
-        self.cluster = ecs.Cluster.from_cluster_attributes(self, 'ECS', cluster_name='QuakeServicesECS', vpc=self.vpc, security_groups=[self.sg])
+        self.vpc, self.cluster = self.gather_shared_resources(vpc_id)
 
         """
         Create X-Ray task container
@@ -28,13 +27,15 @@ class XrayDeployStack(core.Stack):
 
         xray_policy = PolicyStatement(
             resources=["*"],
-            actions=["xray:GetGroup",
-                     "xray:GetGroups",
-                     "xray:GetSampling*",
-                     "xray:GetTime*",
-                     "xray:GetService*",
-                     "xray:PutTelemetryRecords",
-                     "xray:PutTraceSegments"]
+            actions=[
+                "xray:GetGroup",
+                "xray:GetGroups",
+                "xray:GetSampling*",
+                "xray:GetTime*",
+                "xray:GetService*",
+                "xray:PutTelemetryRecords",
+                "xray:PutTraceSegments"
+            ]
         )
 
         xray_task.add_to_task_role_policy(xray_policy)
@@ -64,3 +65,20 @@ class XrayDeployStack(core.Stack):
             task_definition=xray_task,
             daemon=True
         )
+
+    def gather_shared_resources(self, vpc_id):
+        vpc = ec2.Vpc.from_lookup(
+            self,
+            'SharedVPC',
+            vpc_id=vpc_id
+        )
+
+        cluster = ecs.Cluster.from_cluster_attributes(
+            self,
+            'ECS',
+            cluster_name='SharedECSCluster',
+            vpc=vpc,
+            security_groups=[]
+        )
+
+        return vpc, cluster

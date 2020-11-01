@@ -1,9 +1,9 @@
 from aws_cdk import core
 from aws_cdk.aws_iam import PolicyStatement, ManagedPolicy
 
+import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ecr as ecr
-import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_elasticloadbalancingv2 as elb
 import aws_cdk.aws_autoscaling as autoscaling
 import aws_cdk.aws_route53 as route53
@@ -13,153 +13,230 @@ import aws_cdk.aws_logs as logs
 
 class MasterDeployStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+    def __init__(self,
+                 scope: core.Construct,
+                 id: str,
+                 vpc_id,
+                 **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        cluster_size = 3
-        master_port = 27900
-        master_healthcheck = '8080'
+        self.master_port = 27900
+        self.master_healthcheck_port = 8080
 
-        """
-        Gather shared resourcs
-        """
-        self.vpc = ec2.Vpc.from_lookup(self, 'VPC', vpc_id='vpc-020d0618ebad0cdeb')
-        self.ecr = ecr.Repository.from_repository_name(self, 'ECR', 'ecrst-quake-v3hdrh4qq3e0')
-        self.zone = route53.HostedZone.from_lookup(self, "quake_services", domain_name="quake.services")
+        self.vpc, self.cluster = self.gather_shared_resources(vpc_id)
 
+        self.task = self.create_master_task()
+        self.container = self.create_task_container()
+        self.nlb = self.create_network_load_balancer()
+        self.create_service_and_nlb()
+        self.create_route53_record()
 
-        """
-        Create Cluster
-        """
-
-        self.cluster = ecs.Cluster(self,
-                                   'QuakeServices',
-                                   cluster_name='QuakeServicesECS',
-                                   vpc=self.vpc)
-
-        self.asg = self.cluster.add_capacity(
-            'DefaultAutoScalingGroupCapacity',
-            instance_type=ec2.InstanceType('t3.micro'),
-            max_capacity=6,
-            min_capacity=cluster_size,
-            task_drain_time=core.Duration.minutes(1),
-            spot_price="0.0104",
-            spot_instance_draining=True
-        )
-
-        self.asg.scale_on_cpu_utilization("KeepCpuHalfwayLoaded",
-            target_utilization_percent=50
-        )
-
+    def create_master_task(self):
         """
         Create master task
         """
-        task = ecs.Ec2TaskDefinition(self,
-                                     'QuakeMasterTask',
-                                     network_mode=ecs.NetworkMode.HOST)
-
-        dynamo_policy = PolicyStatement(
-            resources=["*"],
-            actions=["dynamodb:BatchGetItem",
-                     "dynamodb:GetRecords",
-                     "dynamodb:GetShardIterator",
-                     "dynamodb:Query",
-                     "dynamodb:GetItem",
-                     "dynamodb:Scan",
-                     "dynamodb:BatchWriteItem",
-                     "dynamodb:PutItem",
-                     "dynamodb:UpdateItem",
-                     "dynamodb:DeleteItem",
-                     "dynamodb:DescribeTable"]
+        task = ecs.Ec2TaskDefinition(
+            self,
+            'task',
+            network_mode=ecs.NetworkMode.HOST
         )
 
-        xray_policy = PolicyStatement(
+        task.add_to_task_role_policy(self.create_dynamodb_access_policy())
+        task.add_to_task_role_policy(self.create_xray_access_policy())
+
+        return task
+
+    def create_dynamodb_access_policy(self):
+        return PolicyStatement(
             resources=["*"],
-            actions=["xray:GetGroup",
-                     "xray:GetGroups",
-                     "xray:GetSampling*",
-                     "xray:GetTime*",
-                     "xray:GetService*",
-                     "xray:PutTelemetryRecords",
-                     "xray:PutTraceSegments"]
+            actions=[
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable"
+            ]
         )
 
-        task.add_to_task_role_policy(dynamo_policy)
-        task.add_to_task_role_policy(xray_policy)
+    def create_xray_access_policy(self):
+        return PolicyStatement(
+            resources=["*"],
+            actions=[
+                "xray:GetGroup",
+                "xray:GetGroups",
+                "xray:GetSampling*",
+                "xray:GetTime*",
+                "xray:GetService*",
+                "xray:PutTelemetryRecords",
+                "xray:PutTraceSegments"
+            ]
+        )
 
+
+    def define_container_image(self):
+        master_ecr = ecr.Repository.from_repository_name(
+            self,
+            'ECR',
+            'quakeservices_master'
+        )
+
+        return ecs.ContainerImage.from_ecr_repository(
+            master_ecr,
+            tag='latest'
+        )
+
+    def create_task_container(self):
         """
         Create container
         """
-        ecs_healthcheck = ecs.HealthCheck(command=["CMD", "curl", "-f", "http://localhost:8080"])
-        log_settings = ecs.LogDrivers.aws_logs(
-                stream_prefix="Master",
-                log_retention=logs.RetentionDays.TWO_WEEKS,
+        ecs_healthcheck = ecs.HealthCheck(
+            command=["CMD", "curl", "-f", "http://localhost:8080"]
         )
 
-        container = task.add_container('Master',
+        log_settings = ecs.LogDrivers.aws_logs(
+            stream_prefix="master",
+            log_retention=logs.RetentionDays.TWO_WEEKS,
+        )
+
+        container = self.task.add_container(
+            'master',
             hostname='master',
             health_check=ecs_healthcheck,
             start_timeout=core.Duration.seconds(15),
             stop_timeout=core.Duration.seconds(15),
-            image=ecs.ContainerImage.from_ecr_repository(self.ecr, tag='latest'),
+            image=self.define_container_image(),
             logging=log_settings,
-            memory_reservation_mib=256)
+            memory_reservation_mib=256
+        )
 
-        container_port_udp = ecs.PortMapping(container_port=master_port,
-                                             protocol=ecs.Protocol.UDP)
-        container_hc_tcp = ecs.PortMapping(container_port=8080,
-                                           protocol=ecs.Protocol.TCP)
+        container.add_port_mappings(
+            ecs.PortMapping(
+                container_port=self.master_port,
+                protocol=ecs.Protocol.UDP
+            )
+        )
+        container.add_port_mappings(
+            ecs.PortMapping(
+                container_port=self.master_healthcheck_port,
+                protocol=ecs.Protocol.TCP
+            )
+        )
 
-        container.add_port_mappings(container_port_udp)
-        container.add_port_mappings(container_hc_tcp)
+        return container
 
+    def create_service(self):
         """
         Create service
+
+        daemon setting: If true, the service scheduler deploys exactly one task
+                        on each container instance in your cluster.
         """
-        service = ecs.Ec2Service(self, 'QuakeMasterService',
+        return ecs.Ec2Service(
+            self,
+            'service',
             cluster=self.cluster,
-            task_definition=task,
+            task_definition=self.task,
             daemon=True
         )
 
+    def create_network_load_balancer(self):
         """
         Create Network Load Balancer
         """
-        lb = elb.NetworkLoadBalancer(self, 'QuakeServicesNLB',
+        return elb.NetworkLoadBalancer(
+            self,
+            'nlb',
             vpc=self.vpc,
             internet_facing=True,
             cross_zone_enabled=True,
-            load_balancer_name='master')
+            load_balancer_name='master'
+        )
 
-        listener = lb.add_listener('UDPListener',
-            port=master_port,
-            protocol=elb.Protocol.UDP)
+    def create_listener(self):
+        return self.nlb.add_listener(
+            'UDPListener',
+            port=self.master_port,
+            protocol=elb.Protocol.UDP
+        )
 
+    def create_service_and_nlb(self):
+        service = self.create_service()
+        listener = self.create_listener()
+
+        nlb_healthcheck = elb.HealthCheck(
+            port=str(self.master_healthcheck_port),
+            protocol=elb.Protocol.HTTP
+        )
+
+        target_group = listener.add_targets(
+            'ECS',
+            port=self.master_port,
+            targets=[
+                service.load_balancer_target(
+                    container_name='master',
+                    container_port=self.master_port,
+                    protocol=ecs.Protocol.UDP
+                )
+            ],
+            proxy_protocol_v2=True,
+            health_check=nlb_healthcheck
+        )
+
+        # self.add_udp_overrides(listener, target_group)
+
+    def add_udp_overrides(self, listener, target_group):
+        """
+        At the time of writing Protocol would be set to TCP without these overrides
+        """
         # Required overrides as Protocol never gets set correctly
         cfn_listener = listener.node.default_child
         cfn_listener.add_override("Properties.Protocol", "UDP")
-
-        elb_healthcheck = elb.HealthCheck(port='8080',
-                                          protocol=elb.Protocol.HTTP)
-
-        target_group = listener.add_targets('ECS',
-                                            port=master_port,
-                                            targets=[service.load_balancer_target(
-                                                container_name='Master',
-                                                container_port=master_port,
-                                                protocol=ecs.Protocol.UDP)],
-                                            proxy_protocol_v2=True,
-                                            health_check=elb_healthcheck)
 
         # Required overrides as Protocol never gets set correctly
         cfn_target_group = target_group.node.default_child
         cfn_target_group.add_override("Properties.Protocol", "UDP")
 
+    def create_route53_record(self):
         """
         Create Route53 entries
         """
-        route53.ARecord(self, "Alias",
-            zone=self.zone,
-            record_name='master',
-            target=route53.AddressRecordTarget.from_alias(route53_targets.LoadBalancerTarget(lb))
+        zone = route53.HostedZone.from_lookup(
+            self,
+            "quake_services",
+            domain_name="quake.services"
         )
+
+        target = route53.AddressRecordTarget.from_alias(
+            route53_targets.LoadBalancerTarget(self.nlb)
+        )
+
+        route53.ARecord(
+            self,
+            "alias",
+            zone=zone,
+            record_name='master',
+            target=target
+        )
+
+    def gather_shared_resources(self, vpc_id):
+        vpc = ec2.Vpc.from_lookup(
+            self,
+            'SharedVPC',
+            vpc_id=vpc_id
+        )
+
+        cluster = ecs.Cluster.from_cluster_attributes(
+            self,
+            'ECS',
+            cluster_name='SharedECSCluster',
+            vpc=vpc,
+            security_groups=[]
+        )
+
+        return vpc, cluster
