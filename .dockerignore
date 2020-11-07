@@ -1,4 +1,5 @@
 .git
+.github
 .gitignore
 .gitmodules
 .pytest_cache
@@ -12,6 +13,6 @@ tests
 README.md
 docker-compose.yml
 docker-compose-fullstack.yml
-requirements.txt
+requirements*
 Dockerfile
 examples
