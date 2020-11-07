@@ -17,3 +17,10 @@ def test_properties(server_status):
     assert server_status.ip == '127.0.0.1'
     assert server_status.port == 27910
     assert server_status.address == '127.0.0.1:27910'
+
+
+def test_status(server_status):
+    assert server_status.status.get('fraglimit', -1) == 0
+    assert server_status.status.get('dmflags', -1) == 16
+    assert server_status.status.get('deathmatch', -1) == 1
+    assert server_status.status.get('cheats', -1) == 0

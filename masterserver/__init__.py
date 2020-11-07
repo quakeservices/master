@@ -5,8 +5,6 @@ from typing import List, Tuple, NoReturn
 
 from gameserver import GameServer
 
-from aws_xray_sdk.core import xray_recorder
-
 
 class MasterServer:
     def __init__(self, storage, protocols):
@@ -15,11 +13,9 @@ class MasterServer:
         self.storage = storage
         self.protocols = protocols
 
-    @xray_recorder.capture('connection_made')
     def connection_made(self, transport) -> NoReturn:
         self.transport = transport
 
-    @xray_recorder.capture('datagram_recieved')
     def datagram_received(self,
                           data: bytes,
                           address: Tuple[str, int]) -> NoReturn:
@@ -37,14 +33,12 @@ class MasterServer:
         if response:
             self.send_response(response, address)
 
-    @xray_recorder.capture('send_response')
     def send_response(self,
                       response,
                       address: Tuple[str, int]) -> NoReturn:
         logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
         self.transport.sendto(response, address)
 
-    @xray_recorder.capture('handle_client')
     def handle_client(self,
                      result) -> bytes:
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
@@ -53,7 +47,6 @@ class MasterServer:
         processed_server_list = [self.pack_address(_) for _ in server_list]
         return self.create_response(response_header, processed_server_list)
 
-    @xray_recorder.capture('handle_server')
     def handle_server(self,
                       result,
                       address: Tuple[str, int]):
