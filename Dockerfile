@@ -4,12 +4,12 @@ RUN apk --no-cache add geoip geoip-dev gcc musl-dev libmaxminddb
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
+COPY requirements.txt /usr/src/app/
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r /usr/src/app/requirements.txt
 
-COPY . .
+COPY . /usr/src/app/
 
 ENTRYPOINT [ "python3" ]
 CMD [ "app.py" ]
