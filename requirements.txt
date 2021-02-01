@@ -1,2 +1,2 @@
-pynamodb==4.3.3
+pynamodb==5.0.0
 PyYAML==5.4.1
