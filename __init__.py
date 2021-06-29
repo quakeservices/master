@@ -8,7 +8,7 @@ import pickle
 from .model import Server
 
 
-class Storage():
+class Storage:
     def __init__(self):
         logging.debug(f"{self.__class__.__name__ } - Initialising storage.")
 
@@ -21,14 +21,18 @@ class Storage():
 
     @staticmethod
     def server_object(server):
-        logging.debug(f"{__class__.__name__ } - creating server for {server.address}") # pylint: disable=undefined-variable
-        return Server(server.address,
-                      game=server.game,
-                      country_code=server.country,
-                      active=True,
-                      status=server.status,
-                      players=server.players,
-                      player_count=server.player_count)
+        logging.debug(
+            f"{__class__.__name__ } - creating server for {server.address}"
+        )  # pylint: disable=undefined-variable
+        return Server(
+            server.address,
+            game=server.game,
+            country_code=server.country,
+            active=True,
+            status=server.status,
+            players=server.players,
+            player_count=server.player_count,
+        )
 
     @staticmethod
     def get_server_obj(server):
@@ -68,14 +72,16 @@ class Storage():
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
         try:
             server_obj = self.get_server_obj(server)
-            server_obj.update(actions=[
-              Server.active.set(True),
-              Server.game.set(server.game),
-              Server.last_seen.set(datetime.utcnow()),
-              Server.status.set(server.status),
-              Server.players.set(server.players),
-              Server.player_count.set(server.player_count)
-            ])
+            server_obj.update(
+                actions=[
+                    Server.active.set(True),
+                    Server.game.set(server.game),
+                    Server.last_seen.set(datetime.utcnow()),
+                    Server.status.set(server.status),
+                    Server.players.set(server.players),
+                    Server.player_count.set(server.player_count),
+                ]
+            )
         except ValueError:
             raise
 
@@ -83,9 +89,11 @@ class Storage():
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
         try:
             server_obj = self.get_server_obj(server)
-            server_obj.update(actions=[
-              Server.active.set(False),
-              Server.last_seen.set(datetime.utcnow())
-            ])
+            server_obj.update(
+                actions=[
+                    Server.active.set(False),
+                    Server.last_seen.set(datetime.utcnow()),
+                ]
+            )
         except ValueError:
             raise

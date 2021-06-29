@@ -7,15 +7,17 @@ except ModuleNotFoundError:
     pass
 
 
-class Cache():
+class Cache:
     def __init__(self):
         logging.debug(f"{self.__class__.__name__ } - Initialising cache.")
-        self.redis = redis.Redis(host='redis',
-                                 port=6379,
-                                 db=0,
-                                 socket_timeout=3,
-                                 socket_connect_timeout=5,
-                                 socket_keepalive=True)
+        self.redis = redis.Redis(
+            host="redis",
+            port=6379,
+            db=0,
+            socket_timeout=3,
+            socket_connect_timeout=5,
+            socket_keepalive=True,
+        )
 
     def get(self, key):
         value = self.redis.get(key)
@@ -23,7 +25,9 @@ class Cache():
             try:
                 result = pickle.loads(value)
             except KeyError:
-                logging.debug(f"{self.__class__.__name__ } - key error: possibly unpickled object?")
+                logging.debug(
+                    f"{self.__class__.__name__ } - key error: possibly unpickled object?"
+                )
                 result = value
             else:
                 return result
