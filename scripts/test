@@ -6,7 +6,6 @@ CODE="/code"
 
 docker run -it \
            --rm \
-           -v ~/.cache/pip:/root/.cache/pip \
            -v "$(pwd)"/:${CODE} \
            -w ${CODE} \
            python:3-alpine \

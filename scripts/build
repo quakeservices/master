@@ -7,7 +7,5 @@ APP=masterserver
 
 echo "+++ Building ${APP} +++"
 docker build --network host \
-             -v ~/.cache/pip:/root/.cache/pip \
-             -v ~/.cache/apk:/etc/apk/cache \
              -t ${APP}:latest \
              .

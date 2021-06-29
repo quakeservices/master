@@ -2,10 +2,10 @@
 .github
 .gitignore
 .gitmodules
-.pytest_cache
 .pylintrc
 **/*.pyc
 **/__pycache__
+**/.pytest_cache
 .env
 .venv
 venv
@@ -13,6 +13,6 @@ tests
 README.md
 docker-compose.yml
 docker-compose-fullstack.yml
-requirements*
+requirements.*.txt
 Dockerfile
 examples

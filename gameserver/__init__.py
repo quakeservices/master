@@ -15,7 +15,7 @@ from typing import Tuple, NoReturn
 #     sys.exit(1)
 
 
-class GameServer():
+class GameServer:
     """
     Input:
         b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
@@ -29,18 +29,17 @@ class GameServer():
     At the end of the heartbeat is the player list split by \n
     Example: <score> <ping> <player>\n
     """
-    def __init__(self,
-                 address: Tuple[str, int],
-                 result):
+
+    def __init__(self, address: Tuple[str, int], result):
         self.server_address = address
-        self.game = 'quake2'
+        self.game = "quake2"
         self.result = result
         self.country = self.get_country()
         self.players = list()
         self.status = dict()
-        if result.get('status'):
-            self.dictify_status(result.get('status')[0])
-            self.dictify_players(result.get('status')[1:])
+        if result.get("status"):
+            self.dictify_status(result.get("status")[0])
+            self.dictify_players(result.get("status")[1:])
         self.player_count = len(self.players)
 
     @property
@@ -53,15 +52,15 @@ class GameServer():
 
     @property
     def address(self) -> str:
-        return ':'.join([self.ip, str(self.port)])
+        return ":".join([self.ip, str(self.port)])
 
     @property
     def encoding(self) -> str:
-        return self.result.get('encoding')
+        return self.result.get("encoding")
 
     @property
     def active(self) -> bool:
-        return self.result.get('active')
+        return self.result.get("active")
 
     @property
     def json_status(self) -> str:
@@ -76,7 +75,7 @@ class GameServer():
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
         """
-        result = 'ZZ'
+        result = "ZZ"
         # try:
         #    result = reader.city(self.ip).country.iso_code
         # except geoip2.errors.AddressNotFoundError:
@@ -86,14 +85,15 @@ class GameServer():
 
     def dictify_players(self, data: str) -> NoReturn:
         player_regex = re.compile(
-            r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII)
+            r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII
+        )
         for player in data:
             player = re.match(player_regex, player.decode(self.encoding))
             if player:
                 self.players.append(player.groupdict())
 
     def dictify_status(self, data: str) -> NoReturn:
-        split_on = self.result.get('split_on', '\\')
+        split_on = self.result.get("split_on", "\\")
 
         if data:
             str_status = data.decode(self.encoding)

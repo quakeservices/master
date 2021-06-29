@@ -7,8 +7,6 @@ LINTER=${1:-'python'}
 
 docker run -it \
            --rm \
-           -v ~/.cache/pip:/root/.cache/pip \
-           -v ~/.cache/apk:/etc/apk/cache \
            --mount type=bind,source="$(pwd)"/,target=${CODE} \
            -w ${CODE} \
            python:3-alpine \

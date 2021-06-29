@@ -9,19 +9,21 @@ from transport import Transport
 from masterserver import MasterServer
 
 
-def setup_logging(level='INFO'):
+def setup_logging(level: str = "INFO") -> None:
     # logging.getLogger('boto3').propagate = False
     # logging.getLogger('botocore').propagate = False
 
     log_level = getattr(logging, level.upper())
 
-    logging.basicConfig(stream=sys.stdout,
-                        level=log_level,
-                        format='%(asctime)s %(levelname)s %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=log_level,
+        format="%(asctime)s %(levelname)s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
 
-def main():
+def main() -> None:
     protocols = Protocols()
     storage = Storage()
     master = MasterServer(storage, protocols)
@@ -33,14 +35,14 @@ def main():
         pass
 
 
-if __name__ == '__main__':
-    os.environ['STAGE'] = os.getenv('STAGE', 'PRODUCTION')
+if __name__ == "__main__":
+    os.environ["STAGE"] = os.getenv("STAGE", "PRODUCTION")
 
-    if os.getenv('STAGE') == 'TESTING':
-        setup_logging('DEBUG')
+    if os.getenv("STAGE") == "TESTING":
+        setup_logging("DEBUG")
     else:
-        setup_logging('DEBUG')
+        setup_logging("DEBUG")
 
-    logging.info(f"Starting master server.")
+    logging.info("Starting master server.")
     main()
-    logging.info(f"Master server stopped.")
+    logging.info("Master server stopped.")
