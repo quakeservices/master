@@ -45,7 +45,7 @@ class MasterDeployStack(cdk.Stack):
         """
         Create master task
         """
-        task = ecs.Ec2TaskDefinition(self, "task", network_mode=ecs.NetworkMode.HOST)
+        task = ecs.FargateTaskDefinition(self, "task", memory_limit_mib=512, cpu=256)
 
         task.add_to_task_role_policy(self.create_dynamodb_access_policy())
         task.add_to_task_role_policy(self.create_xray_access_policy())
@@ -133,12 +133,11 @@ class MasterDeployStack(cdk.Stack):
         daemon setting: If true, the service scheduler deploys exactly one task
                         on each container instance in your cluster.
         """
-        return ecs.Ec2Service(
+        return ecs.FargateService(
             self,
             "service",
             cluster=self.cluster,
-            task_definition=self.task,
-            daemon=True,
+            task_definition=self.task
         )
 
     def create_network_load_balancer(self):
