@@ -106,7 +106,6 @@ class MasterDeployStack(cdk.Stack):
 
         container = self.task.add_container(
             "master",
-            hostname="master",
             health_check=ecs_healthcheck,
             start_timeout=cdk.Duration.seconds(15),
             stop_timeout=cdk.Duration.seconds(15),
