@@ -1,6 +1,7 @@
 import os
 import logging
 import yaml
+from enum import Enum, auto
 from typing import List, NoReturn
 
 from .proxy import ProxyProtocol
@@ -8,12 +9,23 @@ from .proxy import ProxyProtocol
 # Request = namedtuple('Request', 'header', 'status', 'players')
 
 
+class Order(Enum):
+    B2M = auto()
+    S2M = auto()
+    S2C = auto()
+    Browser_to_Master = B2M
+    Server_to_Master = S2M
+    Server_to_Client = S2C
+
+
 class Protocols:
-    def __init__(self, header_order="master"):
+    def __init__(self, header_order: str = "master"):
         logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
         if header_order == "server":
             self.header_order = ["B2M", "S2M"]
         elif header_order == "client":
+            self.header_order = ["B2M", "S2M"]
+        elif header_order == "master":
             self.header_order = ["B2M", "S2M"]
         else:
             self.header_order = ["B2M", "S2M"]

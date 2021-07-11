@@ -5,10 +5,10 @@ COMMAND='pylint'
 echo "+++ Installing pylint dependencies +++"
 if ! $(which ${COMMAND}); then
   apk add gcc musl-dev
-  pip install --upgrade pip > /dev/null
-  pip install -r requirements.txt > /dev/null
-  pip install -r requirements.testing.txt > /dev/null
-  pip install ${COMMAND} > /dev/null
+  pip install --upgrade pip
+  pip install -r requirements.txt
+  pip install -r requirements.testing.txt
+  pip install ${COMMAND}
 fi
 
 echo "+++ Running Python linter +++"

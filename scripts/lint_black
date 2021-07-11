@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+COMMAND='black'
+
+echo "+++ Installing black dependencies +++"
+if ! $(which ${COMMAND}); then
+  pip install --upgrade pip
+  pip install -r requirements.txt
+  pip install -r requirements.testing.txt
+  pip install ${COMMAND}
+fi
+
+echo "+++ Running Black +++"
+${COMMAND} $(find -type f -name '*.py' | awk '!/.venv/ && !/.env/ && !/venv/')

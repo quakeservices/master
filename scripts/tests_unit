@@ -5,11 +5,9 @@ COMMAND='pytest'
 echo "+++ Installing test dependencies +++"
 if ! $(which ${COMMAND}); then
   echo "+++ Upgrade pip +++"
-  pip install --upgrade pip > /dev/null
-  echo "+++ Install ${COMMAND} +++"
-  pip install ${COMMAND} > /dev/null
-  echo "+++ Install requirments.txt +++"
-  pip install -r requirements.txt > /dev/null
+  pip install --upgrade pip
+  pip install ${COMMAND}
+  pip install -r requirements.txt
 fi
 
 echo "+++ Running unit tests +++"

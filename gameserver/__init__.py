@@ -1,9 +1,6 @@
-import logging
 import re
 import json
-import os
-import sys
-from typing import Tuple, NoReturn
+from typing import Tuple, NoReturn, Dict
 
 # import geoip2.database
 
@@ -30,7 +27,7 @@ class GameServer:
     Example: <score> <ping> <player>\n
     """
 
-    def __init__(self, address: Tuple[str, int], result):
+    def __init__(self, address: Tuple[str, int], result: Dict):
         self.server_address = address
         self.game = "quake2"
         self.result = result
@@ -59,6 +56,10 @@ class GameServer:
         return self.result.get("encoding")
 
     @property
+    def split_on(self) -> str:
+        return self.result.get("split_on")
+
+    @property
     def active(self) -> bool:
         return self.result.get("active")
 
@@ -74,6 +75,7 @@ class GameServer:
         """
         Returns two letter country code for a particular IP
         If none exists then ZZ is returned as unknown.
+        TODO: Fix this
         """
         result = "ZZ"
         # try:
@@ -92,22 +94,34 @@ class GameServer:
             if player:
                 self.players.append(player.groupdict())
 
-    def dictify_status(self, data: str) -> NoReturn:
-        split_on = self.result.get("split_on", "\\")
+    def dictify_status(self, data: str, split_on: str = "\\") -> NoReturn:
+        decoded_status = data.decode(self.encoding)
+        list_status = decoded_status.split(split_on)[1:]
 
-        if data:
-            str_status = data.decode(self.encoding)
-            list_status = str_status.split(split_on)[1:]
-            if len(list_status) % 2 != 0:
-                list_status = list_status[:-1]
+        """
+        If the length of status isn't even, truncate the last value
+        """
+        if len(list_status) % 2 != 0:
+            list_status = list_status[:-1]
 
-            zip_status = zip(list_status[0::2], list_status[1::2])
+        """
+        Coalesce list into key:value pairs
+        ['a', 1, 'b', 2]
+        turns into
+        {'a': 1, 'b': 2}
+        """
+        zip_status = zip(list_status[0::2], list_status[1::2])
 
-            for status_k, status_v in zip_status:
-                if len(status_v) > 128:
-                    status_v = status_v[:128]
+        """
+        For each key:value;
+        Truncate if it's longer than 128 characters
+        Coalesce strings into integers if possible
+        """
+        for status_k, status_v in zip_status:
+            if len(status_v) > 128:
+                status_v = status_v[:128]
 
-                try:
-                    self.status[status_k] = int(status_v)
-                except ValueError:
-                    self.status[status_k] = status_v
+            try:
+                self.status[status_k] = int(status_v)
+            except ValueError:
+                self.status[status_k] = status_v

@@ -21,9 +21,9 @@ class MasterServer:
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
         result = self.protocols.parse_data(data)
 
-        if result.get("class", "") == "B2M":
+        if result.get("class", None) == "B2M":
             response = self.handle_client(result)
-        elif result.get("class", "") == "S2M":
+        elif result.get("class", None) == "S2M":
             response = self.handle_server(result, address)
         else:
             pass
@@ -42,7 +42,7 @@ class MasterServer:
         processed_server_list = [self.pack_address(_) for _ in server_list]
         return self.create_response(response_header, processed_server_list)
 
-    def handle_server(self, result, address: Tuple[str, int]):
+    def handle_server(self, result, address: Tuple[str, int]) -> bytes:
         logging.debug(f"{self.__class__.__name__ } - Header belongs to server")
         server = GameServer(address, result)
         if self.storage.get_server(server):

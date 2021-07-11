@@ -11,10 +11,10 @@ cd $(dirname $0)/..
 ./scripts/build
 
 repo="ecrst-quake-v3hdrh4qq3e0"
-account=$1
+account=${1:-$(aws sts get-caller-identity | jq '.Account' | sed 's/"//g')}
 region=${2:-"us-west-2"}
 
-$(aws ecr get-login --no-include-email --region us-west-2)
+$(aws ecr get-login --no-include-email --region ${region})
 
 docker tag masterserver:latest ${account}.dkr.ecr.${region}.amazonaws.com/${repo}:latest && \
   docker push ${account}.dkr.ecr.${region}.amazonaws.com/${repo}:latest
