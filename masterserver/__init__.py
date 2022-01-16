@@ -1,17 +1,19 @@
 import logging
 import struct
 from ipaddress import ip_address
-from typing import List, Tuple, NoReturn
+from typing import List, Tuple, NoReturn, Dict
 
+from protocols import Protocols
+from storage import Storage
 from gameserver import GameServer
 
 
 class MasterServer:
-    def __init__(self, storage, protocols):
+    def __init__(self):
         logging.debug(f"{self.__class__.__name__ } - Initialising master server.")
         self.transport = None
-        self.storage = storage
-        self.protocols = protocols
+        self.storage = Storage()
+        self.protocols = Protocols()
 
     def connection_made(self, transport) -> NoReturn:
         self.transport = transport
@@ -19,7 +21,7 @@ class MasterServer:
     def datagram_received(self, data: bytes, address: Tuple[str, int]) -> NoReturn:
         response = None
         logging.debug(f"{self.__class__.__name__ } - Recieved {data} from {address}")
-        result = self.protocols.parse_data(data)
+        result: Dict = self.protocols.parse_data(data)
 
         if result.get("class", None) == "B2M":
             response = self.handle_client(result)
@@ -31,11 +33,11 @@ class MasterServer:
         if response:
             self.send_response(response, address)
 
-    def send_response(self, response, address: Tuple[str, int]) -> NoReturn:
+    def send_response(self, response: bytes, address: Tuple[str, int]) -> NoReturn:
         logging.debug(f"{self.__class__.__name__ } - Sending {response} to {address}")
         self.transport.sendto(response, address)
 
-    def handle_client(self, result) -> bytes:
+    def handle_client(self, result: Dict) -> bytes:
         logging.debug(f"{self.__class__.__name__ } - Header belongs to client")
         response_header = result.get("resp", None)
         server_list = self.storage.list_server_addresses(result.get("game"))

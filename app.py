@@ -3,8 +3,6 @@ import logging
 import sys
 import os
 
-from protocols import Protocols
-from storage import Storage
 from transport import Transport
 from masterserver import MasterServer
 
@@ -24,9 +22,7 @@ def setup_logging(level: str = "INFO") -> None:
 
 
 def main() -> None:
-    protocols = Protocols()
-    storage = Storage()
-    master = MasterServer(storage, protocols)
+    master = MasterServer()
     transport = Transport(master)
 
     try:

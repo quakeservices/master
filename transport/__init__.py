@@ -4,11 +4,13 @@ import signal
 import functools
 import logging
 
+from masterserver import MasterServer
+
 
 class Transport:
     def __init__(
         self,
-        master,
+        master: MasterServer,
         port: int = 27900,
         ipv4_enabled: bool = True,
         ipv4_bind: str = "0.0.0.0",
@@ -95,6 +97,6 @@ class HealthCheck(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
 
-    def data_received(self, data):
+    def data_received(self, data: bytes):
         logging.debug(f"{self.__class__.__name__ } - Received health check ping")
         self.transport.write(b"HTTP/1.1 200 Success\n")

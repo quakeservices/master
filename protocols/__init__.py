@@ -2,7 +2,7 @@ import os
 import logging
 import yaml
 from enum import Enum, auto
-from typing import List, NoReturn
+from typing import List, NoReturn, Dict
 
 from .proxy import ProxyProtocol
 
@@ -57,7 +57,7 @@ class Protocols:
                 self.protocols.append(GameProtocol(config))
                 logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
 
-    def find_protocol(self, header: str):
+    def find_protocol(self, header: bytes) -> Dict:
         for game in self.protocols:
             result = game.match_header(self.header_order, header)
             if result:
@@ -69,14 +69,15 @@ class Protocols:
                     "class": result.get("class", self.header_order[0]),
                 }
 
-        return False
+        return {}
 
-    def parse_data(self, data):
+    def parse_data(self, data: bytes) -> Dict:
         logging.debug(f"{self.__class__.__name__ } - Parsing {data}")
         if len(data) >= 16:
-            sanitised_data = ProxyProtocol.parse_data(data)
+            sanitised_data: bytes = ProxyProtocol.parse_data(data)
         else:
-            sanitised_data = data
+            sanitised_data: bytes = data
+
         logging.debug(f"{self.__class__.__name__ } - Sanitised as {sanitised_data}")
         header, *status = sanitised_data.splitlines()
         logging.debug(f"{self.__class__.__name__ } - Header is {header}")
@@ -85,8 +86,8 @@ class Protocols:
             result["header"] = header
             result["status"] = status
             return result
-        else:
-            return False
+
+        return {}
 
 
 class GameProtocol:
