@@ -1,6 +1,7 @@
 */*.pyc
 **/__pycache__
 *.swp
+.venv
 venv
 .env
 notes
