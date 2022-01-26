@@ -1,9 +1,8 @@
-*/*.pyc
+**/.pytest_cache
 **/__pycache__
 *.swp
-.venv
-venv
+*/*.pyc
 .env
-notes
+.venv
 nonfree/
-**/.pytest_cache
+venv
