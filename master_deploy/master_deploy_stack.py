@@ -1,26 +1,26 @@
-from aws_cdk import core as cdk
-import aws_cdk.aws_iam as iam
-
+import boto3
+import aws_cdk.aws_dynamodb as dynamodb
 import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ecr as ecr
+import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_elasticloadbalancingv2 as elb
+import aws_cdk.aws_iam as iam
+import aws_cdk.aws_logs as logs
 import aws_cdk.aws_route53 as route53
 import aws_cdk.aws_route53_targets as route53_targets
-import aws_cdk.aws_logs as logs
-import aws_cdk.aws_dynamodb as dynamodb
+from aws_cdk import core as cdk
 
 
 class MasterDeployStack(cdk.Stack):
-    def __init__(self, scope: cdk.Construct, id: str, vpc_id, **kwargs) -> None:
+    def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self.master_port = 27900
         self.master_healthcheck_port = 8080
 
-        self.vpc, self.cluster = self.gather_shared_resources(vpc_id)
+        self.vpc, self.cluster = self.gather_shared_resources()
 
-        self.table = self.create_table()
+        self.table = dynamodb.Table.from_table_name(self, "server", "server")
 
         self.task = self.create_master_task()
         self.container = self.create_task_container()
@@ -128,15 +128,9 @@ class MasterDeployStack(cdk.Stack):
     def create_service(self):
         """
         Create service
-
-        daemon setting: If true, the service scheduler deploys exactly one task
-                        on each container instance in your cluster.
         """
         return ecs.FargateService(
-            self,
-            "service",
-            cluster=self.cluster,
-            task_definition=self.task
+            self, "service", cluster=self.cluster, task_definition=self.task
         )
 
     def create_network_load_balancer(self):
@@ -165,7 +159,7 @@ class MasterDeployStack(cdk.Stack):
             port=str(self.master_healthcheck_port), protocol=elb.Protocol.HTTP
         )
 
-        target_group = listener.add_targets(
+        listener.add_targets(
             "ECS",
             port=self.master_port,
             targets=[
@@ -207,7 +201,12 @@ class MasterDeployStack(cdk.Stack):
 
         route53.ARecord(self, "alias", zone=zone, record_name="master", target=target)
 
-    def gather_shared_resources(self, vpc_id):
+    def gather_shared_resources(self):
+        client = boto3.client("ssm", region_name="ap-southeast-2")
+        r = client.get_parameter(Name="/common/shared_vpc_id")
+        if "Parameter" in r.keys():
+            vpc_id = r["Parameter"]["Value"]
+
         vpc = ec2.Vpc.from_lookup(self, "SharedVPC", vpc_id=vpc_id)
 
         cluster = ecs.Cluster.from_cluster_attributes(
