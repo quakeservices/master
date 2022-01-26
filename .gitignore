@@ -6,3 +6,5 @@
 .venv
 nonfree/
 venv
+package
+function.zip
