@@ -30,3 +30,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+cdk.out
+cdk.context.json
+npm-debug.log

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Overview
 
 This project as an attempt to replicate the idSoftware master server for Quake 2 (satan.idsoftware.com) in Python 3.
