@@ -1,20 +1,18 @@
 import os
+
 import boto3
-
-from aws_cdk import (
-    core,
-    aws_certificatemanager as certificatemanager,
-    aws_apigateway as apigateway,
-    aws_lambda as _lambda,
-    aws_s3 as s3,
-    aws_iam as iam,
-    aws_route53 as route53,
-    aws_route53_targets as route53_targets,
-)
+from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_certificatemanager as certificatemanager
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_route53 as route53
+from aws_cdk import aws_route53_targets as route53_targets
+from aws_cdk import aws_s3 as s3
+from aws_cdk import core as cdk
 
 
-class WebBackendDeployStack(core.Stack):
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+class WebBackendDeployStack(cdk.Stack):
+    def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self.zone = route53.HostedZone.from_lookup(

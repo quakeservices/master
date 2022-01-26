@@ -1,5 +1,4 @@
 import pytest
-
 from gameserver import GameServer
 
 

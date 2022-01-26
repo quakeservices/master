@@ -2,7 +2,6 @@
 import os
 
 from aws_cdk import core as cdk
-
 from stacks.master import MasterDeployStack
 from stacks.web_backend import WebBackendDeployStack
 

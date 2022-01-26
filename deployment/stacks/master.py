@@ -1,4 +1,3 @@
-import boto3
 import aws_cdk.aws_dynamodb as dynamodb
 import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_ecr as ecr
@@ -8,6 +7,7 @@ import aws_cdk.aws_iam as iam
 import aws_cdk.aws_logs as logs
 import aws_cdk.aws_route53 as route53
 import aws_cdk.aws_route53_targets as route53_targets
+import boto3
 from aws_cdk import core as cdk
 
 
