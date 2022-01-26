@@ -1,9 +1,8 @@
-from datetime import datetime
-
+import json
 import logging
 import os
-import json
 import pickle
+from datetime import datetime
 
 from .model import Server
 

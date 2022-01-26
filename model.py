@@ -1,17 +1,11 @@
+import os
 from datetime import datetime
 
-import os
-
-from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
-
+from pynamodb.attributes import (BooleanAttribute, JSONAttribute,
+                                 NumberAttribute, UnicodeAttribute,
+                                 UTCDateTimeAttribute)
+from pynamodb.indexes import AllProjection, GlobalSecondaryIndex
 from pynamodb.models import Model
-from pynamodb.attributes import (
-    UnicodeAttribute,
-    NumberAttribute,
-    UTCDateTimeAttribute,
-    BooleanAttribute,
-    JSONAttribute,
-)
 
 
 class ServerIndex(GlobalSecondaryIndex):
