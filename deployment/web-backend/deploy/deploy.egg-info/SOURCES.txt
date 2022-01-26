@@ -1,7 +1,0 @@
-README.md
-setup.py
-web_backend_deploy/web_backend_deploy.egg-info/PKG-INFO
-web_backend_deploy/web_backend_deploy.egg-info/SOURCES.txt
-web_backend_deploy/web_backend_deploy.egg-info/dependency_links.txt
-web_backend_deploy/web_backend_deploy.egg-info/requires.txt
-web_backend_deploy/web_backend_deploy.egg-info/top_level.txt
