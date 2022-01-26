@@ -3,8 +3,8 @@ Bare implementation of ProxyProtocolV2
 This is not, and probably won't be, a full implementation.
 Just enough to get things working
 """
-import struct
 import logging
+import struct
 
 
 class ProxyProtocol:

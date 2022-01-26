@@ -1,6 +1,6 @@
-import re
 import json
-from typing import Tuple, NoReturn, Dict, List
+import re
+from typing import Dict, List, NoReturn, Tuple
 
 # import geoip2.database
 

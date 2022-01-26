@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import logging
-import sys
 import os
+import sys
 
-from transport import Transport
 from masterserver import MasterServer
+from transport import Transport
 
 
 def setup_logging(level: str = "INFO") -> None:

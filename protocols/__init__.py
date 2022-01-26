@@ -1,8 +1,9 @@
-import os
 import logging
-import yaml
+import os
 from enum import Enum, auto
-from typing import List, NoReturn, Dict
+from typing import Dict, List, NoReturn
+
+import yaml
 
 from .proxy import ProxyProtocol
 

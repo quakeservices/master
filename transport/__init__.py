@@ -1,8 +1,8 @@
 import asyncio
-import socket
-import signal
 import functools
 import logging
+import signal
+import socket
 
 from masterserver import MasterServer
 
