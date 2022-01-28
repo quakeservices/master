@@ -1,9 +1,13 @@
 import os
 from datetime import datetime
 
-from pynamodb.attributes import (BooleanAttribute, JSONAttribute,
-                                 NumberAttribute, UnicodeAttribute,
-                                 UTCDateTimeAttribute)
+from pynamodb.attributes import (
+    BooleanAttribute,
+    JSONAttribute,
+    NumberAttribute,
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+)
 from pynamodb.indexes import AllProjection, GlobalSecondaryIndex
 from pynamodb.models import Model
 

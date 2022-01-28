@@ -1,17 +1,21 @@
-import aws_cdk.aws_dynamodb as dynamodb
-import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_ecr as ecr
-import aws_cdk.aws_ecs as ecs
-import aws_cdk.aws_elasticloadbalancingv2 as elb
-import aws_cdk.aws_iam as iam
-import aws_cdk.aws_logs as logs
-import aws_cdk.aws_route53 as route53
-import aws_cdk.aws_route53_targets as route53_targets
 import boto3
-from aws_cdk import core as cdk
+import botocore
+
+from aws_cdk import (
+    aws_dynamodb as dynamodb,
+    aws_ec2 as ec2,
+    aws_ecr as ecr,
+    aws_ecs as ecs,
+    aws_elasticloadbalancingv2 as elb,
+    aws_iam as iam,
+    aws_logs as logs,
+    aws_route53 as route53,
+    aws_route53_targets as route53_targets,
+    core as cdk,
+)
 
 
-class MasterDeployStack(cdk.Stack):
+class MasterStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 

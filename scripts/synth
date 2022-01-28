@@ -1,27 +1,6 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
+set -euo pipefail
 
 cd "$(dirname $0)/.."
 
-./cdk-docker/cdk synth $1
-=======
-set -euo pipefail
-
-cd $(dirname $0)/..
-
-if ! which cdk; then
-    echo "CDK command not found"
-    exit 1
-fi
-
-if test -d .env; then
-    source .env/bin/activate && \
-    pip install -r requirements.txt
-else
-    python3 -m venv .env && \
-    source .env/bin/activate && \
-    pip install -r requirements.txt
-fi
-
-cdk synth
->>>>>>> web-backend-deploy/master
+scripts/cdk cdk synth --app deployment/app.py master-web-backend
