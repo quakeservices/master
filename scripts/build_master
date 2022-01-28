@@ -9,4 +9,5 @@ echo "+++ Building ${APP} +++"
 DOCKER_BUILDKIT=1 \
 docker build --network host \
              -t ${APP}:latest \
-             .
+             -f lib/${APP}/Dockerfile \
+             lib/

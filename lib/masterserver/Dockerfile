@@ -4,12 +4,14 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  pip install --upgrade pip
+  python3 -m pip install --upgrade pip
 
-COPY requirements.txt .
+COPY masterserver/requirements.txt .
+
 RUN --mount=type=cache,target=/root/.cache/pip \
-  pip install -r requirements.txt
+  python3 -m pip install -r requirements.txt
 
-COPY . /usr/src/app/
+COPY storage/ /usr/src/app/storage
+COPY masterserver/ /usr/src/app/
 
 CMD [ "python3", "app.py" ]
