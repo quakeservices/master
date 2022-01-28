@@ -49,7 +49,7 @@ def server_info(storage, server_id):
     return response
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     # TODO: Add basic routing
     # /servers = return all active servers
     # /server/ = return all information about server
@@ -58,4 +58,4 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
-    print(lambda_handler("", ""))
+    print(handler("", ""))

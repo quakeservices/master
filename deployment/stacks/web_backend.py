@@ -1,38 +1,32 @@
 import os
+from typing import Dict, List
 
-import boto3
-from aws_cdk import aws_apigateway as apigateway
-from aws_cdk import aws_certificatemanager as certificatemanager
-from aws_cdk import aws_iam as iam
-from aws_cdk import aws_lambda as _lambda
-from aws_cdk import aws_route53 as route53
-from aws_cdk import aws_route53_targets as route53_targets
-from aws_cdk import aws_s3 as s3
-from aws_cdk import core as cdk
+from aws_cdk import (
+    aws_apigateway as apigateway,
+    aws_certificatemanager as certificatemanager,
+    aws_iam as iam,
+    aws_lambda as _lambda,
+    aws_lambda_python as _lambda_python,
+    aws_route53 as route53,
+    aws_route53_targets as route53_targets,
+    core as cdk,
+)
 
 
-class WebBackendDeployStack(cdk.Stack):
+class WebBackendStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        self.zone = route53.HostedZone.from_lookup(
-            self, "quake_services", domain_name="quake.services"
-        )
+        self.region = "ap-southeast-2"
+        self.domain_name = "quake.services"
 
-        """
-        Get existing certificate
-        """
-        arn = "arn:aws:acm:{region}:{account}:certificate/{cert}".format(
-            region="us-west-2",
-            account=os.getenv("CDK_DEFAULT_ACCOUNT"),
-            cert="6744abde-0b71-4aa5-94b1-a9f554fb1116",
-        )
-        certificate = certificatemanager.Certificate.from_certificate_arn(
-            self, "wildcard_cert", arn
-        )
+        self.backend = self._create_lambda_function()
+        self.api = self._create_api_gateway()
+        self._create_route53_entries()
 
-        policy = iam.PolicyStatement(
-            resources=["*"],
+    def _create_dynamodb_access_policy(self, resources: List[str] = ["*"]):
+        return iam.PolicyStatement(
+            resources=resources,
             actions=[
                 "dynamodb:Get*",
                 "dynamodb:Query",
@@ -42,64 +36,79 @@ class WebBackendDeployStack(cdk.Stack):
             ],
         )
 
-        """
-        Define domain name and certificate to use for API Gateway
-        """
-        domain = {"domain_name": "api.quake.services", "certificate": certificate}
-
-        """
-        Get latest version of code
-        There is probably a more elegant way of doing this
-        But for now this works
-        """
-        s3_bucket_name = "web-backend-lambda-package"
-        s3client = boto3.client("s3")
-        latest_version = s3client.get_object_tagging(
-            Bucket=s3_bucket_name, Key="function.zip"
-        )
-        bucket = s3.Bucket.from_bucket_name(self, "bucket", bucket_name=s3_bucket_name)
-
+    def _create_lambda_function(self, entry: str = "lib/web-backend"):
         """
         Define Lambda function
         """
-        code = _lambda.Code.from_bucket(
-            bucket=bucket,
-            key="function.zip",
-            object_version=latest_version.get("VersionId"),
+
+        backend = _lambda_python.PythonFunction(
+            self,
+            "web-backend-handler",
+            entry=entry,
+            runtime=_lambda.Runtime.PYTHON_3_9,
         )
 
-        backend = _lambda.Function(
-            self,
-            "web-backend",
-            runtime=_lambda.Runtime.PYTHON_3_8,
-            handler="lambda.lambda_handler",
-            code=code,
-        )
+        policy = self._create_dynamodb_access_policy()
 
         backend.add_to_role_policy(statement=policy)
 
+        return backend
+
+    def _define_cert_and_domain(
+        self,
+        certificate_id: str = "6744abde-0b71-4aa5-94b1-a9f554fb1116",
+        record_name: str = "api",
+    ) -> Dict:
+        """
+        Get existing wildcard certificate and
+        Define domain name and certificate to use for API Gateway
+        """
+        arn = "arn:aws:acm:{region}:{account}:certificate/{cert}".format(
+            region=self.region,
+            account=os.getenv("CDK_DEFAULT_ACCOUNT"),
+            cert=certificate_id,
+        )
+
+        certificate = certificatemanager.Certificate.from_certificate_arn(
+            self, "wildcard_cert", arn
+        )
+
+        return {
+            "domain_name": f"{record_name}.{self.domain_name}",
+            "certificate": certificate,
+        }
+
+    def _create_api_gateway(self):
         """
         Define API Gateway
         """
-        api = apigateway.LambdaRestApi(
+        domain = self._define_cert_and_domain()
+
+        return apigateway.LambdaRestApi(
             self,
-            "QuakeServicesAPI",
+            "api",
             domain_name=domain,
-            handler=backend,
+            handler=self.backend,
             default_cors_preflight_options={
-                "allow_origins": ["www.quake.services"],
+                "allow_origins": [f"www.{self.domain_name}"],
                 "allow_methods": ["GET"],
             },
         )
+
+    def _create_route53_entries(self):
         """
         Create Route53 entries
         """
+        zone = route53.HostedZone.from_lookup(
+            self, "zone", domain_name=self.domain_name
+        )
+
         route53.ARecord(
             self,
-            "Alias",
-            zone=self.zone,
+            "alias",
+            zone=zone,
             record_name="api",
             target=route53.AddressRecordTarget.from_alias(
-                route53_targets.ApiGateway(api)
+                route53_targets.ApiGateway(self.api)
             ),
         )
