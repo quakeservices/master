@@ -3,11 +3,4 @@ set -euo pipefail
 
 cd $(dirname $0)/..
 
-APP=masterserver
-
-echo "+++ Building ${APP} +++"
-DOCKER_BUILDKIT=1 \
-docker build --network host \
-             -t ${APP}:latest \
-             -f lib/${APP}/Dockerfile \
-             lib/
+./scripts/build masterserver
