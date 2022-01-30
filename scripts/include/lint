@@ -3,7 +3,7 @@
 cd $(dirname $0)/..
 
 CODE="/code"
-LINTER=${1:-'python'}
+LINTER=${1:-"python"}
 
 DOCKER_BUILDKIT=1 \
 docker run -it \

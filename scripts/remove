@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-cd "$(dirname $0)/.."
-
-./cdk-docker/cdk destroy $1

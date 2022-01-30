@@ -3,10 +3,12 @@ set -euo pipefail
 
 IMAGE_NAME="docker-cdk"
 IMAGE_VERSION="latest"
+DOCKER_SOCKET="/var/run/docker.sock"
 
 docker run --rm \
            -it \
            --network host \
+           -v ${DOCKER_SOCKET}:${DOCKER_SOCKET} \
            -v $(pwd):$(pwd) \
            -w $(pwd) \
            -e AWS_ACCESS_KEY_ID \

@@ -3,10 +3,7 @@
 COMMAND='yamllint'
 
 echo "+++ Installing yamllint dependencies +++"
-if ! $(which ${COMMAND}); then
-  pip install --upgrade pip
-  pip install ${COMMAND}
-fi
+python3 -m pip install yamllint
 
 echo "+++ Running YAML linter +++"
-${COMMAND} protocols/config/
+yamllint lib/masterserver/protocols/config/

@@ -3,4 +3,4 @@ set -euo pipefail
 
 cd $(dirname $0)/..
 
-./scripts/build masterserver
+npm run build

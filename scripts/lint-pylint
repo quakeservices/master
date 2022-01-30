@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+echo "+++ Installing dependencies +++"
+python3 -m pip install --upgrade pip
+python3 -m pip install -r lib/masterserver/requirements.dev.txt
+python3 -m pip install -r lib/masterserver/requirements.txt
+python3 -m pip install -r lib/web-backend/requirements.txt
+
+echo "+++ Running pylint +++"
+pylint --errors-only lib deployment
