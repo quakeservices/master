@@ -13,7 +13,7 @@ env = {
 
 app = cdk.App()
 
-MasterStack(app, "master", env=env)
+MasterStack(app, "master-server", env=env)
 WebBackendStack(app, "master-web-backend", env=env)
 
 app.synth()

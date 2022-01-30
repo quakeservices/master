@@ -17,7 +17,6 @@ class WebBackendStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
-        self.region = "ap-southeast-2"
         self.domain_name = "quake.services"
 
         self.backend = self._create_lambda_function()
