@@ -1,5 +1,5 @@
 -c requirements.in
 pytest
-flake8
 black
+mypy
 types-PyYAML
