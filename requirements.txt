@@ -8,7 +8,7 @@ botocore==1.23.37
     # via pynamodb
 jmespath==0.10.0
     # via botocore
-pynamodb==5.2.0
+pynamodb==5.2.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via botocore
