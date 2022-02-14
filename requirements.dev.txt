@@ -34,11 +34,13 @@ pyflakes==2.4.0
     # via flake8
 pyparsing==3.0.6
     # via packaging
-pytest==6.2.5
+pytest==7.0.1
     # via -r requirements.dev.in
-toml==0.10.2
-    # via pytest
 tomli==1.2.3
-    # via black
+    # via
+    #   black
+    #   pytest
+types-pyyaml==6.0.4
+    # via -r requirements.dev.in
 typing-extensions==4.0.1
     # via black
