@@ -6,7 +6,7 @@
 #
 attrs==21.4.0
     # via pytest
-black==21.12b0
+black==22.3.0
     # via -r requirements.dev.in
 click==8.0.3
     # via black
@@ -40,5 +40,5 @@ toml==0.10.2
     # via pytest
 tomli==1.2.3
     # via black
-typing-extensions==4.0.1
-    # via black
+types-pyyaml==6.0.5
+    # via -r requirements.dev.in
