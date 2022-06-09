@@ -1,29 +1,58 @@
 import os
-from typing import Dict, List
+from typing import Optional
 
-from aws_cdk import (
-    aws_apigateway as apigateway,
-    aws_certificatemanager as certificatemanager,
-    aws_iam as iam,
-    aws_lambda as _lambda,
-    aws_lambda_python as _lambda_python,
-    aws_route53 as route53,
-    aws_route53_targets as route53_targets,
-    core as cdk,
-)
+from aws_cdk import Stack
+from aws_cdk import aws_acm as acm
+from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_lambda as aws_lambda
+from aws_cdk import aws_lambda_python as _lambda_python
+from aws_cdk import aws_route53 as route53
+from aws_cdk import aws_route53_targets as route53_targets
+from constructs import Construct
+from deployment.constants import APP_NAME, DOMAIN_NAME
 
 
-class WebBackendStack(cdk.Stack):
-    def __init__(self, scope: cdk.Construct, id: str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
+class WebBackendStack(Stack):
+    def __init__(
+        self,
+        scope: Construct,
+        construct_id: str,
+        **kwargs,
+    ) -> None:
+        super().__init__(scope, construct_id, **kwargs)
 
-        self.domain_name = "quake.services"
+        self.domain_name: str = DOMAIN_NAME
+        self.sub_domain: str = "api" + DOMAIN_NAME
+        self.zone = self._get_zone(DOMAIN_NAME)
+        self.cert = self._create_certificate(self.domain_name, [self.sub_domain])
 
         self.backend = self._create_lambda_function()
         self.api = self._create_api_gateway()
         self._create_route53_entries()
 
-    def _create_dynamodb_access_policy(self, resources: List[str] = ["*"]):
+    def _get_zone(self, zone: str) -> route53.IHostedZone:
+        if not zone.endswith("."):
+            zone += "."
+
+        return route53.HostedZone.from_lookup(self, "zone", domain_name=zone)
+
+    def _create_certificate(
+        self,
+        domain_name: str,
+        san: Optional[list[str]] = None,
+        certificate_name: str = "certificate",
+    ) -> acm.Certificate:
+        return acm.Certificate(
+            self,
+            certificate_name,
+            domain_name=domain_name,
+            subject_alternative_names=san,
+            validation=acm.CertificateValidation.from_dns(self.zone),
+        )
+
+    def _create_dynamodb_access_policy(self, resources: list[str] = ["*"]):
+        # TODO: Import table
         return iam.PolicyStatement(
             resources=resources,
             actions=[
@@ -44,7 +73,7 @@ class WebBackendStack(cdk.Stack):
             self,
             "web-backend-handler",
             entry=entry,
-            runtime=_lambda.Runtime.PYTHON_3_9,
+            runtime=aws_lambda.Runtime.PYTHON_3_9,
         )
 
         policy = self._create_dynamodb_access_policy()
@@ -53,61 +82,40 @@ class WebBackendStack(cdk.Stack):
 
         return backend
 
-    def _define_cert_and_domain(
-        self,
-        certificate_id: str = "6744abde-0b71-4aa5-94b1-a9f554fb1116",
-        record_name: str = "api",
-    ) -> Dict:
-        """
-        Get existing wildcard certificate and
-        Define domain name and certificate to use for API Gateway
-        """
-        arn = "arn:aws:acm:{region}:{account}:certificate/{cert}".format(
-            region=self.region,
-            account=os.getenv("CDK_DEFAULT_ACCOUNT"),
-            cert=certificate_id,
+    def _create_api_domain(self) -> apigateway.DomainNameOptions:
+        return apigateway.DomainNameOptions(
+            certificate=self.cert,
+            domain_name=self.sub_domain,
+            endpoint_type=apigateway.EndpointType.REGIONAL,
+            security_policy=apigateway.SecurityPolicy.TLS_1_2,
         )
 
-        certificate = certificatemanager.Certificate.from_certificate_arn(
-            self, "wildcard_cert", arn
-        )
-
-        return {
-            "domain_name": f"{record_name}.{self.domain_name}",
-            "certificate": certificate,
-        }
-
-    def _create_api_gateway(self):
-        """
-        Define API Gateway
-        """
-        domain = self._define_cert_and_domain()
-
+    def _create_api(self, handler: aws_lambda.Function) -> apigateway.RestApi:
         return apigateway.LambdaRestApi(
             self,
             "api",
-            domain_name=domain,
-            handler=self.backend,
-            default_cors_preflight_options={
-                "allow_origins": [f"www.{self.domain_name}"],
-                "allow_methods": ["GET"],
-            },
+            handler=handler,
+            rest_api_name=APP_NAME,
+            domain_name=self._create_api_domain(),
+            endpoint_types=[apigateway.EndpointType.REGIONAL],
+            disable_execute_api_endpoint=True,
         )
 
     def _create_route53_entries(self):
         """
         Create Route53 entries
         """
-        zone = route53.HostedZone.from_lookup(
-            self, "zone", domain_name=self.domain_name
+        target = route53.AddressRecordTarget.from_alias(
+            route53_targets.ApiGateway(self.api)
         )
 
         route53.ARecord(
+            self, "api-v4", zone=self.zone, record_name="api", target=target
+        )
+        route53.AaaaRecord(
             self,
-            "alias",
-            zone=zone,
+            "api-v6",
+            zone=self.zone,
             record_name="api",
-            target=route53.AddressRecordTarget.from_alias(
-                route53_targets.ApiGateway(self.api)
-            ),
+            target=target,
         )
