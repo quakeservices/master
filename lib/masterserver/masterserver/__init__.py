@@ -3,9 +3,10 @@ import struct
 from ipaddress import ip_address
 from typing import Dict, List, NoReturn, Tuple
 
+from storage import Storage
+
 from gameserver import GameServer
 from protocols import Protocols
-from storage import Storage
 
 
 class MasterServer:

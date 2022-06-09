@@ -1,5 +1,3 @@
 -c requirements.in
 pytest
-black
 mypy
-types-PyYAML

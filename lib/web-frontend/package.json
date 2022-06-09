@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "make:component": "vue-cli-service make:component",
+    "make:directive": "vue-cli-service make:directive",
+    "make:layout": "vue-cli-service make:layout",
+    "make:mixin": "vue-cli-service make:mixin",
+    "make:view": "vue-cli-service make:view"
+  },
+  "dependencies": {
+    "@vue/cli": "^4.5.17",
+    "axios": "^0.27.2",
+    "vue-router": "^4.0.16"
+  },
+  "devDependencies": {
+    "pluralize": "^8.0.0",
+    "vue-cli-plugin-vuetify-cli": "^0.2.4"
+  }
+}

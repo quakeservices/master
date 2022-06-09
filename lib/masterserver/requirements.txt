@@ -4,17 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-botocore==1.23.37
-    # via pynamodb
-jmespath==0.10.0
-    # via botocore
-pynamodb==5.2.0
-    # via -r requirements.in
-python-dateutil==2.8.2
-    # via botocore
 pyyaml==6.0
     # via -r requirements.in
-six==1.16.0
-    # via python-dateutil
-urllib3==1.26.8
-    # via botocore
+types-pyyaml==6.0.8
+    # via -r requirements.in
