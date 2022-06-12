@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from aws_cdk import Stack
