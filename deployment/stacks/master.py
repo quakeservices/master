@@ -32,9 +32,11 @@ class MasterStack(Stack):
         self.zone = self._get_zone()
         self.cluster = self._get_cluster()
         self.table = self._get_table()
+        self.repository = self._get_ecr_repository()
 
         self.task = self._create_master_task()
-        self.container = self._create_task_container()
+        self._grant_read_write_to_task()
+        self._create_task_container()
         self.nlb = self._create_network_load_balancer()
         self._create_service_and_nlb()
         self._create_route53_record()
@@ -66,19 +68,17 @@ class MasterStack(Stack):
         """
         Create master task
         """
-        task = ecs.FargateTaskDefinition(
+        return ecs.FargateTaskDefinition(
             self, "task", memory_limit_mib=self.MASTER_MEMORY, cpu=self.MASTER_CPU
         )
-        self.table.grant_read_write_data(task)
 
-        return task
+    def _grant_read_write_to_task(self):
+        self.table.grant_read_write_data(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
-        master_ecr = ecr.Repository.from_repository_name(self, "ECR", APP_NAME)
+        return ecs.ContainerImage.from_asset(directory="lib/masterserver")
 
-        return ecs.ContainerImage.from_ecr_repository(master_ecr, tag="latest")
-
-    def _create_task_container(self) -> ecs.ContainerDefinition:
+    def _create_task_container(self):
         """
         Create container
         """
@@ -98,10 +98,11 @@ class MasterStack(Stack):
 
         container = self.task.add_container(
             "master",
+            container_name=APP_NAME,
+            image=self._define_container_image(),
             health_check=ecs_healthcheck,
             start_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
             stop_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
-            image=self._define_container_image(),
             logging=log_settings,
             memory_reservation_mib=self.MASTER_MEMORY,
         )
@@ -114,8 +115,6 @@ class MasterStack(Stack):
                 container_port=self.MASTER_HEALTHCHECK_PORT, protocol=ecs.Protocol.TCP
             )
         )
-
-        return container
 
     def _create_service(self):
         """
@@ -155,25 +154,26 @@ class MasterStack(Stack):
             port=str(self.MASTER_HEALTHCHECK_PORT), protocol=elb.Protocol.HTTP
         )
 
-        listener.add_targets(
-            "target",
-            port=self.MASTER_PORT,
-            targets=[
-                service.load_balancer_target(
-                    container_name=APP_NAME,
-                    container_port=self.MASTER_PORT,
-                    protocol=ecs.Protocol.UDP,
-                )
-            ],
-            proxy_protocol_v2=True,
-            health_check=nlb_healthcheck,
+        target = ecs.EcsTarget(
+            container_name=APP_NAME,
+            container_port=self.MASTER_PORT,
+            protocol=ecs.Protocol.UDP,
+            new_target_group_id=APP_NAME,
+            listener=ecs.ListenerConfig.network_listener(
+                listener,
+                port=self.MASTER_PORT,
+                preserve_client_ip=True,
+                health_check=nlb_healthcheck,
+            ),
         )
+
+        service.register_load_balancer_targets(target)
 
     def _create_route53_record(self):
         """
         Create Route53 entries
         """
-        target = route53.AddressRecordTarget.from_alias(
+        target = route53.RecordTarget.from_alias(
             route53_targets.LoadBalancerTarget(self.nlb)
         )
 

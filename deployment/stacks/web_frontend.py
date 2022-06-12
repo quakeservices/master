@@ -2,7 +2,7 @@ import os
 from typing import Optional
 
 from aws_cdk import RemovalPolicy, Stack
-from aws_cdk import aws_acm as acm
+from aws_cdk import aws_certificatemanager as acm
 from aws_cdk import aws_cloudfront as cloudfront
 from aws_cdk import aws_cloudfront_origins as origins
 from aws_cdk import aws_route53 as route53
@@ -23,9 +23,9 @@ class WebFrontendStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         self.domain: str = DOMAIN_NAME
-        self.sub_domain: str = "www" + DOMAIN_NAME
+        self.subdomain: str = "www" + DOMAIN_NAME
         self.zone = self._get_zone(DOMAIN_NAME)
-        self.certificate = self._create_certificate(self.domain, [self.sub_domain])
+        self.cert = self._create_certificate(self.domain, [self.subdomain])
         self._create_buckets()
         self._create_distributions()
         self._create_deployment()
@@ -37,8 +37,8 @@ class WebFrontendStack(Stack):
         self.redirect_bucket = self._create_redirect_bucket()
 
     def _create_distributions(self):
-        self.site_distribution = self.create_site_distribution()
-        self.redirect_distribution = self.create_redirect_distribution()
+        self.site_distribution = self._create_site_distribution()
+        self.redirect_distribution = self._create_redirect_distribution()
 
     def _create_certificate(
         self,
@@ -76,52 +76,39 @@ class WebFrontendStack(Stack):
             self,
             "redirect_bucket",
             website_redirect=s3.RedirectTarget(
-                host_name=self.sub_domain,
+                host_name=self.subdomain,
                 protocol=s3.RedirectProtocol.HTTPS,
             ),
             auto_delete_objects=True,
             removal_policy=RemovalPolicy.DESTROY,
         )
 
-    def _gather_assets(self):
-        """
-        Gather assets and deploy them to the S3 bucket
-        Assumes path is <pwd>/../<config_source>
-        """
-        paths: list[str] = [
-            os.path.join(os.getcwd(), self.config.get("source")),
-            os.path.join(os.getcwd(), "..", self.config.get("source")),
-        ]
-        assets_path = [path for path in paths if os.path.isdir(path)]
-        if assets_path:
-            return assets_path.pop()
-
     def _create_deployment(self):
-        assets_directory = self._gather_assets()
+        assets_directory = "lib/web-frontend/dist"
         return s3deploy.BucketDeployment(
             self,
             "asset_deployment",
             sources=[s3deploy.Source.asset(assets_directory)],
-            destination_bucket=self.bucket_assets,
+            destination_bucket=self.asset_bucket,
         )
 
     def _create_site_distribution(self):
         """
         Pull it all together in a CloudFront distribution
         """
-        return cloudfront.CloudFrontWebDistribution(
+        return cloudfront.Distribution(
             self,
             "site_distribution",
             default_behavior=cloudfront.BehaviorOptions(
                 origin=origins.S3Origin(self.asset_bucket),
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             ),
-            domain_names=[self.sub_domain],
+            domain_names=[self.subdomain],
             certificate=self.cert,
         )
 
     def _create_redirect_distribution(self):
-        return cloudfront.CloudFrontWebDistribution(
+        return cloudfront.Distribution(
             self,
             "redirect_distribution",
             default_behavior=cloudfront.BehaviorOptions(

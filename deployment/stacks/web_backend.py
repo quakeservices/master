@@ -2,11 +2,12 @@ import os
 from typing import Optional
 
 from aws_cdk import Stack
-from aws_cdk import aws_acm as acm
 from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_certificatemanager as acm
+from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as aws_lambda
-from aws_cdk import aws_lambda_python as _lambda_python
+from aws_cdk import aws_lambda_python_alpha as _lambda_python
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
@@ -26,8 +27,9 @@ class WebBackendStack(Stack):
         self.sub_domain: str = "api" + DOMAIN_NAME
         self.zone = self._get_zone(DOMAIN_NAME)
         self.cert = self._create_certificate(self.domain_name, [self.sub_domain])
+        self.table = self._get_table()
 
-        self.backend = self._create_lambda_function()
+        self.handler = self._create_lambda_function()
         self.api = self._create_api_gateway()
         self._create_route53_entries()
 
@@ -36,6 +38,13 @@ class WebBackendStack(Stack):
             zone += "."
 
         return route53.HostedZone.from_lookup(self, "zone", domain_name=zone)
+
+    def _get_table(self) -> dynamodb.Table:
+        return dynamodb.Table.from_table_name(
+            self,
+            "table",
+            table_name=APP_NAME,
+        )
 
     def _create_certificate(
         self,
@@ -51,36 +60,21 @@ class WebBackendStack(Stack):
             validation=acm.CertificateValidation.from_dns(self.zone),
         )
 
-    def _create_dynamodb_access_policy(self, resources: list[str] = ["*"]):
-        # TODO: Import table
-        return iam.PolicyStatement(
-            resources=resources,
-            actions=[
-                "dynamodb:Get*",
-                "dynamodb:Query",
-                "dynamodb:Scan",
-                "dynamodb:Describe*",
-                "dynamodb:List*",
-            ],
-        )
-
     def _create_lambda_function(self, entry: str = "lib/web-backend"):
         """
         Define Lambda function
         """
 
-        backend = _lambda_python.PythonFunction(
+        handler = _lambda_python.PythonFunction(
             self,
             "web-backend-handler",
             entry=entry,
             runtime=aws_lambda.Runtime.PYTHON_3_9,
         )
 
-        policy = self._create_dynamodb_access_policy()
+        self.table.grant_read_data(handler.role)
 
-        backend.add_to_role_policy(statement=policy)
-
-        return backend
+        return handler
 
     def _create_api_domain(self) -> apigateway.DomainNameOptions:
         return apigateway.DomainNameOptions(
@@ -90,11 +84,11 @@ class WebBackendStack(Stack):
             security_policy=apigateway.SecurityPolicy.TLS_1_2,
         )
 
-    def _create_api(self, handler: aws_lambda.Function) -> apigateway.RestApi:
+    def _create_api_gateway(self) -> apigateway.RestApi:
         return apigateway.LambdaRestApi(
             self,
             "api",
-            handler=handler,
+            handler=self.handler,
             rest_api_name=APP_NAME,
             domain_name=self._create_api_domain(),
             endpoint_types=[apigateway.EndpointType.REGIONAL],
@@ -105,9 +99,7 @@ class WebBackendStack(Stack):
         """
         Create Route53 entries
         """
-        target = route53.AddressRecordTarget.from_alias(
-            route53_targets.ApiGateway(self.api)
-        )
+        target = route53.RecordTarget.from_alias(route53_targets.ApiGateway(self.api))
 
         route53.ARecord(
             self, "api-v4", zone=self.zone, record_name="api", target=target

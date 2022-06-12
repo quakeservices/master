@@ -8,27 +8,48 @@ attrs==21.4.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-lib==2.27.0
+aws-cdk-aws-lambda-python-alpha==2.27.0a0
     # via -r requirements.in
-cattrs==22.1.0
-    # via jsii
-constructs==10.1.35
+aws-cdk-lib==2.27.0
     # via
     #   -r requirements.in
+    #   aws-cdk-aws-lambda-python-alpha
+cattrs==22.1.0
+    # via jsii
+click==8.1.3
+    # via pip-tools
+constructs==10.1.36
+    # via
+    #   -r requirements.in
+    #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
 exceptiongroup==1.0.0rc8
     # via cattrs
 jsii==1.60.1
     # via
+    #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
     #   constructs
+pep517==0.12.0
+    # via pip-tools
+pip-tools==6.6.2
+    # via -r requirements.in
 publication==0.0.3
     # via
+    #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
     #   constructs
 python-dateutil==2.8.2
     # via jsii
 six==1.16.0
     # via python-dateutil
+tomli==2.0.1
+    # via pep517
 typing-extensions==4.2.0
     # via jsii
+wheel==0.37.1
+    # via pip-tools
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools

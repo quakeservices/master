@@ -3,12 +3,11 @@ import os
 
 from aws_cdk import App, Environment
 
-from stacks.infra import InfraStack
-from stacks.master import MasterStack
-from stacks.web_backend import WebBackendStack
-from stacks.web_frontend import WebFrontendStack
-
-from .constants import APP_NAME
+from deployment.constants import APP_NAME
+from deployment.stacks.infra import InfraStack
+from deployment.stacks.master import MasterStack
+from deployment.stacks.web_backend import WebBackendStack
+from deployment.stacks.web_frontend import WebFrontendStack
 
 default_account: str = os.getenv(
     "AWS_ACCOUNT", os.getenv("CDK_DEFAULT_ACCOUNT", "123456789012")

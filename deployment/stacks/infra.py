@@ -28,10 +28,12 @@ class InfraStack(Stack):
             self,
             "vpc",
             vpc_name=APP_NAME,
-            subnet_configuration=ec2.SubnetConfiguration(
-                name=f"{APP_NAME}-public",
-                subnet_type=ec2.SubnetType.PUBLIC,
-            ),
+            subnet_configuration=[
+                ec2.SubnetConfiguration(
+                    name=f"{APP_NAME}-public",
+                    subnet_type=ec2.SubnetType.PUBLIC,
+                )
+            ],
         )
 
     def _create_table(self):
