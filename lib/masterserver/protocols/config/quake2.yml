@@ -5,19 +5,21 @@ encoding: latin1
 active: true
 version: 34   # Vanilla
 
-S2M:
+headers:
   ping:
     recv: "\xff\xff\xff\xffping"
     resp: "\xff\xff\xff\xffack"
+    type: "any"
   heartbeat:
     recv: "\xff\xff\xff\xffheartbeat"
     resp: "\xff\xff\xff\xffack"
+    type: "any"
   shutdown:
     recv: "\xff\xff\xff\xffshutdown"
-
-B2M:
+    type: "server"
   query:
     recv: "query"
+    type: "client"
 
 status_keys:
   - key: "cheats"

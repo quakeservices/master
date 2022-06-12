@@ -1,15 +1,5 @@
 import json
 import re
-from typing import Dict, List, NoReturn, Tuple
-
-# import geoip2.database
-
-# geoip_db = 'nonfree/GeoIP.dat'
-# if os.path.isfile(geoip_db):
-#     reader = geoip2.database.Reader(geoip_db)
-# else:
-#     print(f"Could not find {geoip_db}")
-#     sys.exit(1)
 
 
 class GameServer:
@@ -27,17 +17,20 @@ class GameServer:
     Example: <score> <ping> <player>\n
     """
 
-    def __init__(self, address: Tuple[str, int], result: Dict):
-        self.server_address: Tuple[str, int] = address
-        self.game: str = "quake2"
-        self.result: Dict = result
-        self.country = self.get_country()
-        self.players = list()
-        self.status = dict()
+    game: str = "quake2"
+    players: list = []
+    player_count: int = 0
+    status: dict = {}
+
+    def __init__(self, address: tuple[str, int], result: dict):
+        self.server_address: tuple[str, int] = address
+        self.result: dict = result
+
         if result.get("status"):
             self.dictify_status(result.get("status")[0])
             self.dictify_players(result.get("status")[1:])
-        self.player_count: int = len(self.players)
+
+        self.player_count = len(self.players)
 
     @property
     def ip(self) -> str:  # pylint: disable=invalid-name
@@ -71,21 +64,7 @@ class GameServer:
     def json_players(self) -> str:
         return json.dumps(self.players)
 
-    def get_country(self) -> str:
-        """
-        Returns two letter country code for a particular IP
-        If none exists then ZZ is returned as unknown.
-        TODO: Fix this
-        """
-        result = "ZZ"
-        # try:
-        #    result = reader.city(self.ip).country.iso_code
-        # except geoip2.errors.AddressNotFoundError:
-        #    pass
-
-        return result
-
-    def dictify_players(self, data: bytes) -> NoReturn:
+    def dictify_players(self, data: bytes):
         player_regex = re.compile(
             r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII
         )
@@ -94,9 +73,9 @@ class GameServer:
             if player:
                 self.players.append(player.groupdict())
 
-    def dictify_status(self, data: bytes, split_on: str = "\\") -> NoReturn:
+    def dictify_status(self, data: bytes, split_on: str = "\\"):
         decoded_status: str = data.decode(self.encoding)
-        list_status: List = decoded_status.split(split_on)[1:]
+        list_status: list = decoded_status.split(split_on)[1:]
 
         """
         If the length of status isn't even, truncate the last value

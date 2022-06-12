@@ -1,18 +1,14 @@
 import os
 from datetime import datetime
 
-from pynamodb.attributes import (
-    BooleanAttribute,
-    JSONAttribute,
-    NumberAttribute,
-    UnicodeAttribute,
-    UTCDateTimeAttribute,
-)
+from pynamodb.attributes import (BooleanAttribute, JSONAttribute,
+                                 NumberAttribute, UnicodeAttribute,
+                                 UTCDateTimeAttribute)
 from pynamodb.indexes import AllProjection, GlobalSecondaryIndex
 from pynamodb.models import Model
 
 
-class ServerIndex(GlobalSecondaryIndex):
+class PynamoServerIndex(GlobalSecondaryIndex):
     class Meta:
         if os.getenv("STAGE", "PRODUCTION") == "TESTING":
             host = "http://dynamodb:8000"
@@ -25,7 +21,7 @@ class ServerIndex(GlobalSecondaryIndex):
     game = UnicodeAttribute(range_key=True)
 
 
-class Server(Model):
+class PynamoServer(Model):
     class Meta:
         if os.getenv("STAGE", "PRODUCTION") == "TESTING":
             host = "http://dynamodb:8000"
@@ -33,7 +29,7 @@ class Server(Model):
         billing_mode = "PAY_PER_REQUEST"
         region = "us-west-2"
 
-    server_index = ServerIndex()
+    server_index = PynamoServerIndex()
 
     address = UnicodeAttribute(hash_key=True)
     game = UnicodeAttribute()

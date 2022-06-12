@@ -1,26 +1,48 @@
 import logging
 from datetime import datetime
 
-from .model import Server
+from boto3 import Session
+
+from .pynamo_model import PynamoServer
 
 
-class Storage:
+class BaseStorage:
+    def save_server(self, server):
+        raise NotImplementedError
+
+    def create_server(self, server):
+        raise NotImplementedError
+
+    def get_server(self, server):
+        raise NotImplementedError
+
+    def update_server(self, server):
+        raise NotImplementedError
+
+    def list_servers(self, game: str):
+        raise NotImplementedError
+
+
+class DynamoDbStorage(BaseStorage):
     def __init__(self):
-        logging.debug(f"{self.__class__.__name__ } - Initialising storage.")
+        self.session = Session()
 
-    @staticmethod
-    def create_table():
-        try:
-            Server.create_table(wait=True)
-        except:
-            raise
+    def _put_item(self, item):
+        pass
 
-    @staticmethod
-    def server_object(server):
+    def _get_item(self, item):
+        pass
+
+    def _scan(self):
+        pass
+
+
+class PynamoDbStorage(BaseStorage):
+    def server_object(self, server):
         logging.debug(
-            f"{__class__.__name__ } - creating server for {server.address}"
-        )  # pylint: disable=undefined-variable
-        return Server(
+            f"{self.__class__.__name__ } - creating server for {server.address}"
+        )
+        return PynamoServer(
             server.address,
             game=server.game,
             country_code=server.country,
@@ -32,7 +54,7 @@ class Storage:
 
     @staticmethod
     def get_server_obj(server):
-        for server in Server.server_index.query(server.address, limit=1):
+        for server in PynamoServer.server_index.query(server.address, limit=1):
             return server
 
     def get_server(self, server):
@@ -46,7 +68,7 @@ class Storage:
 
     def list_servers(self, game=None):
         logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [server for server in Server.scan() if server.active]
+        servers = [server for server in PynamoServer.scan() if server.active]
 
         return servers
 
@@ -56,7 +78,13 @@ class Storage:
 
         return servers
 
-    def create_server(self, server):
+    def save_server(self, server):
+        if self.get_server(server):
+            self._update_server(server)
+        else:
+            self._create_server(server)
+
+    def _create_server(self, server):
         logging.debug(f"{self.__class__.__name__ } - create_server {server.address}")
         try:
             server_obj = self.server_object(server)
@@ -64,18 +92,18 @@ class Storage:
         except ValueError:
             raise
 
-    def update_server(self, server):
+    def _update_server(self, server):
         logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
         try:
             server_obj = self.get_server_obj(server)
             server_obj.update(
                 actions=[
-                    Server.active.set(True),
-                    Server.game.set(server.game),
-                    Server.last_seen.set(datetime.utcnow()),
-                    Server.status.set(server.status),
-                    Server.players.set(server.players),
-                    Server.player_count.set(server.player_count),
+                    PynamoServer.active.set(True),
+                    PynamoServer.game.set(server.game),
+                    PynamoServer.last_seen.set(datetime.utcnow()),
+                    PynamoServer.status.set(server.status),
+                    PynamoServer.players.set(server.players),
+                    PynamoServer.player_count.set(server.player_count),
                 ]
             )
         except ValueError:
@@ -87,8 +115,8 @@ class Storage:
             server_obj = self.get_server_obj(server)
             server_obj.update(
                 actions=[
-                    Server.active.set(False),
-                    Server.last_seen.set(datetime.utcnow()),
+                    PynamoServer.active.set(False),
+                    PynamoServer.last_seen.set(datetime.utcnow()),
                 ]
             )
         except ValueError:

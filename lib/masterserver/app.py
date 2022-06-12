@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import asyncio
 import logging
 import os
 import sys
@@ -7,7 +8,7 @@ from masterserver import MasterServer
 from transport import Transport
 
 
-def setup_logging(level: str = "INFO") -> None:
+def setup_logging(level: str = "INFO"):
     # logging.getLogger('boto3').propagate = False
     # logging.getLogger('botocore').propagate = False
 
@@ -21,9 +22,10 @@ def setup_logging(level: str = "INFO") -> None:
     )
 
 
-def main() -> None:
+def main():
+    loop = asyncio.get_event_loop()
     master = MasterServer()
-    transport = Transport(master)
+    transport = Transport(loop, master)
 
     try:
         transport.loop.run_forever()
@@ -32,10 +34,12 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    os.environ["STAGE"] = os.getenv("STAGE", "PRODUCTION")
+    os.environ["DEPLOYMENT_ENVIRONMENT"] = os.getenv(
+        "DEPLOYMENT_ENVIRONMENT", "development"
+    )
 
-    if os.getenv("STAGE") == "TESTING":
-        setup_logging("DEBUG")
+    if os.getenv("DEPLOYMENT_ENVIRONMENT") == "production":
+        setup_logging("INFO")
     else:
         setup_logging("DEBUG")
 

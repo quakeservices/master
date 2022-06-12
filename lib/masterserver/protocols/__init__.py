@@ -1,141 +1,94 @@
 import logging
 import os
-from enum import Enum, auto
-from typing import Dict, List, NoReturn
+from dataclasses import dataclass
+from typing import Optional
 
 import yaml
 
+from .game_protocol import GameProtocol, GameProtocolResponse
 from .proxy import ProxyProtocol
 
-# Request = namedtuple('Request', 'header', 'status', 'players')
 
-
-class Order(Enum):
-    B2M = auto()
-    S2M = auto()
-    S2C = auto()
-    Browser_to_Master = B2M
-    Server_to_Master = S2M
-    Server_to_Client = S2C
+@dataclass
+class ProtocolResponse:
+    found_header: bool = False
+    game: Optional[str] = None
+    response: Optional[bytes] = None
+    active: bool = False
+    encoding: str = "latin1"
+    header: Optional[str] = None
+    status: Optional[str] = None
+    header_source: Optional[str] = None
+    header_type: Optional[str] = None
 
 
 class Protocols:
-    def __init__(self, header_order: str = "master"):
-        logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
-        if header_order == "server":
-            self.header_order = ["B2M", "S2M"]
-        elif header_order == "client":
-            self.header_order = ["B2M", "S2M"]
-        elif header_order == "master":
-            self.header_order = ["B2M", "S2M"]
-        else:
-            self.header_order = ["B2M", "S2M"]
+    protocols: list[GameProtocol] = []
 
-        self.protocols = list()
+    def __init__(self):
+        logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
         self.load_protocols()
 
     @staticmethod
-    def gather_protocol_files() -> List[str]:
-        config_files = []
-        module_path = os.path.abspath(os.path.dirname(__file__))
-        config_path = os.path.join(module_path, "config")
-        for _ in os.listdir(config_path):
-            if _.endswith(".yml"):
-                config_files.append(os.path.join(config_path, _))
+    def _gather_protocol_files() -> list[str]:
+        config_files: list[str] = []
+        config_path: str = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "config")
+        )
+        for filename in os.listdir(config_path):
+            if filename.endswith(".yml"):
+                config_files.append(os.path.join(config_path, filename))
 
         return config_files
 
-    def load_protocols(self) -> NoReturn:
+    def load_protocols(self):
         logging.debug(f"{self.__class__.__name__ } - Loading protocols...")
-        for config_file in self.gather_protocol_files():
-            self.load_protocol(config_file)
+        for config_file in self._gather_protocol_files():
+            self._load_protocol(config_file)
 
-    def load_protocol(self, config_file: str) -> NoReturn:
+    def _load_protocol(self, config_file: str):
         logging.debug(f"{self.__class__.__name__ } - Reading {config_file}")
         with open(config_file, "rb") as config_file_handle:
-            config = yaml.load(config_file_handle, Loader=yaml.FullLoader)
+            config = yaml.safe_load(config_file_handle)
             if config.get("active", False):
-                self.protocols.append(GameProtocol(config))
+                self.protocols.append(GameProtocol(**config))
                 logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
 
-    def find_protocol(self, header: bytes) -> Dict:
+    def _find_protocol(self, header: bytes) -> ProtocolResponse:
+        game_protocol: Optional[GameProtocolResponse] = None
+        response: ProtocolResponse = ProtocolResponse()
+
         for game in self.protocols:
-            result = game.match_header(self.header_order, header)
-            if result:
-                return {
-                    "game": game.name,
-                    "resp": result.get("resp", None),
-                    "encoding": game.encoding,
-                    "active": result.get("active", True),
-                    "class": result.get("class", self.header_order[0]),
-                }
+            game_protocol = game.match_receive_header(header)
+            if game_protocol.header_match:
+                response = ProtocolResponse(
+                    game=game_protocol.game,
+                    response=game_protocol.response,
+                    encoding=game_protocol.encoding,
+                    active=game_protocol.active,
+                    found_header=True,
+                    header_type=game_protocol.header_type,
+                )
+                break
 
-        return {}
+        return response
 
-    def parse_data(self, data: bytes) -> Dict:
-        logging.debug(f"{self.__class__.__name__ } - Parsing {data}")
-        if len(data) >= 16:
-            sanitised_data: bytes = ProxyProtocol.parse_data(data)
+    def parse_request(self, request: bytes) -> ProtocolResponse:
+        logging.debug(f"{self.__class__.__name__ } - Parsing {request}")
+        parsed_request: bytes
+        if len(request) >= 16:
+            parsed_request = ProxyProtocol.parse_request(request)
         else:
-            sanitised_data: bytes = data
+            parsed_request = request
 
-        logging.debug(f"{self.__class__.__name__ } - Sanitised as {sanitised_data}")
-        header, *status = sanitised_data.splitlines()
+        logging.debug(f"{self.__class__.__name__ } - Sanitised as {parsed_request}")
+        header, *status = parsed_request.splitlines()
+
         logging.debug(f"{self.__class__.__name__ } - Header is {header}")
-        result = self.find_protocol(header)
-        if result:
-            result["header"] = header
-            result["status"] = status
-            return result
+        response: ProtocolResponse = self._find_protocol(header)
 
-        return {}
+        if response.found_header:
+            response.header = header
+            response.status = status
 
-
-class GameProtocol:
-    def __init__(self, protocol):
-        self.protocol = protocol
-        logging.debug(
-            f"{self.__class__.__name__ } - Initialising protocols for {self.name}"
-        )
-        self.process_headers()
-
-    def __repr__(self) -> str:
-        return self.name
-
-    @property
-    def name(self) -> str:
-        return self.protocol.get("game", "Unknown")
-
-    @property
-    def encoding(self) -> str:
-        return self.protocol.get("encoding", "latin1")
-
-    def match_header(self, header_order: str, header: bytes):
-        for header_class in [_ for _ in header_order if _ in self.protocol.keys()]:
-            for k, v in self.protocol[
-                header_class
-            ].items():  # pylint: disable=invalid-name
-                if v.get("recv", "").startswith(header):
-                    v["class"] = header_class
-                    if k == "shutdown":
-                        v["active"] = False
-
-                    return v
-
-        return False
-
-    def process_headers(self) -> NoReturn:
-        for header_class in ["S2M", "B2M"]:
-            for k, v in self.protocol[
-                header_class
-            ].items():  # pylint: disable=invalid-name
-                self.protocol[header_class][k] = self.encode_headers(v)
-
-    def encode_headers(self, headers):
-        for _ in ["recv", "resp"]:
-            if _ in headers:
-                headers[_] = self.encoder(headers[_])
-        return headers
-
-    def encoder(self, data: str) -> bytes:
-        return bytes(data, self.encoding, errors="backslashreplace")
+        return response

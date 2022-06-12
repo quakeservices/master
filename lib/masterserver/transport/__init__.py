@@ -1,38 +1,49 @@
 import asyncio
+import enum
 import functools
 import logging
 import signal
 import socket
+from typing import Callable, Literal, Optional
 
 from masterserver import MasterServer
 
 
-class Transport:
+class Transport(asyncio.Protocol):
+    loop: asyncio.AbstractEventLoop
+    port: int = 27900
+    v4_bind: str = "0.0.0.0"
+    v4_enabled: bool = True
+    v4_udp_protocol: Optional[asyncio.DatagramProtocol] = None
+    v4_udp_transport: Optional[asyncio.DatagramTransport] = None
+    v6_bind: str = "::"
+    v6_enabled: bool = False
+    v6_udp_protocol: Optional[asyncio.DatagramProtocol] = None
+    v6_udp_transport: Optional[asyncio.DatagramTransport] = None
+
     def __init__(
         self,
+        loop: asyncio.AbstractEventLoop,
         master: MasterServer,
-        port: int = 27900,
-        ipv4_enabled: bool = True,
-        ipv4_bind: str = "0.0.0.0",
-        ipv6_enabled: bool = False,
-        ipv6_bind: str = "::",
     ):
+        self.loop = loop
+        self.main(master)
+
+    def main(self, master: MasterServer):
         logging.debug(f"{self.__class__.__name__ } - Initialising transport")
-        self.loop = asyncio.get_event_loop()
+
         self.signal()
 
         self.healt_check_transport = self.health_check(HealthCheck())
-        self.v4_udp_transport = None
-        self.v6_udp_transport = None
 
-        if ipv4_enabled:
-            self.v4_udp_transport, self.v4_udp_protocol = self.listener(
-                master, socket.AF_INET, (ipv4_bind, port)
+        if self.v4_enabled:
+            self.v4_udp_transport, self.v4_udp_protocol = self._create_listener(
+                lambda: master, socket.AF_INET, (self.v4_bind, self.port)
             )
 
-        if ipv6_enabled:
-            self.v6_udp_transport, self.v6_udp_protocol = self.listener(
-                master, socket.AF_INET6, (ipv6_bind, port)
+        if self.v6_enabled:
+            self.v6_udp_transport, self.v6_udp_protocol = self._create_listener(
+                lambda: master, socket.AF_INET6, (self.v6_bind, self.port)
             )
 
     def signal(self):
@@ -43,16 +54,22 @@ class Transport:
                 getattr(signal, signame), functools.partial(self.shutdown, signame)
             )
 
-    def listener(self, server, socket_family, bind):
+    def _create_listener(
+        self,
+        server: Callable,
+        socket_family: enum.IntEnum,
+        bind: tuple[str, int],
+    ) -> tuple[asyncio.DatagramTransport, asyncio.DatagramProtocol]:
         logging.debug(
             f"{self.__class__.__name__ } - Setting up master listener on {bind[0]}:{bind[1]}"
         )
+        transport: asyncio.DatagramTransport
+        protocol: asyncio.DatagramProtocol
 
-        listen = self.loop.create_datagram_endpoint(
-            lambda: server, family=socket_family, local_addr=bind
+        listener = self.loop.create_datagram_endpoint(
+            server, family=socket_family, local_addr=bind
         )
-
-        transport, protocol = self.loop.run_until_complete(listen)
+        transport, protocol = self.loop.run_until_complete(listener)
 
         return transport, protocol
 
@@ -91,8 +108,7 @@ class Transport:
 
 
 class HealthCheck(asyncio.Protocol):
-    def __init__(self):
-        self.transport = None
+    transport = None
 
     def connection_made(self, transport):
         self.transport = transport

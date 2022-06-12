@@ -6,12 +6,11 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,target=/root/.cache/pip \
   python3 -m pip install --upgrade pip
 
-COPY masterserver/requirements.txt .
+COPY requirements.txt .
 
 RUN --mount=type=cache,target=/root/.cache/pip \
   python3 -m pip install -r requirements.txt
 
-COPY storage/ /usr/src/app/storage
-COPY masterserver/ /usr/src/app/
+COPY . /usr/src/app/
 
 CMD [ "python3", "app.py" ]
