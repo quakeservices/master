@@ -11,6 +11,7 @@ from .proxy import ProxyProtocol
 
 @dataclass
 class ProtocolResponse:
+    # TODO: Merge with GameProtocolResponse
     found_header: bool = False
     game: Optional[str] = None
     response: Optional[bytes] = None

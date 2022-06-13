@@ -12,6 +12,7 @@ EncodedHeaders = dict[HeaderCommand, dict[HeaderMessage, bytes]]
 
 @dataclass
 class GameProtocolResponse:
+    # TODO: Merge with ProtocolResponse
     game: str
     encoding: str
     header_type: Optional[str] = None
