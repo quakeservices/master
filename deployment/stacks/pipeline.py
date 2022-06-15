@@ -1,4 +1,5 @@
 from aws_cdk import RemovalPolicy, Stack
+from aws_cdk import aws_ssm as ssm
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
 from constructs import Construct
 from deployment.constants import APP_NAME, REPO
@@ -17,20 +18,30 @@ class PipelineStack(Stack):
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
         self.pipeline = self._create_pipeline()
+        self._create_infra_stage()
 
     def _create_pipeline(self):
+        connection_arn = ssm.StringParameter.from_string_parameter_attributes(
+            self,
+            "connection-arn",
+            parameter_name="/quakeservices/codepipeline/connection-arn",
+        ).string_value
+
         return CodePipeline(
             self,
             "pipeline",
             pipeline_name=APP_NAME,
             synth=ShellStep(
                 "Synth",
-                input=CodePipelineSource.git_hub(REPO, "main"),
+                input=CodePipelineSource.connection(
+                    REPO, "main", connection_arn=connection_arn
+                ),
                 commands=[
                     "npm install -g aws-cdk",
                     "python -m pip install -r deployment/requirements.txt",
-                    "cdk synth",
+                    "cdk synth --app ./app.py",
                 ],
             ),
         )
