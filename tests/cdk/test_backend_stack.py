@@ -98,8 +98,8 @@ class TestQuakeservicesBackend:
             "AWS::Lambda::Function",
             {
                 "Code": {
-                    "S3Bucket": "cdk-hnb659fds-assets-123456789012-us-west-2",
-                    "S3Key": "537709db13f203c8f57757815f2f384467be36f037092c2b20910ea988bb6522.zip",
+                    "S3Bucket": Match.any_value(),
+                    "S3Key": Match.any_value(),
                 },
                 "Role": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
                 "Handler": "index.handler",
