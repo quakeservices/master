@@ -1,123 +1,62 @@
-import logging
-from datetime import datetime
+from dataclasses import dataclass
+from typing import Optional, Union
 
-from boto3 import Session
-
-from .pynamo_model import PynamoServer
+from helper import LoggingMixin
 
 
-class BaseStorage:
-    def save_server(self, server):
-        raise NotImplementedError
+@dataclass
+class Server:
+    # TODO: Replace GameServer class with this
+    active: bool
+    game: str
+    details: dict[str, Union[str, int]]
+    players: list[dict[str, str]]
 
-    def create_server(self, server):
-        raise NotImplementedError
+    server_address: Optional[str] = None
+    server_ip: Optional[str] = None
+    server_port: Optional[int] = None
 
-    def get_server(self, server):
-        raise NotImplementedError
+    def __post_init__(self):
+        self._validate_server_address()
 
-    def update_server(self, server):
-        raise NotImplementedError
-
-    def list_servers(self, game: str):
-        raise NotImplementedError
-
-
-class DynamoDbStorage(BaseStorage):
-    def __init__(self):
-        self.session = Session()
-
-    def _put_item(self, item):
-        pass
-
-    def _get_item(self, item):
-        pass
-
-    def _scan(self):
-        pass
-
-
-class PynamoDbStorage(BaseStorage):
-    def server_object(self, server):
-        logging.debug(
-            f"{self.__class__.__name__ } - creating server for {server.address}"
-        )
-        return PynamoServer(
-            server.address,
-            game=server.game,
-            country_code=server.country,
-            active=True,
-            status=server.status,
-            players=server.players,
-            player_count=server.player_count,
-        )
-
-    @staticmethod
-    def get_server_obj(server):
-        for server in PynamoServer.server_index.query(server.address, limit=1):
-            return server
-
-    def get_server(self, server):
-        logging.debug(f"{self.__class__.__name__ } - looking for {server.address}")
-
-        query = self.get_server_obj(server)
-        if query:
-            return True
+    def _validate_server_address(self):
+        if self.server_address:
+            server_ip, server_port = self.server_address.split(":")
+            self.server_ip = server_ip
+            self.server_port = int(server_port)
+        elif self.server_ip and self.server_port:
+            self.server_address = ":".join([self.server_ip, str(self.server_port)])
         else:
-            return False
-
-    def list_servers(self, game=None):
-        logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [server for server in PynamoServer.scan() if server.active]
-
-        return servers
-
-    def list_server_addresses(self, game=None):
-        logging.debug(f"{self.__class__.__name__ } - list_servers for {game}")
-        servers = [server.address for server in self.list_servers()]
-
-        return servers
-
-    def save_server(self, server):
-        if self.get_server(server):
-            self._update_server(server)
-        else:
-            self._create_server(server)
-
-    def _create_server(self, server):
-        logging.debug(f"{self.__class__.__name__ } - create_server {server.address}")
-        try:
-            server_obj = self.server_object(server)
-            server_obj.save()
-        except ValueError:
-            raise
-
-    def _update_server(self, server):
-        logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
-        try:
-            server_obj = self.get_server_obj(server)
-            server_obj.update(
-                actions=[
-                    PynamoServer.active.set(True),
-                    PynamoServer.game.set(server.game),
-                    PynamoServer.last_seen.set(datetime.utcnow()),
-                    PynamoServer.status.set(server.status),
-                    PynamoServer.players.set(server.players),
-                    PynamoServer.player_count.set(server.player_count),
-                ]
+            raise ValueError(
+                "Either server_address, or both server_ip and server_port must be set"
             )
-        except ValueError:
-            raise
 
-    def server_shutdown(self, server):
-        logging.debug(f"{self.__class__.__name__ } - update_server {server.address}")
-        try:
-            server_obj = self.get_server_obj(server)
-            server_obj.update(
-                actions=[
-                    PynamoServer.active.set(False),
-                    PynamoServer.last_seen.set(datetime.utcnow()),
-                ]
-            )
-        except ValueError:
-            raise
+
+class BaseStorage(LoggingMixin):
+    def create_server(self, server_data: Server) -> bool:
+        """
+        Return True on successful create
+        Return Fale on failed create
+        """
+        raise NotImplementedError
+
+    def get_server(
+        self, server_address: str, game: Optional[str] = None
+    ) -> Optional[Server]:
+        """
+        Return optional Server object
+        """
+        raise NotImplementedError
+
+    def get_servers(self, game: Optional[str] = None) -> list[Server]:
+        """
+        Return a list of Server objects
+        """
+        raise NotImplementedError
+
+    def update_server(self, server_data: Server) -> bool:
+        """
+        Return True on successful update
+        Return Fale on failed update
+        """
+        raise NotImplementedError

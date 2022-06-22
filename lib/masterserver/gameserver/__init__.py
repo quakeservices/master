@@ -3,7 +3,7 @@ import re
 
 from protocols.models import GameProtocolResponse
 
-
+# TODO: Replace with storage.Server
 class GameServer:
     """
     Input:
