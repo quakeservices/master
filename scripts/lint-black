@@ -1,10 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "+++ Installing dependencies +++"
-python3 -m pip install --upgrade pip
-python3 -m pip install -r lib/masterserver/requirements.dev.txt
-python3 -m pip install -r lib/masterserver/requirements.txt
-python3 -m pip install -r lib/web-backend/requirements.txt
+cd "$(git rev-parse --show-toplevel)"
+
+source scripts/include/build-env
 
 echo "+++ Running Black +++"
-black --check .
+scripts/include/run-test-container black --check .

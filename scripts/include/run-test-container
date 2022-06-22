@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+source scripts/include/build-env
+scripts/build-test
+
+docker run --interactive \
+           --tty \
+           --rm \
+           --mount=type=bind,source="$(pwd)"/,target=${CODE_DIR} \
+           --workdir ${CODE_DIR} \
+           ${APP_NAME}/test:latest \
+           "$@"

@@ -5,5 +5,5 @@ cd "$(git rev-parse --show-toplevel)"
 
 source scripts/include/build-env
 
-echo "+++ Running yamllint +++"
-scripts/include/run-test-container yamllint lib/masterserver/protocols/config/
+echo "+++ Running mypy +++"
+scripts/include/run-test-container mypy .
