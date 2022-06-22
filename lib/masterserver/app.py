@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-import asyncio
 import logging
 import os
 import sys
 
-from masterserver import MasterServer
-from transport import Transport
+from master import MasterServer
 
 
 def setup_logging(level: str = "INFO"):
@@ -22,18 +20,7 @@ def setup_logging(level: str = "INFO"):
     )
 
 
-def main():
-    loop = asyncio.get_event_loop()
-    master = MasterServer()
-    transport = Transport(loop, master)
-
-    try:
-        transport.loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-
-
-if __name__ == "__main__":
+def setup_environment():
     os.environ["DEPLOYMENT_ENVIRONMENT"] = os.getenv(
         "DEPLOYMENT_ENVIRONMENT", "development"
     )
@@ -43,6 +30,16 @@ if __name__ == "__main__":
     else:
         setup_logging("DEBUG")
 
+
+def main():
     logging.info("Starting master server.")
-    main()
+
+    masterserver = MasterServer()
+    masterserver.start()
+
     logging.info("Master server stopped.")
+
+
+if __name__ == "__main__":
+    setup_environment()
+    main()

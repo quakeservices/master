@@ -1,33 +1,19 @@
-import logging
 import os
 from dataclasses import dataclass
 from typing import Optional
 
 import yaml
+from helpers import LoggingMixin
 
-from .game_protocol import GameProtocol, GameProtocolResponse
-from .proxy import ProxyProtocol
-
-
-@dataclass
-class ProtocolResponse:
-    # TODO: Merge with GameProtocolResponse
-    found_header: bool = False
-    game: Optional[str] = None
-    response: Optional[bytes] = None
-    active: bool = False
-    encoding: str = "latin1"
-    header: Optional[str] = None
-    status: Optional[str] = None
-    header_source: Optional[str] = None
-    header_type: Optional[str] = None
+from protocols.models import GameProtocol, GameProtocolResponse
+from protocols.proxy import ProxyProtocol
 
 
-class Protocols:
+class GameProtocols(LoggingMixin):
     protocols: list[GameProtocol] = []
 
     def __init__(self):
-        logging.debug(f"{self.__class__.__name__ } - Initialising protocols.")
+        self.log("Initialising protocols.")
         self.load_protocols()
 
     @staticmethod
@@ -43,52 +29,43 @@ class Protocols:
         return config_files
 
     def load_protocols(self):
-        logging.debug(f"{self.__class__.__name__ } - Loading protocols...")
+        self.log("Loading protocols...")
         for config_file in self._gather_protocol_files():
             self._load_protocol(config_file)
 
     def _load_protocol(self, config_file: str):
-        logging.debug(f"{self.__class__.__name__ } - Reading {config_file}")
+        self.log(f"Reading {config_file}")
         with open(config_file, "rb") as config_file_handle:
             config = yaml.safe_load(config_file_handle)
             if config.get("active", False):
                 self.protocols.append(GameProtocol(**config))
-                logging.debug(f"{self.__class__.__name__ } - Loaded {config}")
+                self.log(f"Loaded {config}")
 
-    def _find_protocol(self, header: bytes) -> ProtocolResponse:
-        game_protocol: Optional[GameProtocolResponse] = None
-        response: ProtocolResponse = ProtocolResponse()
+    def _find_protocol(self, header: bytes) -> GameProtocolResponse:
+        response: GameProtocolResponse = GameProtocolResponse()
 
         for game in self.protocols:
-            game_protocol = game.match_receive_header(header)
-            if game_protocol.header_match:
-                response = ProtocolResponse(
-                    game=game_protocol.game,
-                    response=game_protocol.response,
-                    encoding=game_protocol.encoding,
-                    active=game_protocol.active,
-                    found_header=True,
-                    header_type=game_protocol.header_type,
-                )
+            response = game.match_receive_header(header)
+            if response.header_match:
                 break
 
         return response
 
-    def parse_request(self, request: bytes) -> ProtocolResponse:
-        logging.debug(f"{self.__class__.__name__ } - Parsing {request}")
+    def parse_request(self, request: bytes) -> GameProtocolResponse:
+        self.log(f"Parsing {request!r}")
         parsed_request: bytes
         if len(request) >= 16:
             parsed_request = ProxyProtocol.parse_request(request)
         else:
             parsed_request = request
 
-        logging.debug(f"{self.__class__.__name__ } - Sanitised as {parsed_request}")
+        self.log(f"Sanitised as {parsed_request!r}")
         header, *status = parsed_request.splitlines()
 
-        logging.debug(f"{self.__class__.__name__ } - Header is {header}")
-        response: ProtocolResponse = self._find_protocol(header)
+        self.log(f"Header is {header!r}")
+        response: GameProtocolResponse = self._find_protocol(header)
 
-        if response.found_header:
+        if response.header_match:
             response.header = header
             response.status = status
 

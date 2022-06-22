@@ -1,12 +1,14 @@
 import json
 import re
 
+from protocols.models import GameProtocolResponse
+
 
 class GameServer:
     """
     Input:
         b'\\cheats\\0\\deathmatch\\1\\dmflags\\16\\fraglimit\\0'
-    Split the above byte-string into list of strings resulting in:
+    Split the above byte-string into list of strings requesting in:
         ['cheats', '0', 'deathmatch', '1', 'dmflags', '16', 'fraglimit', '0']
     If the number of keys/values isn't equal truncate the last value
     Zip the above list of strings and then convert zip object into a dict:
@@ -21,14 +23,15 @@ class GameServer:
     players: list = []
     player_count: int = 0
     status: dict = {}
+    request: GameProtocolResponse
 
-    def __init__(self, address: tuple[str, int], result: dict):
+    def __init__(self, address: tuple[str, int], request: GameProtocolResponse):
         self.server_address: tuple[str, int] = address
-        self.result: dict = result
+        self.request = request
 
-        if result.get("status"):
-            self.dictify_status(result.get("status")[0])
-            self.dictify_players(result.get("status")[1:])
+        if request.status:
+            self.dictify_status(request.status[0])
+            self.dictify_players(request.status[1:])
 
         self.player_count = len(self.players)
 
@@ -46,15 +49,15 @@ class GameServer:
 
     @property
     def encoding(self) -> str:
-        return self.result.get("encoding")
+        return self.request.encoding
 
     @property
     def split_on(self) -> str:
-        return self.result.get("split_on")
+        return self.request.split_on
 
     @property
     def active(self) -> bool:
-        return self.result.get("active")
+        return self.request.active
 
     @property
     def json_status(self) -> str:
@@ -64,18 +67,18 @@ class GameServer:
     def json_players(self) -> str:
         return json.dumps(self.players)
 
-    def dictify_players(self, data: bytes):
+    def dictify_players(self, data: list[bytes]):
         player_regex = re.compile(
             r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII
         )
         for player in data:
-            player = re.match(player_regex, player.decode(self.encoding))
-            if player:
-                self.players.append(player.groupdict())
+            player_re = re.match(player_regex, player.decode(self.encoding))
+            if player_re:
+                self.players.append(player_re.groupdict())
 
-    def dictify_status(self, data: bytes, split_on: str = "\\"):
+    def dictify_status(self, data: bytes):
         decoded_status: str = data.decode(self.encoding)
-        list_status: list = decoded_status.split(split_on)[1:]
+        list_status: list = decoded_status.split(self.split_on)[1:]
 
         """
         If the length of status isn't even, truncate the last value
