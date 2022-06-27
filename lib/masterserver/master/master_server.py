@@ -5,7 +5,9 @@ from socketserver import (BaseServer, DatagramRequestHandler,
                           ThreadingTCPServer, ThreadingUDPServer)
 
 from helpers import LoggingMixin
+
 from master import HealthCheckHandler, MasterHandler
+from master.threadpool import ThreadPoolServer
 
 
 class MasterServerUDP(ThreadingUDPServer):
@@ -21,7 +23,7 @@ class MasterServerTCP(ThreadingTCPServer):
 
 
 class MasterServer(LoggingMixin):
-    master_server: MasterServerUDP
+    master_server: ThreadPoolServer
     master_thread: threading.Thread
     health_server: MasterServerTCP
     health_thread: threading.Thread
@@ -39,7 +41,7 @@ class MasterServer(LoggingMixin):
         self._create_health_check_master(address, health_port)
 
     def _create_master_master(self, address: str, port: int):
-        self.master_server = MasterServerUDP(
+        self.master_server = ThreadPoolServer(
             (address, port),
             MasterHandler,
         )

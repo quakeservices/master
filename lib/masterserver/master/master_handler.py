@@ -4,18 +4,15 @@ from ipaddress import ip_address
 from socketserver import DatagramRequestHandler
 from typing import Optional
 
-from gameserver import GameServer
 from helpers import LoggingMixin
-from protocols import GameProtocolResponse, GameProtocols
-from storage import PynamoDbStorage
+from protocols import ProtocolResponse, Protocols
+from storage import DynamoDbStorage, Server
 
 
 class MasterHandler(DatagramRequestHandler, LoggingMixin):
     def handle(self):
-        self.log("Initialising master server.")
-        self.storage = PynamoDbStorage()
-        # TODO: Share this between threads?
-        self.protocols = GameProtocols()
+        self.protocols = Protocols()
+        self.storage = DynamoDbStorage()
 
         request: bytes = b""
         while True:
@@ -27,11 +24,13 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
                 break
 
         self.log(f"Recieved {request!r} from {self.client_address}")
-        response: Optional[bytes] = None
 
-        protocol_response: GameProtocolResponse = self.protocols.parse_request(request)
+        protocol_response: Optional[ProtocolResponse] = self.protocols.parse_request(
+            request
+        )
         self.log(f"{asdict(protocol_response)}")
-        if protocol_response.header_match:
+        if protocol_response:
+            response: Optional[bytes] = None
             if protocol_response.header_type == "client":
                 response = self._handle_client_request(protocol_response)
             elif protocol_response.header_type in ("server", "any"):
@@ -44,24 +43,31 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
         self.log(f"Sending {response!r} to {self.client_address}")
         self.wfile.write(response)
 
-    def _handle_client_request(self, request: GameProtocolResponse) -> bytes:
+    def _handle_client_request(self, request: ProtocolResponse) -> bytes:
         self.log("Header belongs to client")
 
         response_header: Optional[bytes] = request.response
-        server_list: list[str] = self.storage.list_server_addresses(request.game)
-        server_list = [""]
+        server_list: list[str] = self.storage.get_servers(request.game)
         processed_server_list: list[bytes] = [
             self._pack_address(server) for server in server_list
         ]
         return self._create_response(processed_server_list, response_header)
 
-    def _handle_server_request(self, request: GameProtocolResponse) -> Optional[bytes]:
+    def _handle_server_request(self, request: ProtocolResponse) -> Optional[bytes]:
         self.log("Header belongs to server")
-        server = GameServer(self.client_address, request)
-        if server.active:
-            self.storage.save_server(server)
-        else:
-            self.storage.server_shutdown(server)
+        address = ":".join([self.client_address[0], self.client_address[1]])
+        server = Server(
+            address=address,
+            game=request.game,
+            active=request.active,
+            details=request.details,
+            players=request.players,
+        )
+
+        # if server.active:
+        #     self.storage.save_server(server)
+        # else:
+        #     self.storage.server_shutdown(server)
 
         return request.response
 

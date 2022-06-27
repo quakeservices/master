@@ -1,20 +1,29 @@
 import logging
+import threading
 from typing import Union
 
 
 class LoggingMixin:
-    # TODO: Different log levels
+    def _get_logger(self):
+        return logging.getLogger(__name__)
+
     def log(self, message: Union[str, bytes]):
-        calling_class = self.__class__.__name__
+        logger = self._get_logger()
+        calling_class: str = self.__class__.__name__
+        current_thread: str = threading.current_thread().name
         if isinstance(message, bytes):
-            logging.debug(
-                "{calling_class} - {message!r}".format(
-                    calling_class=calling_class, message=message
+            logger.debug(
+                "{calling_class} - {current_thread} - {message!r}".format(
+                    calling_class=calling_class,
+                    current_thread=current_thread,
+                    message=message,
                 )
             )
         else:
-            logging.debug(
-                "{calling_class} - {message}".format(
-                    calling_class=calling_class, message=message
+            logger.debug(
+                "{calling_class} - {current_thread} - {message}".format(
+                    calling_class=calling_class,
+                    current_thread=current_thread,
+                    message=message,
                 )
             )

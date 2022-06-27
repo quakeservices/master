@@ -3,7 +3,8 @@ import re
 
 from protocols.models import GameProtocolResponse
 
-# TODO: Replace with storage.Server
+
+# TODO: Replace with protocols.models.idtech2.quake2
 class GameServer:
     """
     Input:
