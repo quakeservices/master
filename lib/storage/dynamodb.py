@@ -1,4 +1,3 @@
-from dataclasses import fields
 from typing import Any, Optional
 
 import boto3
@@ -10,7 +9,8 @@ from mypy_boto3_dynamodb.type_defs import (GetItemOutputTableTypeDef,
                                            ScanOutputTableTypeDef,
                                            UpdateItemOutputTableTypeDef)
 
-from . import BaseStorage, Server
+from . import BaseStorage
+from .server import Server
 
 
 class DynamoDbStorage(BaseStorage):
@@ -21,18 +21,18 @@ class DynamoDbStorage(BaseStorage):
         dynamodb: DynamoDBServiceResource = session.resource("dynamodb")
         self.table: Table = dynamodb.Table(table_name)
 
-    def create_server(self, server_data: Server) -> bool:
-        result: bool = self._put_item(server_data)
+    def create_server(self, server: Server) -> bool:
+        result: bool = self._put_item(server)
         return result
 
-    def _put_item(self, server_data: Server) -> bool:
+    def _put_item(self, server: Server) -> bool:
         result: PutItemOutputTableTypeDef = self.table.put_item(
             Item={
-                "server": server_data.server_address,
-                "active": server_data.active,
-                "game": server_data.game,
-                "details": server_data.details,
-                "players": server_data.players,
+                "server": server.address,
+                "active": server.active,
+                "game": server.game,
+                "details": server.details,
+                "players": server.players,
             }
         )
 
@@ -41,20 +41,18 @@ class DynamoDbStorage(BaseStorage):
 
         return False
 
-    def get_server(
-        self, server_address: str, game: Optional[str] = None
-    ) -> Optional[Server]:
+    def get_server(self, address: str, game: Optional[str] = None) -> Optional[Server]:
         server: Optional[Server] = None
-        result = self._get_item(server_address)
+        result = self._get_item(address)
 
         if result:
             server = Server(**result)
 
         return server
 
-    def _get_item(self, server_address: str):
+    def _get_item(self, address: str):
         response: GetItemOutputTableTypeDef = self.table.get_item(
-            Key={"server_address": server_address}
+            Key={"address": address}
         )
         item: GetItemOutputTableTypeDef.Item = response["Item"]
         return item
@@ -80,20 +78,20 @@ class DynamoDbStorage(BaseStorage):
         items = response["Items"]
         return items
 
-    def update_server(self, server_data: Server) -> bool:
-        result: bool = self._update_item(server_data)
+    def update_server(self, server: Server) -> bool:
+        result: bool = self._update_item(server)
         return result
 
-    def _update_item(self, server_data: Server) -> bool:
+    def _update_item(self, server: Server) -> bool:
         update_expression: str = "SET active=:a, game=:g, details=:d, players=:p"
         expression_attribute_values: dict[str, Any] = {
-            ":a": server_data.active,
-            ":g": server_data.game,
-            ":d": server_data.details,
-            ":p": server_data.players,
+            ":a": server.active,
+            ":g": server.game,
+            ":d": server.details,
+            ":p": server.players,
         }
         result: UpdateItemOutputTableTypeDef = self.table.update_item(
-            Key={"server_address": server_data.server_address},
+            Key={"address": server.address},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
             ReturnedValues="UPDATED_NEW",
