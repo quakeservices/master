@@ -1,0 +1,10 @@
+pytest
+black
+isort
+pylint
+mypy
+yamllint
+-c ./lib/storage/requirements.txt
+-c ./lib/web-backend/requirements.txt
+-c ./lib/masterserver/requirements.txt
+-c ./deployment/requirements.txt
