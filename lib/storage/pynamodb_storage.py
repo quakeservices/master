@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from helper import LoggingMixin
-
 from . import BaseStorage
 from .pynamo_model import PynamoServer
 
 
+# TODO: This a hot mess in need of a rework
+#       or alternatively removal
 class PynamoDbStorage(BaseStorage):
     def server_object(self, server):
-        self.log(f"creating server for {server.address}")
         return PynamoServer(
             server.address,
             game=server.game,
@@ -25,8 +24,6 @@ class PynamoDbStorage(BaseStorage):
             return server
 
     def get_server(self, server):
-        self.log(f"looking for {server.address}")
-
         query = self.get_server_obj(server)
         if query:
             return True
@@ -34,13 +31,11 @@ class PynamoDbStorage(BaseStorage):
             return False
 
     def list_servers(self, game=None):
-        self.log(f"list_servers for {game}")
         servers = [server for server in PynamoServer.scan() if server.active]
 
         return servers
 
     def list_server_addresses(self, game=None):
-        self.log(f"list_servers for {game}")
         servers = [server.address for server in self.list_servers()]
 
         return servers
@@ -52,7 +47,6 @@ class PynamoDbStorage(BaseStorage):
             self._create_server(server)
 
     def _create_server(self, server):
-        self.log(f"create_server {server.address}")
         try:
             server_obj = self.server_object(server)
             server_obj.save()
@@ -60,7 +54,6 @@ class PynamoDbStorage(BaseStorage):
             raise
 
     def _update_server(self, server):
-        self.log(f"update_server {server.address}")
         try:
             server_obj = self.get_server_obj(server)
             server_obj.update(
@@ -77,7 +70,6 @@ class PynamoDbStorage(BaseStorage):
             raise
 
     def server_shutdown(self, server):
-        self.log(f"update_server {server.address}")
         try:
             server_obj = self.get_server_obj(server)
             server_obj.update(
