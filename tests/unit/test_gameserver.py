@@ -1,4 +1,5 @@
 import pytest
+
 from lib.masterserver.gameserver import GameServer
 
 

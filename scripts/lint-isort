@@ -4,9 +4,9 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND='yamllint lib/masterserver/protocols/config/'
+COMMAND='isort --check-only .'
 
-echo "+++ Running yamllint +++"
+echo "+++ Running Black +++"
 if [ -z $CI ]; then
   scripts/include/run-test-container $COMMAND
 else

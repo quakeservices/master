@@ -1,8 +1,12 @@
 import socket
 import threading
 import time
-from socketserver import (BaseServer, DatagramRequestHandler,
-                          ThreadingTCPServer, ThreadingUDPServer)
+from socketserver import (
+    BaseServer,
+    DatagramRequestHandler,
+    ThreadingTCPServer,
+    ThreadingUDPServer,
+)
 
 from helpers import LoggingMixin
 

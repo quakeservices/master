@@ -1,4 +1,5 @@
 import pytest
+
 from lib.masterserver.protocols import ProtocolResponse, Protocols
 
 

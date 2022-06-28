@@ -4,10 +4,12 @@ import boto3
 from boto3.dynamodb.conditions import Attr, Key
 from constants import APP_NAME
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
-from mypy_boto3_dynamodb.type_defs import (GetItemOutputTableTypeDef,
-                                           PutItemOutputTableTypeDef,
-                                           ScanOutputTableTypeDef,
-                                           UpdateItemOutputTableTypeDef)
+from mypy_boto3_dynamodb.type_defs import (
+    GetItemOutputTableTypeDef,
+    PutItemOutputTableTypeDef,
+    ScanOutputTableTypeDef,
+    UpdateItemOutputTableTypeDef,
+)
 
 from . import BaseStorage
 from .server import Server

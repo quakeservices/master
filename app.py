@@ -3,8 +3,7 @@ from aws_cdk import App, Environment
 
 from deployment.constants import APP_NAME
 from deployment.environments import us_east_1, us_west_2
-from deployment.stacks import (InfraStack, MasterStack, WebBackendStack,
-                               WebFrontendStack)
+from deployment.stacks import InfraStack, MasterStack, WebBackendStack, WebFrontendStack
 from deployment.stacks.pipeline import PipelineStack
 
 app = App()

@@ -1,7 +1,6 @@
 from typing import Optional, Union
 
-from protocols.models import (BaseProtocolHeaders, GameProtocol,
-                              ProtocolResponse)
+from protocols.models import BaseProtocolHeaders, GameProtocol, ProtocolResponse
 from protocols.models.idtech2 import Idtech2Protocol
 from protocols.utilities import dictify_players, dictify_status
 from pydantic import Field

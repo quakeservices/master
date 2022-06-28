@@ -1,8 +1,7 @@
 from collections.abc import Mapping
 from typing import Optional
 
-from protocols.models import (BaseProtocol, BaseProtocolHeaders,
-                              ProtocolResponse)
+from protocols.models import BaseProtocol, BaseProtocolHeaders, ProtocolResponse
 from pydantic import Field
 
 

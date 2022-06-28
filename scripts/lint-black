@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
-
 source scripts/include/build-env
 
+COMMAND='black --check .'
+
 echo "+++ Running Black +++"
-scripts/include/run-test-container black --check .
+if [ -z $CI ]; then
+  scripts/include/run-test-container $COMMAND
+else
+  $COMMAND
+fi

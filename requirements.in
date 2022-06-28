@@ -1,12 +1,4 @@
-black
-isort
-mypy
-pylint
-pytest
-yamllint
 PyYAML
-
-
 aws-cdk-lib
 aws_cdk.aws_lambda_python_alpha
 boto3

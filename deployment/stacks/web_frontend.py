@@ -10,6 +10,7 @@ from aws_cdk import aws_route53_targets as route53_targets
 from aws_cdk import aws_s3 as s3
 from aws_cdk import aws_s3_deployment as s3deploy
 from constructs import Construct
+
 from deployment.constants import DOMAIN_NAME
 
 

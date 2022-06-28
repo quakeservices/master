@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
-
 source scripts/include/build-env
 
+COMMAND='pylint --errors-only app.py lib deployment tests'
+
 echo "+++ Running Pylint +++"
-scripts/include/run-test-container pylint --errors-only app.py lib deployment
+if [ -z $CI ]; then
+  scripts/include/run-test-container $COMMAND
+else
+  $COMMAND
+fi
