@@ -1,8 +1,8 @@
 from aws_cdk import Stage
 from constructs import Construct
+
 from deployment.constants import APP_NAME
-from deployment.stacks import (InfraStack, MasterStack, WebBackendStack,
-                               WebFrontendStack)
+from deployment.stacks import InfraStack, MasterStack, WebBackendStack, WebFrontendStack
 
 
 class PipelineInfraStage(Stage):
