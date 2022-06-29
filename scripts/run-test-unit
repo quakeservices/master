@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+source scripts/include/build-env
+
+COMMAND="pytest -v test/unit"
+
+echo "+++ Running tests +++"
+if [ -z $CI ]; then
+  scripts/include/run-test-container $COMMAND
+else
+  $COMMAND
+fi
