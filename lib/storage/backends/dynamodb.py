@@ -10,9 +10,8 @@ from mypy_boto3_dynamodb.type_defs import (
     ScanOutputTableTypeDef,
     UpdateItemOutputTableTypeDef,
 )
-
-from . import BaseStorage
-from .server import Server
+from storage import BaseStorage
+from storage.server import Server
 
 
 class DynamoDbStorage(BaseStorage):

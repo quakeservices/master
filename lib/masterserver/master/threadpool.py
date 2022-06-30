@@ -8,6 +8,7 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
     allow_reuse_port: bool = True
     allow_reuse_address: bool = True
     cpu_count: int = os.cpu_count() or 1
+    # TODO: Have a max_thread_pool_size
     thread_pool_size: int = cpu_count * 1
     requests: Queue = Queue(thread_pool_size)
 

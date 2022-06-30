@@ -1,6 +1,7 @@
 from typing import Optional
 
-from protocols.models import GameProtocol, ProtocolResponse, Quake2
+from protocols.models import GameProtocol, Quake2
+from protocols.models.response import ProtocolResponse
 from protocols.proxy import ProxyProtocol
 
 
@@ -33,6 +34,6 @@ class Protocols:
 
         protocol = self._find_protocol(request_header)
         if protocol:
-            response = protocol.process_data(status)
+            response = protocol.process_data(request_header, status)
 
         return response

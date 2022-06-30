@@ -1,7 +1,7 @@
-from collections.abc import Mapping
 from typing import Optional
 
-from protocols.models import BaseProtocol, BaseProtocolHeaders, ProtocolResponse
+from protocols.models import BaseProtocol, Headers
+from protocols.models.response import ProtocolResponse
 from pydantic import Field
 
 
@@ -18,7 +18,7 @@ class GameProtocol(BaseProtocol):
     versions: list[str] = Field(
         description="Versions of the game this protocol applies to"
     )
-    headers: Mapping[str, BaseProtocolHeaders] = Field(description="Header definitions")
+    headers: Headers = Field(description="Header definitions")
     valid_status_keys: Optional[list[str]] = Field(
         description="List of expected keys when parsing a server status",
         default_factory=list,
@@ -27,5 +27,7 @@ class GameProtocol(BaseProtocol):
     def match_header(self, received_header: bytes) -> bool:
         raise NotImplementedError
 
-    def process_data(self, data: list[bytes]) -> ProtocolResponse:
+    def process_data(
+        self, received_header: bytes, data: list[bytes]
+    ) -> ProtocolResponse:
         raise NotImplementedError

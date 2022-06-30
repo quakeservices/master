@@ -1,12 +1,12 @@
 import struct
-from dataclasses import asdict
 from ipaddress import ip_address
 from socketserver import DatagramRequestHandler
 from typing import Optional
 
 from helpers import LoggingMixin
 from protocols import ProtocolResponse, Protocols
-from storage import DynamoDbStorage, Server
+from storage import Server
+from storage.backends import DynamoDbStorage
 
 
 class MasterHandler(DatagramRequestHandler, LoggingMixin):
@@ -28,7 +28,6 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
         protocol_response: Optional[ProtocolResponse] = self.protocols.parse_request(
             request
         )
-        self.log(f"{asdict(protocol_response)}")
         if protocol_response:
             response: Optional[bytes] = None
             if protocol_response.header_type == "client":
@@ -47,20 +46,21 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
         self.log("Header belongs to client")
 
         response_header: Optional[bytes] = request.response
-        server_list: list[str] = self.storage.get_servers(request.game)
+        server_list: list[Server] = self.storage.get_servers(request.game)
         processed_server_list: list[bytes] = [
-            self._pack_address(server) for server in server_list
+            self._pack_address(server.address) for server in server_list
         ]
+
         return self._create_response(processed_server_list, response_header)
 
     def _handle_server_request(self, request: ProtocolResponse) -> Optional[bytes]:
         self.log("Header belongs to server")
-        address = ":".join([self.client_address[0], self.client_address[1]])
+        address = ":".join([self.client_address[0], str(self.client_address[1])])
         server = Server(
             address=address,
             game=request.game,
             active=request.active,
-            details=request.details,
+            status=request.status,
             players=request.players,
         )
 

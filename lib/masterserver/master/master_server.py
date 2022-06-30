@@ -1,23 +1,12 @@
 import socket
 import threading
 import time
-from socketserver import (
-    BaseServer,
-    DatagramRequestHandler,
-    ThreadingTCPServer,
-    ThreadingUDPServer,
-)
+from socketserver import ThreadingTCPServer
 
 from helpers import LoggingMixin
 
 from master import HealthCheckHandler, MasterHandler
 from master.threadpool import ThreadPoolServer
-
-
-class MasterServerUDP(ThreadingUDPServer):
-    daemon_threads = True
-    allow_reuse_address = True
-    allow_reuse_port = True
 
 
 class MasterServerTCP(ThreadingTCPServer):
