@@ -85,7 +85,12 @@ class WebFrontendStack(Stack):
         )
 
     def _create_deployment(self):
-        assets_directory = "lib/web-frontend/dist"
+        if Stack.of(self).account == "1234567890123":
+            # If we're in the test environment just pick a directory that exists
+            assets_directory = "lib/web-frontend"
+        else:
+            assets_directory = "lib/web-frontend/dist"
+
         return s3deploy.BucketDeployment(
             self,
             "asset_deployment",
