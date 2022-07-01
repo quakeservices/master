@@ -4,7 +4,16 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND='mypy .'
+COMMAND='
+mypy
+  --exclude lib/masterserver/storage
+  --exclude lib/web-backend/storage
+  deployment/
+  lib/clients/
+  lib/masterserver/
+  lib/web-backend/
+  lib/storage/
+'
 
 echo "+++ Running mypy +++"
 if [ -z $CI ]; then

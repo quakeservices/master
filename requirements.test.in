@@ -1,18 +1,15 @@
+-r ./lib/storage/requirements.txt
+-r ./lib/web-backend/requirements.txt
+-r ./lib/masterserver/requirements.txt
+-r ./deployment/requirements.txt
+
 black
 isort
 mypy
 pylint
 pytest
+pytest-cov
+pytest-mock
 yamllint
 PyYAML
-
-
-aws-cdk-lib
-aws_cdk.aws_lambda_python_alpha
-boto3
-boto3-stubs[dynamodb]
-constructs
 pip-tools
-pynamodb
-pydantic
-types-PyYAML

@@ -1,1 +1,1 @@
-pynamodb
+-r storage/requirements.txt

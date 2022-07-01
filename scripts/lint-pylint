@@ -4,7 +4,16 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND='pylint --errors-only app.py lib deployment tests'
+COMMAND='
+pylint
+    --errors-only
+    app.py
+    lib/clients
+    lib/masterserver
+    lib/web-backend
+    deployment
+    test
+'
 
 echo "+++ Running Pylint +++"
 if [ -z $CI ]; then

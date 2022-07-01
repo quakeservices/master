@@ -4,7 +4,13 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND="pytest -v test/unit"
+COMMAND="
+pytest -v
+  --cov=lib/masterserver/
+  --cov=lib/web-backend/
+  --cov=lib/storage/
+  test/unit
+"
 
 echo "+++ Running tests +++"
 if [ -z $CI ]; then
