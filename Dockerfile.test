@@ -1,8 +1,12 @@
 # syntax=docker/dockerfile:1
 FROM quakeservices/base:latest
 
+WORKDIR /code
+
 RUN --mount=type=cache,target=/var/cache/apt \
-  apt-get install -y docker npm
+  apt-get install -y --no-install-recommends \
+    docker \
+    npm
 
 RUN --mount=type=cache,target=/root/.npm \
   npm -g install aws-cdk@latest

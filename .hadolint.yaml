@@ -1,0 +1,7 @@
+---
+ignored:
+  - DL3009  # Delete the apt-get lists after installing something.
+  - DL3013  # Pin versions in pip.
+  - DL3042  # Avoid use of cache directory with pip.
+  - DL3008  # Pin versions in apt get install.
+  - DL3007  # Using latest is prone to errors if the image will ever update.
