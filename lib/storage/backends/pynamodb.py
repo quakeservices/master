@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from . import BaseStorage
-from .pynamo_model import PynamoServer
+from storage import BaseStorage
+from storage.models.pynamodb import PynamoServer
 
 
 # TODO: This a hot mess in need of a rework

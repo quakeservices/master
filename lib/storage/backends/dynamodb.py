@@ -55,7 +55,7 @@ class DynamoDbStorage(BaseStorage):
         response: GetItemOutputTableTypeDef = self.table.get_item(
             Key={"address": address}
         )
-        item: GetItemOutputTableTypeDef.Item = response["Item"]
+        item = response["Item"]
         return item
 
     def get_servers(self, game: Optional[str] = None) -> list[Server]:
@@ -95,7 +95,7 @@ class DynamoDbStorage(BaseStorage):
             Key={"address": server.address},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
-            ReturnedValues="UPDATED_NEW",
+            ReturnValues="UPDATED_NEW",
         )
 
         # The Attributes map is only present if ReturnValues was specified as

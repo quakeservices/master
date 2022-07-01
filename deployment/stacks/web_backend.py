@@ -39,7 +39,7 @@ class WebBackendStack(Stack):
 
         return route53.HostedZone.from_lookup(self, "zone", domain_name=zone)
 
-    def _get_table(self) -> dynamodb.Table:
+    def _get_table(self) -> dynamodb.ITable:
         return dynamodb.Table.from_table_name(
             self,
             "table",

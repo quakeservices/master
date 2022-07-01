@@ -4,11 +4,9 @@ from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_elasticloadbalancingv2 as elb
-from aws_cdk import aws_iam as iam
 from aws_cdk import aws_logs as logs
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
-from aws_cdk import aws_ssm as ssm
 from constructs import Construct
 
 from deployment.constants import APP_NAME, DOMAIN_NAME
@@ -42,23 +40,23 @@ class MasterStack(Stack):
         self._create_service_and_nlb()
         self._create_route53_record()
 
-    def _get_vpc(self) -> ec2.Vpc:
+    def _get_vpc(self) -> ec2.IVpc:
         return ec2.Vpc.from_lookup(self, "vpc", vpc_name=APP_NAME)
 
-    def _get_zone(self) -> route53.HostedZone:
+    def _get_zone(self) -> route53.IHostedZone:
         return route53.HostedZone.from_lookup(self, "domain", domain_name=DOMAIN_NAME)
 
-    def _get_cluster(self) -> ecs.Cluster:
+    def _get_cluster(self) -> ecs.ICluster:
         return ecs.Cluster.from_cluster_attributes(
             self, "cluster", vpc=self.vpc, cluster_name=APP_NAME, security_groups=[]
         )
 
-    def _get_ecr_repository(self) -> ecr.Repository:
+    def _get_ecr_repository(self) -> ecr.IRepository:
         return ecr.Repository.from_repository_name(
             self, "repository", repository_name=APP_NAME
         )
 
-    def _get_table(self) -> dynamodb.Table:
+    def _get_table(self) -> dynamodb.ITable:
         return dynamodb.Table.from_table_name(
             self,
             "table",
