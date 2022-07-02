@@ -133,7 +133,7 @@ class TestQuakeservicesFrontend:
                 "MemorySize": 128,
                 "Handler": "__entrypoint__.handler",
                 "Role": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
-                "Runtime": "nodejs12.x",
+                "Runtime": "nodejs14.x",
                 "Description": {
                     "Fn::Join": [
                         Match.any_value(),
