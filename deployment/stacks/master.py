@@ -75,7 +75,7 @@ class MasterStack(Stack):
         self.table.grant_read_write_data(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
-        return ecs.ContainerImage.from_asset(directory="lib/masterserver")
+        return ecs.ContainerImage.from_asset(file="Dockerfile.master", directory=".")
 
     def _create_task_container(self):
         """
