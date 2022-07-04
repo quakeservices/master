@@ -5,6 +5,7 @@ from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
+
 from deployment.constants import APP_NAME, DOMAINS
 
 

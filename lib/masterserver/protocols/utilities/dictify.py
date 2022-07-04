@@ -8,7 +8,7 @@ def dictify_players(data: list[bytes], encoding: str) -> list[Optional[dict[str,
     """
     players: list[Optional[dict[str, str]]] = []
     player_regex = re.compile(
-        r'(?P<score>-?\d+) (?P<ping>\d+) (?P<name>".+")', flags=re.ASCII
+        r'(?P<score>-?\d+) (?P<ping>-?\d+) "(?P<name>.+)"', flags=re.ASCII
     )
     for player in data:
         player_re = re.match(player_regex, player.decode(encoding))

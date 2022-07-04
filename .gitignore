@@ -1,7 +1,6 @@
 cdk.context.json
 cdk.out/*
 
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

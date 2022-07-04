@@ -1,4 +1,3 @@
 aws-cdk-lib
 aws_cdk.aws_lambda_python_alpha
 constructs
-pip-tools

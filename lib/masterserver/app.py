@@ -35,6 +35,7 @@ def main():
     logging.info("Starting master server.")
 
     masterserver = MasterServer()
+
     masterserver.start()
 
     logging.info("Master server stopped.")

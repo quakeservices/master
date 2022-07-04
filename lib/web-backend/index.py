@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 
-from storage import Storage
+from storage.backends import DynamoDbStorage as Storage
 
 HEADERS = {
     "Content-Type": "application/json",

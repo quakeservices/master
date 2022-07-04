@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
-
 source scripts/include/build-env
 
+COMMAND='
+mypy
+  --exclude lib/masterserver/storage
+  --exclude lib/web-backend/storage
+  deployment/
+  lib/clients/
+  lib/masterserver/
+  lib/web-backend/
+  lib/storage/
+'
+
 echo "+++ Running mypy +++"
-scripts/include/run-test-container mypy .
+if [ -z $CI ]; then
+  scripts/include/run-test-container $COMMAND
+else
+  $COMMAND
+fi

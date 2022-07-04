@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
 cd "$(git rev-parse --show-toplevel)"
 
 source scripts/include/build-env
@@ -9,3 +7,4 @@ scripts/lint-black
 scripts/lint-isort
 scripts/lint-pylint
 scripts/lint-mypy
+scripts/lint-hadolint

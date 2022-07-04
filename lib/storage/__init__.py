@@ -1,6 +1,5 @@
 from typing import Optional, Union
 
-from storage.dynamodb.py import DynamoDbStorage
 from storage.server import Server
 
 

@@ -1,13 +1,19 @@
 from aws_cdk import RemovalPolicy, Stack
+from aws_cdk import aws_codebuild as codebuild
+from aws_cdk import aws_codepipeline as codepipeline
+from aws_cdk import aws_codepipeline_actions as codepipeline_actions
 from aws_cdk import aws_ssm as ssm
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
 from constructs import Construct
+
 from deployment.constants import APP_NAME, REPO
 from deployment.environments import us_east_1, us_west_2
-from deployment.stacks.pipelines import (PipelineInfraStage,
-                                         PipelineMasterStage,
-                                         PipelineWebBackendStage,
-                                         PipelineWebFrontendStage)
+from deployment.stacks.pipelines import (
+    PipelineInfraStage,
+    PipelineMasterStage,
+    PipelineWebBackendStage,
+    PipelineWebFrontendStage,
+)
 
 
 class PipelineStack(Stack):

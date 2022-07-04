@@ -1,10 +1,15 @@
-pytest
+-r ./lib/storage/requirements.txt
+-r ./lib/web-backend/requirements.txt
+-r ./lib/masterserver/requirements.txt
+-r ./deployment/requirements.txt
+
 black
 isort
-pylint
 mypy
+pylint
+pytest
+pytest-cov
+pytest-mock
 yamllint
--c ./lib/storage/requirements.txt
--c ./lib/web-backend/requirements.txt
--c ./lib/masterserver/requirements.txt
--c ./deployment/requirements.txt
+PyYAML
+pip-tools

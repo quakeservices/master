@@ -4,13 +4,14 @@ import boto3
 from boto3.dynamodb.conditions import Attr, Key
 from constants import APP_NAME
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
-from mypy_boto3_dynamodb.type_defs import (GetItemOutputTableTypeDef,
-                                           PutItemOutputTableTypeDef,
-                                           ScanOutputTableTypeDef,
-                                           UpdateItemOutputTableTypeDef)
-
-from . import BaseStorage
-from .server import Server
+from mypy_boto3_dynamodb.type_defs import (
+    GetItemOutputTableTypeDef,
+    PutItemOutputTableTypeDef,
+    ScanOutputTableTypeDef,
+    UpdateItemOutputTableTypeDef,
+)
+from storage import BaseStorage
+from storage.server import Server
 
 
 class DynamoDbStorage(BaseStorage):
@@ -54,7 +55,7 @@ class DynamoDbStorage(BaseStorage):
         response: GetItemOutputTableTypeDef = self.table.get_item(
             Key={"address": address}
         )
-        item: GetItemOutputTableTypeDef.Item = response["Item"]
+        item = response["Item"]
         return item
 
     def get_servers(self, game: Optional[str] = None) -> list[Server]:
@@ -94,7 +95,7 @@ class DynamoDbStorage(BaseStorage):
             Key={"address": server.address},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
-            ReturnedValues="UPDATED_NEW",
+            ReturnValues="UPDATED_NEW",
         )
 
         # The Attributes map is only present if ReturnValues was specified as

@@ -10,6 +10,7 @@ from aws_cdk import aws_lambda_python_alpha as _lambda_python
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
+
 from deployment.constants import APP_NAME, DOMAIN_NAME
 
 
@@ -38,7 +39,7 @@ class WebBackendStack(Stack):
 
         return route53.HostedZone.from_lookup(self, "zone", domain_name=zone)
 
-    def _get_table(self) -> dynamodb.Table:
+    def _get_table(self) -> dynamodb.ITable:
         return dynamodb.Table.from_table_name(
             self,
             "table",

@@ -7,3 +7,7 @@ MASTER_NAME="master"
 MASTER_DIR="lib/masterserver"
 MASTER_PORT="27900/udp"
 MASTER_HEALTHCHECK="8080/tcp"
+
+AWS_DEFAULT_ACCESS_KEY="xxxxxxxxxxxx"
+AWS_DEFAULT_SECRET_KEY="xxxxxxxxxxxx"
+AWS_DEFAULT_REGION="us-west-2"

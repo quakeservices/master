@@ -1,5 +1,6 @@
 import pytest
 from aws_cdk.assertions import Match, Template
+
 from deployment.stacks import MasterStack
 
 
@@ -88,9 +89,7 @@ class TestQuakeservicesMaster:
                             "Retries": 3,
                             "Timeout": 5,
                         },
-                        "Image": {
-                            "Fn::Sub": "123456789012.dkr.ecr.us-west-2.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-123456789012-us-west-2:6de474f4bc34f4d55d83a8ff7fdf432688c0c434e371d6b98ec7f9f946e5eb7f"
-                        },
+                        "Image": {"Fn::Sub": Match.any_value()},
                         "LogConfiguration": {
                             "LogDriver": "awslogs",
                             "Options": {

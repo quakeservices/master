@@ -4,9 +4,13 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND='yamllint lib/masterserver/protocols/config/'
+COMMAND="
+pytest -v
+  --cov=deployment/
+  test/cdk
+"
 
-echo "+++ Running yamllint +++"
+echo "+++ Running tests +++"
 if [ -z $CI ]; then
   scripts/include/run-test-container $COMMAND
 else

@@ -1,22 +1,23 @@
 from typing import Optional
 
-from protocols.models import GameProtocol, ProtocolResponse, Quake2
-from protocols.proxy import ProxyProtocol
+from protocols.models import GameProtocol, Quake2
+from protocols.models.response import ProtocolResponse
+from proxyprotocol import ProxyProtocolResult
+from proxyprotocol.v2 import ProxyProtocolV2
 
 
 class Protocols:
+    pp = ProxyProtocolV2()
     protocols: list[GameProtocol] = [Quake2()]
 
-    @staticmethod
-    def _check_proxy_protocol(request: bytes) -> bytes:
-        parsed_request: bytes = b""
+    def _check_proxy_protocol(self, request: bytes) -> bytes:
+        if len(request) > 8:
+            if self.pp.is_valid(request):
+                raise NotImplementedError
+                # TODO: Fixme
+                # result: ProxyProtocolResult = self.pp.parse(request)
 
-        if len(request) >= 16:
-            parsed_request = ProxyProtocol.parse_request(request)
-        else:
-            parsed_request = request
-
-        return parsed_request
+        return request
 
     def _find_protocol(self, request_header: bytes) -> Optional[GameProtocol]:
         for protocol in self.protocols:
@@ -33,6 +34,6 @@ class Protocols:
 
         protocol = self._find_protocol(request_header)
         if protocol:
-            response = protocol.process_data(status)
+            response = protocol.process_data(request_header, status)
 
         return response

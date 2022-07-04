@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
-FROM quakeservices/base:latest
+FROM quakeservices/cdk:latest
+
+WORKDIR /code
 
 COPY requirements.test.txt .
 

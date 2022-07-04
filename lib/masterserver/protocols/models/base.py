@@ -1,6 +1,7 @@
+from collections.abc import Mapping
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 
 class BaseProtocol(BaseModel):
@@ -26,3 +27,6 @@ class BaseProtocolHeaders(BaseModel):
 class BaseProtocolPlayerStatus(BaseModel):
     score: int = Field(description="Player score")
     player: str = Field(description="Player name")
+
+
+Headers = Mapping[str, BaseProtocolHeaders]
