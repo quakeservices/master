@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 source scripts/include/build-env
-scripts/build-cdk
+scripts/build-base
 
 DOCKER_ARGS=""
 PARENT_COMMAND=$(ps -o args= $PPID)
@@ -12,8 +12,8 @@ if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
   DOCKER_ARGS="--quiet"
 fi
 
-echo "+++ Building test image +++"
+echo "+++ Building cdk image +++"
 docker build ${DOCKER_ARGS} \
-              --tag ${APP_NAME}/test:latest \
-              --file Dockerfile.test \
+              --tag ${APP_NAME}/cdk:latest \
+              --file Dockerfile.cdk \
               .

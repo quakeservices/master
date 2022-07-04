@@ -4,6 +4,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 source scripts/include/build-env
 
+DOCKER_ARGS=""
 PARENT_COMMAND=$(ps -o args= $PPID)
 if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
   DOCKER_ARGS="--quiet"
