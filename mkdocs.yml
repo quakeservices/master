@@ -1,0 +1,14 @@
+site_name: Quake Services
+nav:
+  - Home: index.md
+  - Usage:
+      - Server Administrators: usage/servers.md
+      - Clients: usage/clients.md
+  - Development:
+      - Environment: development/environment.md
+      - Contributing: development/contributing.md
+  - Deployment:
+      - Local: deployment/local.md
+      - AWS: deployment/aws.md
+  - Reference:
+      - External: references/external.md
