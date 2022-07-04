@@ -1,9 +1,11 @@
+import signal
 import socket
 import threading
 import time
 from socketserver import ThreadingTCPServer
 
 from helpers import LoggingMixin
+
 from master import HealthCheckHandler, MasterHandler
 from master.threadpool import ThreadPoolServer
 
@@ -31,6 +33,11 @@ class MasterServer(LoggingMixin):
     ):
         self._create_master_master(address, master_port)
         self._create_health_check_master(address, health_port)
+        self._setup_signals()
+
+    def _setup_signals(self):
+        signal.signal(signal.SIGINT, self.shutdown())
+        signal.signal(signal.SIGTERM, self.shutdown())
 
     def _create_master_master(self, address: str, port: int):
         self.master_server = ThreadPoolServer(
@@ -59,7 +66,7 @@ class MasterServer(LoggingMixin):
                 while self.alive():
                     time.sleep(1)
             except KeyboardInterrupt:
-                pass
+                self.shutdown()
             finally:
                 self.shutdown()
 
@@ -67,5 +74,6 @@ class MasterServer(LoggingMixin):
         return self.master_thread.is_alive() and self.health_thread.is_alive()
 
     def shutdown(self):
+        self.master_server.terminate()
         self.master_server.shutdown()
         self.health_server.shutdown()
