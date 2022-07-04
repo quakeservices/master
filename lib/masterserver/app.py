@@ -36,7 +36,6 @@ def main():
 
     masterserver = MasterServer()
 
-
     masterserver.start()
 
     logging.info("Master server stopped.")
