@@ -1,5 +1,7 @@
 # Overview
 
+[![Build Status](https://github.com/quakeservices/master/actions/workflows/master.yaml/badge.svg)](https://github.com/quakeservices/master/actions/workflows/master.yaml)
+
 This project as an attempt to replicate the idSoftware master server for Quake 2 (satan.idsoftware.com) in Python 3.
 
 Core goals:
