@@ -15,5 +15,5 @@ fi
 echo "+++ Building master server +++"
 docker build ${DOCKER_ARGS} \
               --tag ${APP_NAME}/master:latest \
-              --file Dockerfile.master \
+              --file docker/Dockerfile.master \
               .

@@ -13,5 +13,5 @@ fi
 echo "+++ Building base image +++"
 docker build ${DOCKER_ARGS} \
               --tag ${APP_NAME}/base:latest \
-              --file Dockerfile.base \
+              --file docker/Dockerfile.base \
               .

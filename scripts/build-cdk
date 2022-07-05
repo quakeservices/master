@@ -15,5 +15,5 @@ fi
 echo "+++ Building cdk image +++"
 docker build ${DOCKER_ARGS} \
               --tag ${APP_NAME}/cdk:latest \
-              --file Dockerfile.cdk \
+              --file docker/Dockerfile.cdk \
               .

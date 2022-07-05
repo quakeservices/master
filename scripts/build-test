@@ -15,5 +15,5 @@ fi
 echo "+++ Building test image +++"
 docker build ${DOCKER_ARGS} \
               --tag ${APP_NAME}/test:latest \
-              --file Dockerfile.test \
+              --file docker/Dockerfile.test \
               .

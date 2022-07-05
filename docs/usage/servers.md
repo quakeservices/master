@@ -1,6 +1,5 @@
 # Servers
 
-
 ## Quake 2
 
 Setting the master of a running Quake 2 server:
