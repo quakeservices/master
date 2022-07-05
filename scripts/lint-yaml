@@ -4,7 +4,7 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
-COMMAND='yamllint mkdocs.yaml'
+COMMAND='yamllint mkdocs.yaml .github/'
 
 echo "+++ Running yamllint +++"
 if [ -z $CI ]; then

@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install prettier@latest
+      - run: npm install -g prettier
       - name: "Linting: Docs"
         run: ./scripts/lint-docs
 
