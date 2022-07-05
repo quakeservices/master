@@ -2,19 +2,17 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
+---
 version: 2
 updates:
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
-updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
-updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:

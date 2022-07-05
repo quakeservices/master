@@ -1,5 +1,5 @@
 ---
-name: Linting Docs
+name: Linting YAML
 
 # yamllint disable-line rule:truthy
 on:
@@ -19,9 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm install -g prettier
-      - name: "Linting: Docs"
-        run: ./scripts/lint-docs
+      - name: "Linting: yaml"
+        run: scripts/lint-yaml
+        if: always()

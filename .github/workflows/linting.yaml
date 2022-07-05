@@ -1,6 +1,7 @@
 ---
 name: Linting
 
+# yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   push:
@@ -9,10 +10,11 @@ on:
   pull_request:
 
 concurrency:
+  # yamllint disable-line rule:line-length
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
 
 jobs:
-  linting:
+  python-linting:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,6 +45,9 @@ jobs:
         run: scripts/lint-mypy
         if: always()
 
+  docker-linting:
+    runs-on: ubuntu-latest
+    steps:
       - name: "Linting: hadolint"
         run: scripts/lint-hadolint
         if: always()

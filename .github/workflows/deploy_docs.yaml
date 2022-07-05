@@ -1,13 +1,15 @@
 ---
-name: Docs
+name: Deploy Docs
 
+# yamllint disable-line rule:truthy
 on:
   workflow_run:
-    workflows: [Linting Docs]
+    workflows: [Linting Docs, Linting YAML]
     types:
       - completed
 
 concurrency:
+  # yamllint disable-line rule:line-length
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
 
 jobs:
