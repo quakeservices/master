@@ -1,0 +1,25 @@
+---
+name: Docs
+
+on:
+  workflow_run:
+    workflows: [Linting Docs]
+    types:
+      - completed
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: 'pip'
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
