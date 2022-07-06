@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 FROM quakeservices/base:latest
 
+WORKDIR /usr/src/app
+
 RUN --mount=type=cache,target=/var/cache/apt \
-  wget https://deb.nodesource.com/setup_current.x -O /tmp/setup_current.x && \
+  wget --quiet https://deb.nodesource.com/setup_current.x -O /tmp/setup_current.x && \
   bash /tmp/setup_current.x && \
   rm /tmp/setup_current.x
 
@@ -11,5 +13,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     docker \
     nodejs
 
+COPY deployment/package.json .
+COPY deployment/package-lock.json .
+
 RUN --mount=type=cache,target=/root/.npm \
-  npm -g install aws-cdk@2.30.0
+  npm install --global aws-cdk
