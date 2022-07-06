@@ -45,7 +45,7 @@ six==1.16.0
     # via
     #   -r ./storage/requirements.txt
     #   python-dateutil
-typing-extensions==4.2.0
+typing-extensions==4.3.0
     # via
     #   -r ./storage/requirements.txt
     #   boto3-stubs
