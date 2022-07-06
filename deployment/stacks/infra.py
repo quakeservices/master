@@ -4,9 +4,10 @@ from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
+from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAINS
+from deployment.constants import APP_NAME, DOMAINS, RECORDS
 
 
 class InfraStack(Stack):
@@ -21,7 +22,7 @@ class InfraStack(Stack):
         self.vpc = self._create_vpc()
         self._create_ecr_repository()
         self._create_ecs_cluster()
-        self._create_zones()
+        self.zones = self._create_zones()
         self._create_table()
 
     def _create_vpc(self) -> ec2.Vpc:
@@ -72,6 +73,26 @@ class InfraStack(Stack):
             lifecycle_rules=lifecycle_rules,
         )
 
-    def _create_zones(self):
+    def _create_zones(self) -> dict[str, route53.IHostedZone]:
+        zones: dict[str, route53.IHostedZone] = {}
         for domain in DOMAINS:
-            route53.PublicHostedZone(self, domain, zone_name=domain)
+            zones[domain] = route53.PublicHostedZone(self, domain, zone_name=domain)
+        return zones
+
+    def _create_records(self):
+        for domain, records in RECORDS.items():
+            for record in records:
+                self._create_route53_record(domain, record)
+
+    def _create_route53_record(self, domain: str, record: dict[str, str]):
+        """
+        Create Route53 entries
+        """
+        if record["type"] == "TXTRecord":
+            route53.TxtRecord(
+                self,
+                f"txt-{domain}-record['key']",
+                zone=self.zones[domain],
+                record_name=record["key"],
+                values=[record["value"]],
+            )
