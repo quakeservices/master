@@ -6,7 +6,7 @@
 #
 boto3==1.24.21
     # via -r storage/requirements.txt
-boto3-stubs[dynamodb]==1.24.21
+boto3-stubs[dynamodb]==1.24.23
     # via -r storage/requirements.txt
 botocore==1.27.21
     # via
