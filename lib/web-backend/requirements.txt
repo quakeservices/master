@@ -4,17 +4,17 @@
 #
 #    pip-compile ./lib/web-backend/requirements.in
 #
-boto3==1.24.23
+boto3==1.24.24
     # via -r ./lib/web-backend/storage/requirements.txt
-boto3-stubs[dynamodb]==1.24.23
+boto3-stubs[dynamodb]==1.24.24
     # via -r ./lib/web-backend/storage/requirements.txt
-botocore==1.27.23
+botocore==1.27.24
     # via
     #   -r ./lib/web-backend/storage/requirements.txt
     #   boto3
     #   pynamodb
     #   s3transfer
-botocore-stubs==1.27.23
+botocore-stubs==1.27.24.post1
     # via
     #   -r ./lib/web-backend/storage/requirements.txt
     #   boto3-stubs
