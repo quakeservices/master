@@ -14,7 +14,7 @@ attrs==21.4.0
     #   pytest
 aws-cdk-aws-lambda-python-alpha==2.29.1a0
     # via -r ./deployment/requirements.txt
-aws-cdk-lib==2.29.1
+aws-cdk-lib==2.30.0
     # via
     #   -r ./deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
