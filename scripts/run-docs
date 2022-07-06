@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+echo "+++ Serving docs +++"
+docker run --interactive \
+           --tty \
+           --rm \
+           --publish 8000:8000 \
+           --volume ${PWD}:/docs \
+           squidfunk/mkdocs-material
