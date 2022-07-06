@@ -20,5 +20,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: "Linting: yaml"
-        run: scripts/lint-yaml
+        run: scripts/ci/lint-yaml
         if: always()

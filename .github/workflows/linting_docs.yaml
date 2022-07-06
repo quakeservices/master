@@ -24,4 +24,4 @@ jobs:
           node-version: 16
       - run: npm install -g prettier
       - name: "Linting: Docs"
-        run: ./scripts/lint-docs
+        run: ./scripts/ci/lint-docs
