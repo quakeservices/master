@@ -3,5 +3,8 @@ FROM quakeservices/cdk:latest
 
 WORKDIR /code
 
+COPY docs/package.json .
+COPY docs/package-lock.json .
+
 RUN --mount=type=cache,target=/root/.npm \
-  npm -g install prettier@latest
+  npm install --global prettier

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+FILES=$(find -type f -iname 'requirements*in' | grep -iv 'cdk.out')
+
+echo "+++ Updating requirements +++"
+for file in $FILES; do
+  echo "Upgrading $file"
+  COMMAND="pip-compile --upgrade $file"
+  if [ -z $CI ]; then
+    scripts/include/run-test-container $COMMAND
+  else
+    $COMMAND
+  fi
+done
+
+# if [ -z $CI ]; then
+#   scripts/include/run-test-container "${COMMAND}"
+# else
+#   $COMMAND
+# fi
