@@ -20,7 +20,7 @@ extend-exclude = '''
 )
 '''
 
-[tool.pytest]
+[tool.pytest.ini_options]
 norecursedirs = [
   ".git",
   ".github",
