@@ -31,7 +31,7 @@ class PipelineStack(Stack):
         self.stage = stage
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
-        # self._create_wave()
+        self._create_master_stage()
 
     def _create_pipeline(self) -> CodePipeline:
         connection_arn = ssm.StringParameter.from_string_parameter_attributes(
@@ -75,8 +75,10 @@ class PipelineStack(Stack):
     def _create_infra_stage(self) -> None:
         self.pipeline.add_stage(PipelineInfraStage(self, self.stage, env=us_west_2))
 
+    def _create_master_stage(self) -> None:
+        self.pipeline.add_stage(PipelineMasterStage(self, self.stage, env=us_west_2))
+
     def _create_wave(self) -> None:
         wave = self.pipeline.add_wave(f"{APP_NAME}-wave")
-        wave.add_stage(PipelineMasterStage(self, "master", env=us_west_2))
         wave.add_stage(PipelineWebBackendStage(self, "backend", env=us_west_2))
         wave.add_stage(PipelineWebFrontendStage(self, "frontend", env=us_east_1))
