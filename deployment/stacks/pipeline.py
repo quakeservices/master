@@ -1,9 +1,7 @@
-from aws_cdk import RemovalPolicy, Stack
-from aws_cdk import aws_codebuild as codebuild
-from aws_cdk import aws_codepipeline as codepipeline
-from aws_cdk import aws_codepipeline_actions as codepipeline_actions
+from aws_cdk import Stack
+from aws_cdk import aws_iam as iam
 from aws_cdk import aws_ssm as ssm
-from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
+from aws_cdk.pipelines import CodeBuildStep, CodePipeline, CodePipelineSource
 from constructs import Construct
 
 from deployment.constants import APP_NAME, REPO
@@ -27,43 +25,48 @@ class PipelineStack(Stack):
 
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
+        # self._create_wave()
 
-    def _create_pipeline(self):
+    def _create_pipeline(self) -> CodePipeline:
         connection_arn = ssm.StringParameter.from_string_parameter_attributes(
             self,
             "connection-arn",
             parameter_name="/quakeservices/codepipeline/connection-arn",
         ).string_value
 
+        commands: list[str] = ["./scripts/cdk/synth"]
+
         return CodePipeline(
             self,
             "pipeline",
             pipeline_name=APP_NAME,
-            synth=ShellStep(
-                "Synth",
+            docker_enabled_for_synth=True,
+            synth=CodeBuildStep(
+                f"{APP_NAME}-synth",
+                project_name=f"{APP_NAME}-synth",
                 input=CodePipelineSource.connection(
-                    REPO, "main", connection_arn=connection_arn
+                    REPO, "cdk-pipeline", connection_arn=connection_arn
                 ),
-                commands=[
-                    "npm install -g aws-cdk",
-                    "python -m pip install -r deployment/requirements.txt",
-                    "cdk synth --app ./app.py",
+                commands=commands,
+                role_policy_statements=[
+                    iam.PolicyStatement(
+                        actions=["sts:AssumeRole"],
+                        resources=["*"],
+                        conditions={
+                            "StringEquals": {
+                                "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
+                            }
+                        },
+                    )
                 ],
             ),
         )
 
-    def _create_infra_stage(self):
+    def _create_infra_stage(self) -> None:
         self.pipeline.add_stage(PipelineInfraStage(self, "infra", env=us_west_2))
 
-    def _create_master_stage(self):
-        self.pipeline.add_stage(PipelineMasterStage(self, "master", env=us_west_2))
-
-    def _create_web_backend_stage(self):
-        self.pipeline.add_stage(
-            PipelineWebBackendStage(self, "web_backend", env=us_west_2)
-        )
-
-    def _create_web_frontend_stage(self):
-        self.pipeline.add_stage(
-            PipelineWebFrontendStage(self, "web_frontend", env=us_east_1)
-        )
+    def _create_wave(self) -> None:
+        wave = self.pipeline.add_wave(f"{APP_NAME}-wave")
+        wave.add_stage(PipelineMasterStage(self, "master", env=us_west_2))
+        wave.add_stage(PipelineWebBackendStage(self, "backend", env=us_west_2))
+        wave.add_stage(PipelineWebFrontendStage(self, "frontend", env=us_east_1))
