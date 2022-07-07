@@ -33,11 +33,11 @@ class WebFrontendStack(Stack):
 
         self._create_records()
 
-    def _create_buckets(self):
+    def _create_buckets(self) -> None:
         self.asset_bucket = self._create_asset_bucket()
         self.redirect_bucket = self._create_redirect_bucket()
 
-    def _create_distributions(self):
+    def _create_distributions(self) -> None:
         self.site_distribution = self._create_site_distribution()
         self.redirect_distribution = self._create_redirect_distribution()
 
@@ -61,7 +61,7 @@ class WebFrontendStack(Stack):
 
         return route53.HostedZone.from_lookup(self, "zone", domain_name=zone)
 
-    def _create_asset_bucket(self):
+    def _create_asset_bucket(self) -> s3.Bucket:
         """
         Create S3 Bucket for assets"
         """
@@ -72,7 +72,7 @@ class WebFrontendStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,
         )
 
-    def _create_redirect_bucket(self):
+    def _create_redirect_bucket(self) -> s3.Bucket:
         return s3.Bucket(
             self,
             "redirect_bucket",
@@ -84,7 +84,7 @@ class WebFrontendStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,
         )
 
-    def _create_deployment(self):
+    def _create_deployment(self) -> s3deploy.BucketDeployment:
         assets_directory = "lib/web-frontend/dist"
 
         return s3deploy.BucketDeployment(
@@ -94,7 +94,7 @@ class WebFrontendStack(Stack):
             destination_bucket=self.asset_bucket,
         )
 
-    def _create_site_distribution(self):
+    def _create_site_distribution(self) -> cloudfront.Distribution:
         """
         Pull it all together in a CloudFront distribution
         """
@@ -109,7 +109,7 @@ class WebFrontendStack(Stack):
             certificate=self.cert,
         )
 
-    def _create_redirect_distribution(self):
+    def _create_redirect_distribution(self) -> cloudfront.Distribution:
         return cloudfront.Distribution(
             self,
             "redirect_distribution",
@@ -121,7 +121,7 @@ class WebFrontendStack(Stack):
             certificate=self.cert,
         )
 
-    def _create_records(self):
+    def _create_records(self) -> None:
         """
         Setup route53 entries
           A Record: subdomain.example.com
@@ -139,7 +139,9 @@ class WebFrontendStack(Stack):
         self._create_route53_records(site_target, self.domain, "route53-site-")
         self._create_route53_records(apex_target, self.subdomain, "route53-apex-")
 
-    def _create_route53_records(self, target, record_name: str, resource_name: str):
+    def _create_route53_records(
+        self, target, record_name: str, resource_name: str
+    ) -> None:
         route53.ARecord(
             self,
             resource_name + "v4",

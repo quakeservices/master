@@ -60,7 +60,9 @@ class WebBackendStack(Stack):
             validation=acm.CertificateValidation.from_dns(self.zone),
         )
 
-    def _create_lambda_function(self, entry: str = "lib/web-backend"):
+    def _create_lambda_function(
+        self, entry: str = "lib/web-backend"
+    ) -> _lambda_python.PythonFunction:
         """
         Define Lambda function
         """
@@ -95,7 +97,7 @@ class WebBackendStack(Stack):
             disable_execute_api_endpoint=True,
         )
 
-    def _create_route53_entries(self):
+    def _create_route53_entries(self) -> None:
         """
         Create Route53 entries
         """

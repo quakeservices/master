@@ -15,14 +15,18 @@ from deployment.stacks.pipelines import (
 
 
 class PipelineStack(Stack):
+    stage: str
+
     def __init__(
         self,
         scope: Construct,
         construct_id: str,
+        stage: str = "prod",
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.stage = stage
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
         # self._create_wave()
@@ -34,7 +38,11 @@ class PipelineStack(Stack):
             parameter_name="/quakeservices/codepipeline/connection-arn",
         ).string_value
 
-        commands: list[str] = ["./scripts/cdk/synth"]
+        commands: list[str] = [
+            "npm install --global aws-cdk",
+            "pip install -r deployment/requirements.txt",
+            "cdk synth",
+        ]
 
         return CodePipeline(
             self,
@@ -63,7 +71,7 @@ class PipelineStack(Stack):
         )
 
     def _create_infra_stage(self) -> None:
-        self.pipeline.add_stage(PipelineInfraStage(self, "infra", env=us_west_2))
+        self.pipeline.add_stage(PipelineInfraStage(self, self.stage, env=us_west_2))
 
     def _create_wave(self) -> None:
         wave = self.pipeline.add_wave(f"{APP_NAME}-wave")

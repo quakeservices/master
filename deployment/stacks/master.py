@@ -71,7 +71,7 @@ class MasterStack(Stack):
             self, "task", memory_limit_mib=self.MASTER_MEMORY, cpu=self.MASTER_CPU
         )
 
-    def _grant_read_write_to_task(self):
+    def _grant_read_write_to_task(self) -> None:
         self.table.grant_read_write_data(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
@@ -79,7 +79,7 @@ class MasterStack(Stack):
             file="docker/Dockerfile.master", directory="."
         )
 
-    def _create_task_container(self):
+    def _create_task_container(self) -> None:
         """
         Create container
         """
@@ -117,7 +117,7 @@ class MasterStack(Stack):
             )
         )
 
-    def _create_service(self):
+    def _create_service(self) -> ecs.FargateService:
         """
         Create service
         """
@@ -147,7 +147,7 @@ class MasterStack(Stack):
             "udplistener", port=self.MASTER_PORT, protocol=elb.Protocol.UDP
         )
 
-    def _create_service_and_nlb(self):
+    def _create_service_and_nlb(self) -> None:
         service = self._create_service()
         listener = self._create_listener()
 
@@ -170,7 +170,7 @@ class MasterStack(Stack):
 
         service.register_load_balancer_targets(target)
 
-    def _create_route53_record(self):
+    def _create_route53_record(self) -> None:
         """
         Create Route53 entries
         """

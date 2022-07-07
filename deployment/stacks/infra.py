@@ -37,7 +37,7 @@ class InfraStack(Stack):
             ],
         )
 
-    def _create_table(self):
+    def _create_table(self) -> None:
         """
         Partition key = server_ip:server_port
         """
@@ -51,7 +51,7 @@ class InfraStack(Stack):
             ),
         )
 
-    def _create_ecs_cluster(self):
+    def _create_ecs_cluster(self) -> None:
         ecs.Cluster(
             self,
             "cluster",
@@ -60,7 +60,7 @@ class InfraStack(Stack):
             enable_fargate_capacity_providers=True,
         )
 
-    def _create_ecr_repository(self):
+    def _create_ecr_repository(self) -> None:
         lifecycle_rules = [
             ecr.LifecycleRule(tag_prefix_list=["master"], max_image_count=5)
         ]
@@ -72,6 +72,6 @@ class InfraStack(Stack):
             lifecycle_rules=lifecycle_rules,
         )
 
-    def _create_zones(self):
+    def _create_zones(self) -> None:
         for domain in DOMAINS:
             route53.PublicHostedZone(self, domain, zone_name=domain)
