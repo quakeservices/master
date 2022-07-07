@@ -7,7 +7,7 @@ def main(
     host: Optional[str] = None,
     port: Optional[int] = 27900,
     message: Optional[bytes] = None,
-):
+) -> None:
     if not host:
         host = socket.gethostbyname(socket.gethostname())
     if not message:
