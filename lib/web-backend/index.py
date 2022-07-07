@@ -10,13 +10,14 @@ HEADERS = {
 }
 
 RESPONSE_200 = {"statusCode": 200, "headers": HEADERS}
+storage = Storage()
 
 
-def server_list(storage):
-    server_list = list()
-    for server in storage.list_servers():
+def server_list() -> dict:
+    servers: list[dict] = []
+    for server in storage.get_servers():
         status = json.loads(server.status)
-        server_list.append(
+        servers.append(
             dict(
                 address=server.address,
                 hostname=status.get("hostname", "unknown"),
@@ -30,31 +31,30 @@ def server_list(storage):
         )
 
     response = RESPONSE_200
-    response["body"] = json.dumps(server_list)
+    response["body"] = json.dumps(servers)
     return response
 
 
-def server_info(storage, server_id):
+def server_info(server_id: str) -> dict:
     # get_server_obj expects a GameServer object.
     # get_server only returns True/False
     # TODO: Fix Storage module to work with the below use case
-    server_obj = storage.get_server_obj(server_id)
+    server_obj = storage.get_server(server_id)
 
     status = json.loads(server_obj.status)
     players = json.loads(server_obj.players)
-    server_info = {"status": status, "players": players}
+    info = {"status": status, "players": players}
 
     response = RESPONSE_200
-    response["body"] = json.dumps(server_info)
+    response["body"] = json.dumps(info)
     return response
 
 
-def handler(event, context):
+def handler(*args):  # type: ignore
     # TODO: Add basic routing
     # /servers = return all active servers
     # /server/ = return all information about server
-    storage = Storage()
-    return server_list(storage)
+    return server_list()
 
 
 if __name__ == "__main__":

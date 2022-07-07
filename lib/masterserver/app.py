@@ -6,7 +6,7 @@ import sys
 from master import MasterServer
 
 
-def setup_logging(level: str = "INFO"):
+def setup_logging(level: str = "INFO") -> None:
     # logging.getLogger('boto3').propagate = False
     # logging.getLogger('botocore').propagate = False
 
@@ -20,7 +20,7 @@ def setup_logging(level: str = "INFO"):
     )
 
 
-def setup_environment():
+def setup_environment() -> None:
     os.environ["DEPLOYMENT_ENVIRONMENT"] = os.getenv(
         "DEPLOYMENT_ENVIRONMENT", "development"
     )
@@ -31,11 +31,10 @@ def setup_environment():
         setup_logging("DEBUG")
 
 
-def main():
+def main() -> None:
     logging.info("Starting master server.")
 
     masterserver = MasterServer()
-
     masterserver.start()
 
     logging.info("Master server stopped.")
