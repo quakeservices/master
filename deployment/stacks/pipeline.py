@@ -1,3 +1,5 @@
+from typing import Any
+
 from aws_cdk import Stack
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_ssm as ssm
@@ -22,7 +24,7 @@ class PipelineStack(Stack):
         scope: Construct,
         construct_id: str,
         stage: str = "prod",
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

@@ -1,10 +1,11 @@
+from typing import Any
+
 from aws_cdk import RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
-from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
 
 from deployment.constants import APP_NAME, DOMAINS, RECORDS
@@ -17,7 +18,7 @@ class InfraStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

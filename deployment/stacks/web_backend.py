@@ -1,11 +1,10 @@
-from typing import Optional
+from typing import Any, Optional
 
 from aws_cdk import Stack
 from aws_cdk import aws_apigateway as apigateway
 from aws_cdk import aws_certificatemanager as acm
 from aws_cdk import aws_dynamodb as dynamodb
-from aws_cdk import aws_iam as iam
-from aws_cdk import aws_lambda as aws_lambda
+from aws_cdk import aws_lambda
 from aws_cdk import aws_lambda_python_alpha as _lambda_python
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
@@ -19,7 +18,7 @@ class WebBackendStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 from aws_cdk import Duration, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
@@ -23,7 +25,7 @@ class MasterStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 

@@ -1,5 +1,4 @@
-import os
-from typing import Optional
+from typing import Any, Optional
 
 from aws_cdk import RemovalPolicy, Stack
 from aws_cdk import aws_certificatemanager as acm
@@ -19,7 +18,7 @@ class WebFrontendStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -140,7 +139,7 @@ class WebFrontendStack(Stack):
         self._create_route53_records(apex_target, self.subdomain, "route53-apex-")
 
     def _create_route53_records(
-        self, target, record_name: str, resource_name: str
+        self, target: route53.RecordTarget, record_name: str, resource_name: str
     ) -> None:
         route53.ARecord(
             self,
