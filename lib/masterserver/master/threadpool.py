@@ -14,8 +14,7 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
     _shutdown: bool = False
 
     # pylint: disable=arguments-differ
-    def serve_forever(self):
-
+    def serve_forever(self) -> None:  # type: ignore
         for _ in range(self.thread_pool_size):
             thread = threading.Thread(target=self.process_request_thread)
             thread.daemon = True
@@ -28,11 +27,11 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
         self.server_close()
 
     # pylint: disable=arguments-differ
-    def process_request_thread(self):
+    def process_request_thread(self) -> None:  # type: ignore
         while not self._shutdown:
             ThreadingMixIn.process_request_thread(self, *self.requests.get())
 
-    def handle_request(self):
+    def handle_request(self) -> None:
         try:
             request, client_address = self.get_request()
         except OSError:
@@ -40,5 +39,5 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
 
         self.requests.put((request, client_address))
 
-    def terminate(self):
+    def terminate(self) -> None:
         self._shutdown = True
