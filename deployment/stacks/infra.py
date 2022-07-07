@@ -8,7 +8,7 @@ from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAINS, RECORDS
+from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAINS, RECORDS
 
 
 class InfraStack(Stack):
@@ -26,7 +26,6 @@ class InfraStack(Stack):
         self._create_ecr_repository()
         self._create_ecs_cluster()
         self._create_zones()
-        self._create_table()
 
     def _create_vpc(self) -> ec2.Vpc:
         return ec2.Vpc(
@@ -39,21 +38,6 @@ class InfraStack(Stack):
                     subnet_type=ec2.SubnetType.PUBLIC,
                 )
             ],
-        )
-
-    def _create_table(self) -> None:
-        """
-        Partition key = server_ip:server_port
-        """
-        dynamodb.Table(
-            self,
-            "table",
-            table_name=APP_NAME,
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            partition_key=dynamodb.Attribute(
-                name="server", type=dynamodb.AttributeType.STRING
-            ),
-            removal_policy=RemovalPolicy.DESTROY,
         )
 
     def _create_ecs_cluster(self) -> None:

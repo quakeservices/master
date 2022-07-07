@@ -8,17 +8,29 @@ from deployment.stacks import InfraStack, MasterStack, WebBackendStack, WebFront
 
 
 class PipelineInfraStage(Stage):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        scope: Construct,
+        construct_id: str,
+        deployment_environment: str,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        InfraStack(self, f"{APP_NAME}-infra")
+        InfraStack(self, deployment_environment)
 
 
 class PipelineMasterStage(Stage):
-    def __init__(self, scope: Construct, construct_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        scope: Construct,
+        construct_id: str,
+        deployment_environment: str,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        MasterStack(self, f"{APP_NAME}-master")
+        MasterStack(self, deployment_environment)
 
 
 class PipelineWebBackendStage(Stage):
