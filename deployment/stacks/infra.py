@@ -4,12 +4,15 @@ from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
+from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAINS
+from deployment.constants import APP_NAME, DOMAINS, RECORDS
 
 
 class InfraStack(Stack):
+    zones: dict[str, route53.IHostedZone] = {}
+
     def __init__(
         self,
         scope: Construct,
@@ -49,6 +52,7 @@ class InfraStack(Stack):
             partition_key=dynamodb.Attribute(
                 name="server", type=dynamodb.AttributeType.STRING
             ),
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
     def _create_ecs_cluster(self) -> None:
@@ -74,4 +78,24 @@ class InfraStack(Stack):
 
     def _create_zones(self) -> None:
         for domain in DOMAINS:
-            route53.PublicHostedZone(self, domain, zone_name=domain)
+            zone = route53.PublicHostedZone(self, domain, zone_name=domain)
+            zone.apply_removal_policy(RemovalPolicy.DESTROY)
+            self.zones[domain] = zone
+
+    def _create_records(self) -> None:
+        for domain, records in RECORDS.items():
+            for record in records:
+                self._create_route53_record(domain, record)
+
+    def _create_route53_record(self, domain: str, record: dict[str, str]) -> None:
+        """
+        Create Route53 entries
+        """
+        if record["type"] == "TXTRecord":
+            route53.TxtRecord(
+                self,
+                f"txt-{domain}-record['key']",
+                zone=self.zones[domain],
+                record_name=record["key"],
+                values=[record["value"]],
+            )
