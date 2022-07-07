@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-IMAGE_NAME="docker-cdk"
-IMAGE_VERSION="latest"
-IMAGE="${IMAGE_NAME}:${IMAGE_VERSION}"
-DOCKER_SOCKET="/var/run/docker.sock"
+cd "$(git rev-parse --show-toplevel)"
 
-docker run --rm \
-           -it \
-           --network host \
-           -v ${DOCKER_SOCKET}:${DOCKER_SOCKET} \
-           -v $(pwd):$(pwd) \
-           -w $(pwd) \
-           -e AWS_ACCOUNT \
-           -e AWS_ACCESS_KEY_ID \
-           -e AWS_SECRET_ACCESS_KEY \
-           -e AWS_DEFAULT_REGION \
-           ${IMAGE} \
+source scripts/include/build-env
+scripts/build-cdk > /dev/null
+
+docker run --interactive \
+           --tty \
+           --rm \
+           --env AWS_ACCESS_KEY_ID \
+           --env AWS_SECRET_ACCESS_KEY \
+           --env AWS_ACCOUNT \
+           --env AWS_SECURITY_TOKEN \
+           --env AWS_DEFAULT_REGION \
+           --mount=type=bind,source="${DOCKER_SOCKET}",target="${DOCKER_SOCKET}" \
+           --mount=type=bind,source="$(pwd)"/,target="$(pwd)" \
+           --workdir "$(pwd)" \
+           "${APP_NAME}/cdk:latest" \
            "$@"

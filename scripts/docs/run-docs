@@ -8,5 +8,5 @@ docker run --interactive \
            --tty \
            --rm \
            --publish 8000:8000 \
-           --volume ${PWD}:/docs \
+           --volume "${PWD}":/docs \
            squidfunk/mkdocs-material

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
+scripts/include/cdk cdk bootstrap "aws://${ACCOUNT}/us-west-2"
+scripts/include/cdk cdk bootstrap "aws://${ACCOUNT}/us-east-1"
