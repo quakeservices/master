@@ -1,3 +1,4 @@
 {
-  "app": "./cdk.py"
+  "app": "./cdk.py",
+  "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true
 }

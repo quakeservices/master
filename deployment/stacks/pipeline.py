@@ -27,7 +27,7 @@ class PipelineStack(Stack):
 
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
-        self._create_master_stage()
+        # self._create_master_stage()
 
     def _create_pipeline(self) -> CodePipeline:
         connection_arn = ssm.StringParameter.from_string_parameter_attributes(
