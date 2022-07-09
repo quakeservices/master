@@ -79,10 +79,12 @@ class InfraStack(Stack):
         """
         if record["type"] == "TXT":
             key: str = record["key"]
-            route53.TxtRecord(
+            entry = route53.TxtRecord(
                 self,
                 f"{domain}-{key}-txt",
                 zone=self.zones[domain],
                 record_name=key,
                 values=[record["value"]],
+                delete_existing=True,
             )
+            entry.apply_removal_policy(RemovalPolicy.DESTROY)
