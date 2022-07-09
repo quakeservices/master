@@ -13,6 +13,11 @@ RECORDS: dict[str, list[dict[str, str]]] = {
             "type": "TXT",
             "key": "_github-pages-challenge-quakeservices",
             "value": "4cbb312cf881980e8b6ddef434f26bu",
-        }
+        },
+        {
+            "type": "CNAME",
+            "key": "docs",
+            "value": "quakeservices.github.io",
+        },
     ]
 }

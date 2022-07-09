@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional, Union
 
 from aws_cdk import RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
@@ -77,14 +77,27 @@ class InfraStack(Stack):
         """
         Create Route53 entries
         """
-        if record["type"] == "TXT":
-            key: str = record["key"]
-            entry = route53.TxtRecord(
-                self,
-                f"{domain}-{key}-txt",
-                zone=self.zones[domain],
-                record_name=key,
-                values=[record["value"]],
-                delete_existing=True,
-            )
+        entry: Optional[Union[route53.TxtRecord, route53.CnameRecord]] = None
+        key: str = record["key"]
+        match record["type"]:
+            case "TXT":
+                entry = route53.TxtRecord(
+                    self,
+                    f"{domain}-{key}-txt",
+                    zone=self.zones[domain],
+                    record_name=key,
+                    values=[record["value"]],
+                    delete_existing=True,
+                )
+            case "CNAME":
+                entry = route53.CnameRecord(
+                    self,
+                    f"{domain}-{key}-cname",
+                    zone=self.zones[domain],
+                    record_name=key,
+                    domain_name=record["value"],
+                    delete_existing=True,
+                )
+
+        if entry:
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
