@@ -26,6 +26,7 @@ class InfraStack(Stack):
         self._create_ecr_repository()
         self._create_ecs_cluster()
         self._create_zones()
+        self._create_records()
 
     def _create_vpc(self) -> ec2.Vpc:
         return ec2.Vpc(
@@ -76,11 +77,12 @@ class InfraStack(Stack):
         """
         Create Route53 entries
         """
-        if record["type"] == "TXTRecord":
+        if record["type"] == "TXT":
+            key: str = record["key"]
             route53.TxtRecord(
                 self,
-                f"txt-{domain}-record['key']",
+                f"{domain}-{key}-txt",
                 zone=self.zones[domain],
-                record_name=record["key"],
+                record_name=key,
                 values=[record["value"]],
             )
