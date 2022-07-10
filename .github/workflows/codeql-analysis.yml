@@ -15,10 +15,10 @@ name: "CodeQL"
 # yamllint disable-line rule:truthy
 on:
   push:
-    branches: ["main", "cdk-pipeline"]
+    branches: ["main", "cdk-pipeline", "codeql"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: ["main", "cdk-pipeline"]
+    branches: ["main", "cdk-pipeline", "codeql"]
   schedule:
     - cron: '20 9 * * 2'
 
