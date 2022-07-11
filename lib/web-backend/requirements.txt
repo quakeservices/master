@@ -8,7 +8,7 @@ boto3==1.24.24
     # via -r ./lib/web-backend/storage/requirements.txt
 boto3-stubs[dynamodb]==1.24.24
     # via -r ./lib/web-backend/storage/requirements.txt
-botocore==1.27.24
+botocore==1.27.26
     # via
     #   -r ./lib/web-backend/storage/requirements.txt
     #   boto3
