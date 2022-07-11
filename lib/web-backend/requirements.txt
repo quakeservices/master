@@ -4,7 +4,7 @@
 #
 #    pip-compile ./lib/web-backend/requirements.in
 #
-boto3==1.24.24
+boto3==1.24.26
     # via -r ./lib/web-backend/storage/requirements.txt
 boto3-stubs[dynamodb]==1.24.24
     # via -r ./lib/web-backend/storage/requirements.txt
