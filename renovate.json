@@ -6,7 +6,7 @@
   ],
   "pip-compile": {
     "fileMatch": ["(^|/)requirements.*\\.in$"]
-  }
+  },
   "js": {
     "managerBranchPrefix": "js-"
   },
