@@ -7,7 +7,7 @@
     "make:view": "vue-cli-service make:view"
   },
   "dependencies": {
-    "@vue/cli": "4.5.17",
+    "@vue/cli": "4.5.19",
     "axios": "0.27.2",
     "vue-router": "4.0.16"
   },
