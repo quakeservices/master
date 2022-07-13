@@ -1,5 +1,6 @@
 ---
 site_name: Quake Services
+theme: material
 nav:
   - Home: index.md
   - Usage:
