@@ -5,12 +5,10 @@
     "group:all"
   ],
   "pip-compile": {
-    "fileMatch": ["(^|/)requirements.*\\.in$"]
+    "fileMatch": ["(^|/)requirements.*\\.in$"],
+    "managerBranchPrefix": "python-"
   },
   "js": {
     "managerBranchPrefix": "js-"
   },
-  "python": {
-    "managerBranchPrefix": "python-"
-  }
 }
