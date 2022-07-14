@@ -5,9 +5,13 @@ name: Testing Master
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - 'lib/master/**'
+      - 'lib/storage/**'
   pull_request:
+    paths:
+      - 'lib/master/**'
+      - 'lib/storage/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

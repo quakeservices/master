@@ -8,6 +8,9 @@ on:
     types:
       - completed
     branches: [main]
+    paths:
+      - 'mkdocs.yaml'
+      - 'docs/**'
 
 concurrency:
   # yamllint disable-line rule:line-length
