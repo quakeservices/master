@@ -51,7 +51,7 @@ class PipelineStack(Stack):
                 f"{APP_NAME}-synth",
                 project_name=f"{APP_NAME}-synth",
                 input=CodePipelineSource.connection(
-                    REPO, "cdk-pipeline", connection_arn=connection_arn
+                    REPO, "main", connection_arn=connection_arn
                 ),
                 commands=commands,
                 role_policy_statements=[
