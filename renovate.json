@@ -4,12 +4,12 @@
     "config:base",
     "group:all"
   ],
-  "python": {
-    "enabled": false
-  },
   "pip-compile": {
     "fileMatch": ["(^|/)requirements.*\\.in$"],
     "managerBranchPrefix": "python-"
+  },
+  "python": {
+    "enabled": false
   },
   "js": {
     "managerBranchPrefix": "js-"
