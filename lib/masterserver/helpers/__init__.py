@@ -4,10 +4,10 @@ from typing import Union
 
 
 class LoggingMixin:
-    def _get_logger(self):
+    def _get_logger(self) -> logging.Logger:
         return logging.getLogger(__name__)
 
-    def log(self, message: Union[str, bytes]):
+    def log(self, message: Union[str, bytes]) -> None:
         logger = self._get_logger()
         calling_class: str = self.__class__.__name__
         current_thread: str = threading.current_thread().name

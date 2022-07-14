@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 source scripts/include/build-env
 
 echo "+++ Running Hadolint +++"
-
-for file in $(find -path '*cdk.out*' -prune -o -type f -name 'Dockerfile*' -print | sort); do
+for file in $(find docker/ -type f -name 'Dockerfile*' -print | sort); do
   echo "${file}"
   docker run --interactive \
              --rm \
-             --mount=type=bind,source="$(pwd)"/,target=${CODE_DIR} \
-             --workdir ${CODE_DIR} \
+             --mount=type=bind,source="$(pwd)",target="$(pwd)" \
+             --workdir "$(pwd)" \
              hadolint/hadolint < "${file}"
 done

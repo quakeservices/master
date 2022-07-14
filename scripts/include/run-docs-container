@@ -9,7 +9,7 @@ scripts/build-docs > /dev/null
 docker run --interactive \
            --tty \
            --rm \
-           --mount=type=bind,source="$(pwd)"/,target=${CODE_DIR} \
-           --workdir ${CODE_DIR} \
-           ${APP_NAME}/docs:latest \
+           --mount=type=bind,source="$(pwd)",target="$(pwd)" \
+           --workdir "$(pwd)" \
+           "${APP_NAME}/docs:latest" \
            "$@"

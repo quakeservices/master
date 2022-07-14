@@ -1,7 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM quakeservices/base:latest
-
-WORKDIR /usr/src/app
+FROM ghcr.io/quakeservices/base:latest
 
 RUN --mount=type=cache,target=/var/cache/apt \
   wget --quiet https://deb.nodesource.com/setup_current.x -O /tmp/setup_current.x && \
@@ -13,8 +11,15 @@ RUN --mount=type=cache,target=/var/cache/apt \
     docker \
     nodejs
 
-COPY deployment/package.json .
-COPY deployment/package-lock.json .
+WORKDIR /tmp
+
+COPY deployment/package.json /tmp
+COPY deployment/package-lock.json /tmp
 
 RUN --mount=type=cache,target=/root/.npm \
-  npm install --global aws-cdk
+  npm install --global
+
+COPY deployment/requirements.txt /tmp
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+  python3 -m pip install -r requirements.txt

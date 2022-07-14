@@ -1,0 +1,66 @@
+[project]
+name = "infer_pyproject"
+version = "0.0.1"
+description = "idTech master server implimented in Python"
+authors = [
+    "Gary Brandon <gary.brandon@gmail.com>"
+]
+license = "BSD"
+readme = "README.md"
+python = "^3.10"
+homepage = "https://www.quake.services"
+repository = "https://github.com/quakeservices/master"
+documentation = "TBD"
+
+[tool.black]
+extend-exclude = '''
+(
+    node_modules
+  | cdk.out
+)
+'''
+
+[tool.pytest.ini_options]
+norecursedirs = [
+  ".git",
+  ".github",
+  "cdk.out",
+  ".venv",
+  "node_modules"
+]
+pythonpath = [
+  "lib/masterserver",
+  "lib/web-backend",
+  "lib/storage"
+]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+skip_gitignore = true
+
+[tool.mypy]
+plugins = [
+  "pydantic.mypy"
+]
+python_version = "3.10"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+show_error_codes = true
+strict_optional = false
+exclude = [
+  "cdk.out",
+  ".venv"
+]
+
+# for strict mypy: (this is the tricky one :-))
+disallow_untyped_defs = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true

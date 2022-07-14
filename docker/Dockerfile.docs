@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1
-FROM quakeservices/cdk:latest
+FROM ghcr.io/quakeservices/cdk:latest
 
-WORKDIR /code
+WORKDIR /tmp
 
-COPY docs/package.json .
-COPY docs/package-lock.json .
+COPY docs/package.json /tmp
+COPY docs/package-lock.json /tmp
 
 RUN --mount=type=cache,target=/root/.npm \
   npm install --global prettier

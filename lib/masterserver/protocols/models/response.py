@@ -15,4 +15,4 @@ class ProtocolResponse(BaseProtocol):
     header_type: str = "any"
     response: Optional[bytes] = None
     players: list[Optional[dict[str, str]]]
-    status: dict[str, Union[str, int]]
+    details: dict[str, Union[str, int]]

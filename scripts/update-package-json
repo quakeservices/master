@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+
+FILES=$(find . -type f -iname 'package.json' | grep -iv 'cdk.out\|node_modules')
+
+echo "+++ Updating package.json +++"
+for file in $FILES; do
+  echo "Upgrading $file"
+  COMMAND="cd $(dirname $file) && npm update && cd -"
+  if [ -z $CI ]; then
+    scripts/include/run-test-container "$COMMAND"
+  else
+    $COMMAND
+  fi
+done

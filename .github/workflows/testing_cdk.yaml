@@ -5,9 +5,11 @@ name: Testing CDK
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - 'deployment/**'
   pull_request:
+    paths:
+      - 'deployment/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

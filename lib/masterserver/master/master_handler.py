@@ -10,7 +10,7 @@ from storage.backends import DynamoDbStorage
 
 
 class MasterHandler(DatagramRequestHandler, LoggingMixin):
-    def handle(self):
+    def handle(self) -> None:
         self.protocols = Protocols()
         self.storage = DynamoDbStorage()
 
@@ -38,7 +38,7 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
             if response:
                 self._send_response(response)
 
-    def _send_response(self, response: bytes):
+    def _send_response(self, response: bytes) -> None:
         self.log(f"Sending {response!r} to {self.client_address}")
         self.wfile.write(response)
 
@@ -60,7 +60,7 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
             address=address,
             game=request.game,
             active=request.active,
-            status=request.status,
+            details=request.details,
             players=request.players,
         )
 

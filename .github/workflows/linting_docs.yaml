@@ -5,9 +5,13 @@ name: Linting Docs
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - 'mkdocs.yaml'
+      - 'docs/**'
   pull_request:
+    paths:
+      - 'mkdocs.yaml'
+      - 'docs/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

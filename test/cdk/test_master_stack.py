@@ -15,6 +15,19 @@ class TestQuakeservicesMaster:
             )
         )
 
+    def test_table8235A42E(self, stack_template):
+        stack_template.has_resource_properties(
+            "AWS::DynamoDB::Table",
+            {
+                "KeySchema": [{"AttributeName": "server", "KeyType": "HASH"}],
+                "AttributeDefinitions": [
+                    {"AttributeName": "server", "AttributeType": Match.any_value()}
+                ],
+                "BillingMode": "PAY_PER_REQUEST",
+                "TableName": Match.any_value(),
+            },
+        )
+
     def test_taskTaskRole99C98141(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::IAM::Role",
@@ -55,16 +68,7 @@ class TestQuakeservicesMaster:
                             ],
                             "Effect": "Allow",
                             "Resource": [
-                                {
-                                    "Fn::Join": [
-                                        Match.any_value(),
-                                        [
-                                            "arn:",
-                                            {"Ref": "AWS::Partition"},
-                                            ":dynamodb:us-west-2:123456789012:table/quakeservices",
-                                        ],
-                                    ]
-                                },
+                                {"Fn::GetAtt": [Match.any_value(), "Arn"]},
                                 {"Ref": "AWS::NoValue"},
                             ],
                         }

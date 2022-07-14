@@ -1,4 +1,6 @@
-from aws_cdk import Duration, Stack
+from typing import Any
+
+from aws_cdk import Duration, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
@@ -9,7 +11,7 @@ from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAIN_NAME
+from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAIN_NAME
 
 
 class MasterStack(Stack):
@@ -23,16 +25,16 @@ class MasterStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         self.vpc = self._get_vpc()
         self.zone = self._get_zone()
         self.cluster = self._get_cluster()
-        self.table = self._get_table()
         self.repository = self._get_ecr_repository()
 
+        self.table = self._create_table()
         self.task = self._create_master_task()
         self._grant_read_write_to_task()
         self._create_task_container()
@@ -56,11 +58,19 @@ class MasterStack(Stack):
             self, "repository", repository_name=APP_NAME
         )
 
-    def _get_table(self) -> dynamodb.ITable:
-        return dynamodb.Table.from_table_name(
+    def _create_table(self) -> dynamodb.Table:
+        """
+        Partition key = server_ip:server_port
+        """
+        return dynamodb.Table(
             self,
             "table",
-            table_name=APP_NAME,
+            table_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            partition_key=dynamodb.Attribute(
+                name="server", type=dynamodb.AttributeType.STRING
+            ),
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
     def _create_master_task(self) -> ecs.FargateTaskDefinition:
@@ -71,7 +81,7 @@ class MasterStack(Stack):
             self, "task", memory_limit_mib=self.MASTER_MEMORY, cpu=self.MASTER_CPU
         )
 
-    def _grant_read_write_to_task(self):
+    def _grant_read_write_to_task(self) -> None:
         self.table.grant_read_write_data(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
@@ -79,7 +89,7 @@ class MasterStack(Stack):
             file="docker/Dockerfile.master", directory="."
         )
 
-    def _create_task_container(self):
+    def _create_task_container(self) -> None:
         """
         Create container
         """
@@ -93,13 +103,13 @@ class MasterStack(Stack):
         )
 
         log_settings = ecs.LogDrivers.aws_logs(
-            stream_prefix=APP_NAME,
+            stream_prefix=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             log_retention=logs.RetentionDays.TWO_WEEKS,
         )
 
         container = self.task.add_container(
             "master",
-            container_name=APP_NAME,
+            container_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             image=self._define_container_image(),
             health_check=ecs_healthcheck,
             start_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
@@ -117,14 +127,14 @@ class MasterStack(Stack):
             )
         )
 
-    def _create_service(self):
+    def _create_service(self) -> ecs.FargateService:
         """
         Create service
         """
         return ecs.FargateService(
             self,
             "service",
-            service_name=APP_NAME,
+            service_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             cluster=self.cluster,
             task_definition=self.task,
         )
@@ -139,7 +149,7 @@ class MasterStack(Stack):
             vpc=self.vpc,
             internet_facing=True,
             cross_zone_enabled=True,
-            load_balancer_name=APP_NAME,
+            load_balancer_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
         )
 
     def _create_listener(self) -> elb.NetworkListener:
@@ -147,7 +157,7 @@ class MasterStack(Stack):
             "udplistener", port=self.MASTER_PORT, protocol=elb.Protocol.UDP
         )
 
-    def _create_service_and_nlb(self):
+    def _create_service_and_nlb(self) -> None:
         service = self._create_service()
         listener = self._create_listener()
 
@@ -156,10 +166,10 @@ class MasterStack(Stack):
         )
 
         target = ecs.EcsTarget(
-            container_name=APP_NAME,
+            container_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             container_port=self.MASTER_PORT,
             protocol=ecs.Protocol.UDP,
-            new_target_group_id=APP_NAME,
+            new_target_group_id=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             listener=ecs.ListenerConfig.network_listener(
                 listener,
                 port=self.MASTER_PORT,
@@ -170,7 +180,7 @@ class MasterStack(Stack):
 
         service.register_load_balancer_targets(target)
 
-    def _create_route53_record(self):
+    def _create_route53_record(self) -> None:
         """
         Create Route53 entries
         """

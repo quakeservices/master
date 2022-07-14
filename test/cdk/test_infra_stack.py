@@ -257,15 +257,3 @@ class TestQuakeservicesInfra:
             "AWS::Route53::HostedZone", {"Name": "quake3.services."}
         )
 
-    def test_table8235A42E(self, stack_template):
-        stack_template.has_resource_properties(
-            "AWS::DynamoDB::Table",
-            {
-                "KeySchema": [{"AttributeName": "server", "KeyType": "HASH"}],
-                "AttributeDefinitions": [
-                    {"AttributeName": "server", "AttributeType": Match.any_value()}
-                ],
-                "BillingMode": "PAY_PER_REQUEST",
-                "TableName": Match.any_value(),
-            },
-        )

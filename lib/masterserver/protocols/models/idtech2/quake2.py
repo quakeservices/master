@@ -56,7 +56,7 @@ class Quake2(Idtech2Protocol):
     def process_data(
         self, received_header: bytes, data: list[bytes]
     ) -> ProtocolResponse:
-        status: dict[str, Union[str, int]] = {}
+        details: dict[str, Union[str, int]] = {}
         players: list[Optional[dict[str, str]]] = []
         active: bool = True
         response: Optional[bytes] = None
@@ -71,7 +71,7 @@ class Quake2(Idtech2Protocol):
                 break
 
         if len(data) >= 1:
-            status = dictify_status(data[0], self.encoding, self.split)
+            details = dictify_status(data[0], self.encoding, self.split)
 
         if len(data) >= 2:
             players = dictify_players(data[1:], self.encoding)
@@ -79,7 +79,7 @@ class Quake2(Idtech2Protocol):
         return ProtocolResponse(
             game=self.game,
             active=active,
-            status=status,
+            details=details,
             players=players,
             response=response,
         )

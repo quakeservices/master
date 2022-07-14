@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+cd "$(git rev-parse --show-toplevel)"
+source scripts/include/build-env
+
+echo "+++ Running shellcheck +++"
+
+for file in $(find scripts -type f); do
+  echo "${file}"
+  if [ -z $CI ]; then
+    docker run --rm \
+               --mount=type=bind,source="$(pwd)"/,target="/mnt" \
+               --workdir ${CODE_DIR} \
+               koalaman/shellcheck:stable "${FILE}"
+  else
+
+  fi
+done

@@ -7,7 +7,6 @@ source scripts/include/build-env
 COMMAND='
 pylint
     --errors-only
-    app.py
     lib/clients
     lib/masterserver
     lib/web-backend

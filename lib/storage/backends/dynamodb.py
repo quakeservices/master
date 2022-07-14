@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from decimal import Decimal
+from typing import Any, Mapping, Optional, Sequence, Union
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
@@ -12,6 +13,26 @@ from mypy_boto3_dynamodb.type_defs import (
 )
 from storage import BaseStorage
 from storage.server import Server
+
+Item = dict[
+    str,
+    Union[
+        bytes,
+        bytearray,
+        str,
+        int,
+        Decimal,
+        bool,
+        set[int],
+        set[Decimal],
+        set[str],
+        set[bytes],
+        set[bytearray],
+        Sequence[Any],
+        Mapping[str, Any],
+        None,
+    ],
+]
 
 
 class DynamoDbStorage(BaseStorage):
@@ -51,7 +72,7 @@ class DynamoDbStorage(BaseStorage):
 
         return server
 
-    def _get_item(self, address: str):
+    def _get_item(self, address: str) -> Item:
         response: GetItemOutputTableTypeDef = self.table.get_item(
             Key={"address": address}
         )
@@ -67,7 +88,7 @@ class DynamoDbStorage(BaseStorage):
 
         return servers
 
-    def _scan(self, game: Optional[str]):
+    def _scan(self, game: Optional[str]) -> list[Item]:
         response: ScanOutputTableTypeDef
         if game:
             response = self.table.scan(

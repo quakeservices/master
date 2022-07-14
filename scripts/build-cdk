@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)" || exit
 
 source scripts/include/build-env
 scripts/build-base
@@ -14,6 +14,8 @@ fi
 
 echo "+++ Building cdk image +++"
 docker build ${DOCKER_ARGS} \
-              --tag ${APP_NAME}/cdk:latest \
+              --tag "${CDK_DOCKER_TAG}:latest" \
               --file docker/Dockerfile.cdk \
               .
+
+docker tag "${CDK_DOCKER_TAG}:latest" "${CDK_GHCR_TAG}:latest"

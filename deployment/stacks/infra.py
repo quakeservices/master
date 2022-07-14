@@ -1,3 +1,5 @@
+from typing import Any, Optional, Union
+
 from aws_cdk import RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
@@ -6,15 +8,17 @@ from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAINS
+from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAINS, RECORDS
 
 
 class InfraStack(Stack):
+    zones: dict[str, route53.IHostedZone] = {}
+
     def __init__(
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -22,7 +26,7 @@ class InfraStack(Stack):
         self._create_ecr_repository()
         self._create_ecs_cluster()
         self._create_zones()
-        self._create_table()
+        self._create_records()
 
     def _create_vpc(self) -> ec2.Vpc:
         return ec2.Vpc(
@@ -37,21 +41,7 @@ class InfraStack(Stack):
             ],
         )
 
-    def _create_table(self):
-        """
-        Partition key = server_ip:server_port
-        """
-        dynamodb.Table(
-            self,
-            "table",
-            table_name=APP_NAME,
-            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            partition_key=dynamodb.Attribute(
-                name="server", type=dynamodb.AttributeType.STRING
-            ),
-        )
-
-    def _create_ecs_cluster(self):
+    def _create_ecs_cluster(self) -> None:
         ecs.Cluster(
             self,
             "cluster",
@@ -60,7 +50,7 @@ class InfraStack(Stack):
             enable_fargate_capacity_providers=True,
         )
 
-    def _create_ecr_repository(self):
+    def _create_ecr_repository(self) -> None:
         lifecycle_rules = [
             ecr.LifecycleRule(tag_prefix_list=["master"], max_image_count=5)
         ]
@@ -72,6 +62,41 @@ class InfraStack(Stack):
             lifecycle_rules=lifecycle_rules,
         )
 
-    def _create_zones(self):
+    def _create_zones(self) -> None:
         for domain in DOMAINS:
-            route53.PublicHostedZone(self, domain, zone_name=domain)
+            zone = route53.PublicHostedZone(self, domain, zone_name=domain)
+            zone.apply_removal_policy(RemovalPolicy.DESTROY)
+            self.zones[domain] = zone
+
+    def _create_records(self) -> None:
+        for domain, records in RECORDS.items():
+            for record in records:
+                self._create_route53_record(domain, record)
+
+    def _create_route53_record(self, domain: str, record: dict[str, str]) -> None:
+        """
+        Create Route53 entries
+        """
+        entry: Optional[Union[route53.TxtRecord, route53.CnameRecord]] = None
+        key: str = record["key"]
+        if record["type"] == "TXT":
+            entry = route53.TxtRecord(
+                self,
+                f"{domain}-{key}-txt",
+                zone=self.zones[domain],
+                record_name=key,
+                values=[record["value"]],
+                delete_existing=True,
+            )
+        elif record["type"] == "CNAME":
+            entry = route53.CnameRecord(
+                self,
+                f"{domain}-{key}-cname",
+                zone=self.zones[domain],
+                record_name=key,
+                domain_name=record["value"],
+                delete_existing=True,
+            )
+
+        if entry:
+            entry.apply_removal_policy(RemovalPolicy.DESTROY)
