@@ -8,10 +8,12 @@ on:
     paths:
       - 'lib/master/**'
       - 'lib/storage/**'
+      - 'test/unit/master/**'
   pull_request:
     paths:
       - 'lib/master/**'
       - 'lib/storage/**'
+      - 'test/unit/master/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

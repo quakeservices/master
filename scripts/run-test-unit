@@ -9,7 +9,7 @@ pytest -v
   --cov=lib/masterserver/
   --cov=lib/web-backend/
   --cov=lib/storage/
-  test/unit
+  test/unit/master
 "
 
 echo "+++ Running tests +++"
