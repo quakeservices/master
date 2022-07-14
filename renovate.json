@@ -8,9 +8,6 @@
     "fileMatch": ["(^|/)requirements.*\\.in$"],
     "managerBranchPrefix": "python-"
   },
-  "python": {
-    "enabled": false
-  },
   "js": {
     "managerBranchPrefix": "js-"
   },
