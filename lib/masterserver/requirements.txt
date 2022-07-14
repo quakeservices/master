@@ -4,17 +4,17 @@
 #
 #    pip-compile requirements.in
 #
-boto3==1.24.29
+boto3==1.24.30
     # via -r ./storage/requirements.txt
-boto3-stubs[dynamodb]==1.24.29
+boto3-stubs[dynamodb]==1.24.30
     # via -r ./storage/requirements.txt
-botocore==1.27.29
+botocore==1.27.30
     # via
     #   -r ./storage/requirements.txt
     #   boto3
     #   pynamodb
     #   s3transfer
-botocore-stubs==1.27.29
+botocore-stubs==1.27.30
     # via
     #   -r ./storage/requirements.txt
     #   boto3-stubs
