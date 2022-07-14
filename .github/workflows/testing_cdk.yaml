@@ -7,9 +7,11 @@ on:
   push:
     paths:
       - 'deployment/**'
+      - 'test/unit/cdk/**'
   pull_request:
     paths:
       - 'deployment/**'
+      - 'test/unit/cdk/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

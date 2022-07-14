@@ -7,7 +7,7 @@ source scripts/include/build-env
 COMMAND="
 pytest -v
   --cov=deployment/
-  test/cdk
+  test/unit/cdk
 "
 
 echo "+++ Running tests +++"
