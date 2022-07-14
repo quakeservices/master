@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM quakeservices/base:latest
+FROM ghcr.io/quakeservices/base:latest
 
 RUN --mount=type=cache,target=/var/cache/apt \
   wget --quiet https://deb.nodesource.com/setup_current.x -O /tmp/setup_current.x && \

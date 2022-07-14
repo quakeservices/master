@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)" || exit
 
 FILES=$(find -type f -iname 'requirements*in' | grep -iv 'cdk.out')
 
