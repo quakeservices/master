@@ -256,4 +256,3 @@ class TestQuakeservicesInfra:
         stack_template.has_resource_properties(
             "AWS::Route53::HostedZone", {"Name": "quake3.services."}
         )
-
