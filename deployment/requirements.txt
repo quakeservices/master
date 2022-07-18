@@ -8,7 +8,7 @@ attrs==21.4.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-aws-lambda-python-alpha==2.31.1a0
+aws-cdk-aws-lambda-python-alpha==2.32.1a0
     # via -r requirements.in
 aws-cdk-lib==2.32.1
     # via
@@ -16,7 +16,7 @@ aws-cdk-lib==2.32.1
     #   aws-cdk-aws-lambda-python-alpha
 cattrs==22.1.0
     # via jsii
-constructs==10.1.48
+constructs==10.1.49
     # via
     #   -r requirements.in
     #   aws-cdk-aws-lambda-python-alpha
