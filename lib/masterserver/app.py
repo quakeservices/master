@@ -19,6 +19,8 @@ def setup_logging(level: str = "INFO") -> None:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    logging.info(f"Logging set to {level.upper()}")
+
 
 def setup_environment() -> None:
     os.environ["DEPLOYMENT_ENVIRONMENT"] = os.getenv(
@@ -35,6 +37,7 @@ def main() -> None:
     logging.info("Starting master server.")
 
     masterserver = MasterServer()
+    masterserver.initialise()
     masterserver.start()
 
     logging.info("Master server stopped.")

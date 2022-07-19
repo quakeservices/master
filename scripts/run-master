@@ -7,10 +7,4 @@ source scripts/include/build-env
 scripts/build-master
 
 echo "+++ Running master server +++"
-docker run --interactive \
-           --tty \
-           --rm \
-           --name ${MASTER_NAME} \
-           --publish ${MASTER_PORT} \
-           --publish ${MASTER_HEALTHCHECK} \
-           ${APP_NAME}/${MASTER_NAME}:latest
+docker-compose up

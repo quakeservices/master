@@ -1,11 +1,10 @@
 import signal
 import socket
 import threading
-import time
 from socketserver import ThreadingTCPServer
 from typing import Union
 
-from helpers import LoggingMixin
+from storage.backends.dynamodb import DynamoDbStorage
 
 from master import HealthCheckHandler, MasterHandler
 from master.threadpool import ThreadPoolServer
@@ -17,7 +16,7 @@ class MasterServerTCP(ThreadingTCPServer):
     allow_reuse_port = True
 
 
-class MasterServer(LoggingMixin):
+class MasterServer:
     master_server: ThreadPoolServer
     master_thread: threading.Thread
     health_server: MasterServerTCP
@@ -34,7 +33,7 @@ class MasterServer(LoggingMixin):
     ):
         self._create_master_master(address, master_port)
         self._create_health_check_master(address, health_port)
-        self._setup_signals()
+        # self._setup_signals()
 
     def _setup_signals(self) -> None:
         signal.signal(signal.SIGINT, self.shutdown())
@@ -61,15 +60,19 @@ class MasterServer(LoggingMixin):
         _thread.start()
         return _thread
 
+    def initialise(self) -> None:
+        storage = DynamoDbStorage()
+        storage.initialise()
+
     def start(self) -> None:
         with self.master_server, self.health_server:
             self.master_thread = self._create_thread(self.master_server)
             self.health_thread = self._create_thread(self.health_server)
             try:
                 while self.alive():
-                    time.sleep(1)
+                    continue
             except KeyboardInterrupt:
-                self.shutdown()
+                pass
             finally:
                 self.shutdown()
 
@@ -77,7 +80,9 @@ class MasterServer(LoggingMixin):
         return self.master_thread.is_alive() and self.health_thread.is_alive()
 
     def shutdown(self) -> bool:
-        self.master_server.terminate()
         self.master_server.shutdown()
         self.health_server.shutdown()
+        while self.alive():
+            continue
+
         return True

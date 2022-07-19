@@ -4,6 +4,13 @@ from storage.models.server import Server
 
 
 class BaseStorage:
+    def initialise(self) -> bool:
+        """
+        Initialise the storage backend.
+        Creating tables for example.
+        """
+        raise NotImplementedError
+
     def create_server(self, server: Server) -> bool:
         """
         Return True on successful create

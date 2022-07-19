@@ -13,3 +13,6 @@ pytest-mock
 yamllint
 PyYAML
 pip-tools
+click
+
+moto[dynamodb]
