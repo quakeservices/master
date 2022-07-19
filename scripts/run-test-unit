@@ -7,9 +7,9 @@ source scripts/include/build-env
 COMMAND="
 pytest -v
   --cov=lib/masterserver/
-  --cov=lib/web-backend/
   --cov=lib/storage/
   test/unit/master
+  test/unit/storage
 "
 
 echo "+++ Running tests +++"

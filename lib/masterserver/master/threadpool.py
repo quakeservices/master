@@ -11,7 +11,6 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
     # TODO: Have a max_thread_pool_size
     thread_pool_size: int = cpu_count * 1
     requests: Queue = Queue(thread_pool_size)
-    _shutdown: bool = False
 
     # pylint: disable=arguments-differ
     def serve_forever(self) -> None:  # type: ignore
@@ -20,15 +19,14 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
             thread.daemon = True
             thread.start()
 
-        while not self._shutdown:
+        while True:
             self.handle_request()
 
-        self.terminate()
         self.server_close()
 
     # pylint: disable=arguments-differ
     def process_request_thread(self) -> None:  # type: ignore
-        while not self._shutdown:
+        while True:
             ThreadingMixIn.process_request_thread(self, *self.requests.get())
 
     def handle_request(self) -> None:
@@ -38,6 +36,3 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
             return
 
         self.requests.put((request, client_address))
-
-    def terminate(self) -> None:
-        self._shutdown = True

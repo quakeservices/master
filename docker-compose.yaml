@@ -1,0 +1,27 @@
+---
+version: '3.8'
+
+services:
+
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory -delayTransientStatuses"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000/tcp"
+
+  master:
+    depends_on:
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
+    image: ghcr.io/quakeservices/master:latest
+    container_name: master
+    ports:
+      - "27900:27900/udp"
+      - "8080:8080/tcp"
+    environment:
+      DEPLOYMENT_ENVIRONMENT: 'development'
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+      REGION: 'us-west-2'

@@ -1,11 +1,10 @@
+import logging
 from socketserver import StreamRequestHandler
 
-from helpers import LoggingMixin
 
-
-class HealthCheckHandler(StreamRequestHandler, LoggingMixin):
+class HealthCheckHandler(StreamRequestHandler):
     def handler(self) -> None:
-        self.log("Received health check ping")
+        logging.debug("Received health check ping")
         response: bytes = (
             b"HTTP/1.1 200 OK\nContent-Type: text/html\n<html><body>OK</body></html>\n"
         )

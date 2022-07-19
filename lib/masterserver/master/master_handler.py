@@ -1,15 +1,15 @@
+import logging
 import struct
 from ipaddress import ip_address
 from socketserver import DatagramRequestHandler
 from typing import Optional
 
-from helpers import LoggingMixin
 from protocols import ProtocolResponse, Protocols
-from storage import Server
 from storage.backends import DynamoDbStorage
+from storage.models.server import Server
 
 
-class MasterHandler(DatagramRequestHandler, LoggingMixin):
+class MasterHandler(DatagramRequestHandler):
     def handle(self) -> None:
         self.protocols = Protocols()
         self.storage = DynamoDbStorage()
@@ -17,13 +17,13 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
         request: bytes = b""
         while True:
             fragment: bytes = self.rfile.readline()
-            self.log(f"Recieved fragment {fragment!r} from {self.client_address}")
+            logging.debug(f"Recieved fragment {fragment!r} from {self.client_address}")
             if fragment != b"":
                 request = request + fragment
             else:
                 break
 
-        self.log(f"Recieved {request!r} from {self.client_address}")
+        logging.info(f"Recieved {request!r} from {self.client_address}")
 
         protocol_response: Optional[ProtocolResponse] = self.protocols.parse_request(
             request
@@ -39,11 +39,11 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
                 self._send_response(response)
 
     def _send_response(self, response: bytes) -> None:
-        self.log(f"Sending {response!r} to {self.client_address}")
+        logging.debug(f"Sending {response!r} to {self.client_address}")
         self.wfile.write(response)
 
     def _handle_client_request(self, request: ProtocolResponse) -> bytes:
-        self.log("Header belongs to client")
+        logging.debug("Header belongs to client")
 
         response_header: Optional[bytes] = request.response
         server_list: list[Server] = self.storage.get_servers(request.game)
@@ -54,7 +54,7 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
         return self._create_response(processed_server_list, response_header)
 
     def _handle_server_request(self, request: ProtocolResponse) -> Optional[bytes]:
-        self.log("Header belongs to server")
+        logging.debug("Header belongs to server")
         address = ":".join([self.client_address[0], str(self.client_address[1])])
         server = Server(
             address=address,
@@ -64,10 +64,7 @@ class MasterHandler(DatagramRequestHandler, LoggingMixin):
             players=request.players,
         )
 
-        # if server.active:
-        #     self.storage.save_server(server)
-        # else:
-        #     self.storage.server_shutdown(server)
+        self.storage.update_server(server)
 
         return request.response
 

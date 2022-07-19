@@ -1,9 +1,11 @@
+import logging
+import os
 from decimal import Decimal
 from typing import Any, Mapping, Optional, Sequence, Union
 
-import boto3
-from boto3.dynamodb.conditions import Attr, Key
-from constants import APP_NAME
+from boto3.dynamodb.conditions import Attr
+from boto3.session import Session
+from constants import APP_NAME, DEFAULT_REGION
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
 from mypy_boto3_dynamodb.type_defs import (
     GetItemOutputTableTypeDef,
@@ -12,7 +14,7 @@ from mypy_boto3_dynamodb.type_defs import (
     UpdateItemOutputTableTypeDef,
 )
 from storage import BaseStorage
-from storage.server import Server
+from storage.models.server import Server
 
 Item = dict[
     str,
@@ -37,31 +39,53 @@ Item = dict[
 
 class DynamoDbStorage(BaseStorage):
     table: Table
+    dynamodb: DynamoDBServiceResource
+    primary_key: str = "address"
 
-    def __init__(self, table_name: str = APP_NAME):
-        session = boto3.session.Session()
-        dynamodb: DynamoDBServiceResource = session.resource("dynamodb")
-        self.table: Table = dynamodb.Table(table_name)
+    def __init__(
+        self,
+        table_name: str = APP_NAME,
+        region: str = DEFAULT_REGION,
+        session: Optional[Session] = None,
+    ):
+        _session = session or Session()
+        self.table = self._create_service_resource(table_name, region, _session)
+
+    def _create_service_resource(
+        self, table_name: str, region: str, session: Session
+    ) -> Table:
+        if os.getenv("DEPLOYMENT_ENVIRONMENT") == "development":
+            # We're in development so use dynamodb-local
+            self.dynamodb = session.resource(
+                "dynamodb",
+                region_name=region,
+                endpoint_url="http://dynamodb-local:8000",
+            )
+        else:
+            # We're in production or (unit) testing so use real endpoint
+            # dynamodb client will be mocked out in unit testing
+            self.dynamodb = session.resource("dynamodb", region_name=region)
+
+        return self.dynamodb.Table(table_name)
+
+    def initialise(self, table_name: str = APP_NAME) -> None:
+        logging.debug(f"Creating table {table_name}")
+        try:
+            self.dynamodb.create_table(
+                TableName=table_name,
+                BillingMode="PAY_PER_REQUEST",
+                KeySchema=[
+                    {"AttributeName": self.primary_key, "KeyType": "HASH"},
+                ],
+                AttributeDefinitions=[
+                    {"AttributeName": self.primary_key, "AttributeType": "S"},
+                ],
+            )
+        except self.dynamodb.meta.client.exceptions.ResourceInUseException:
+            logging.debug("Table already exists, skipping creation.")
 
     def create_server(self, server: Server) -> bool:
-        result: bool = self._put_item(server)
-        return result
-
-    def _put_item(self, server: Server) -> bool:
-        result: PutItemOutputTableTypeDef = self.table.put_item(
-            Item={
-                "server": server.address,
-                "active": server.active,
-                "game": server.game,
-                "details": server.details,
-                "players": server.players,
-            }
-        )
-
-        if result:
-            return True
-
-        return False
+        return self.update_server(server)
 
     def get_server(self, address: str, game: Optional[str] = None) -> Optional[Server]:
         server: Optional[Server] = None
@@ -101,8 +125,7 @@ class DynamoDbStorage(BaseStorage):
         return items
 
     def update_server(self, server: Server) -> bool:
-        result: bool = self._update_item(server)
-        return result
+        return self._update_item(server)
 
     def _update_item(self, server: Server) -> bool:
         update_expression: str = "SET active=:a, game=:g, details=:d, players=:p"
@@ -113,7 +136,7 @@ class DynamoDbStorage(BaseStorage):
             ":p": server.players,
         }
         result: UpdateItemOutputTableTypeDef = self.table.update_item(
-            Key={"address": server.address},
+            Key={self.primary_key: server.address},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
             ReturnValues="UPDATED_NEW",
