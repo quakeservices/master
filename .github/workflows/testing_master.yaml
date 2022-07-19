@@ -9,11 +9,13 @@ on:
       - 'lib/master/**'
       - 'lib/storage/**'
       - 'test/unit/master/**'
+      - 'test/unit/storage/**'
   pull_request:
     paths:
       - 'lib/master/**'
       - 'lib/storage/**'
       - 'test/unit/master/**'
+      - 'test/unit/storage/**'
 
 concurrency:
   # yamllint disable-line rule:line-length

@@ -1,13 +1,25 @@
 ---
-name: Linting
+name: Linting Python
 
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - 'deployment/**'
+      - 'lib/master/**'
+      - 'lib/storage/**'
+      - 'test/unit/cdk/**'
+      - 'test/unit/master/**'
+      - 'test/unit/storage/**'
   pull_request:
+    paths:
+      - 'deployment/**'
+      - 'lib/master/**'
+      - 'lib/storage/**'
+      - 'test/unit/cdk/**'
+      - 'test/unit/master/**'
+      - 'test/unit/storage/**'
 
 concurrency:
   # yamllint disable-line rule:line-length
