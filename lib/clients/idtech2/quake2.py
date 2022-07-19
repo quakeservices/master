@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 import socket
 from enum import Enum
-from typing import Optional
 
 import click
 
-# https://click.palletsprojects.com/en/8.1.x/options/#boolean-flags
-
-DEFAULT_HOST = socket.gethostbyname(socket.gethostname())
+DEFAULT_HOST: str = socket.gethostbyname(socket.gethostname())
+DEFAULT_PORT: int = 27900
 
 
 class Request(Enum):
@@ -18,7 +16,7 @@ class Request(Enum):
 
 @click.command()
 @click.option("-h", "--host", "host", default=DEFAULT_HOST, type=str)
-@click.option("-p", "--port", "port", default=27900, type=int)
+@click.option("-p", "--port", "port", default=DEFAULT_PORT, type=int)
 @click.option(
     "-r",
     "--request",
@@ -38,12 +36,12 @@ def main(
 
     print(f"Connecting to {host}:{port}...")
 
-    sock.sendto(message.value, (host, port))
-    print(f"Sent:     {message.value!r}")
+    sock.sendto(message, (host, port))
+    print(f"Sent:     {message!r}")
 
     received: bytes = sock.recv(1024)
     print(f"Received: {received!r}")
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter
