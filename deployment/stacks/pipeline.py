@@ -3,7 +3,7 @@ from typing import Any
 from aws_cdk import Stack
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_ssm as ssm
-from aws_cdk.pipelines import CodeBuildStep, CodePipeline, CodePipelineSource
+from aws_cdk.pipelines import CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep
 from constructs import Construct
 
 from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, REPO
@@ -30,42 +30,65 @@ class PipelineStack(Stack):
         self._create_master_stage()
 
     def _create_pipeline(self) -> CodePipeline:
-        connection_arn = ssm.StringParameter.from_string_parameter_attributes(
-            self,
-            "connection-arn",
-            parameter_name="/quakeservices/codepipeline/connection-arn",
-        ).string_value
-
-        commands: list[str] = [
-            "npm install --global aws-cdk",
-            "pip install -r deployment/requirements.txt",
-            "cdk synth",
-        ]
+        test_step = self._create_pipeline_test_step()
+        build_step = self._create_pipeline_build_step()
+        build_step.add_step_dependency(test_step)
 
         return CodePipeline(
             self,
             "pipeline",
             pipeline_name=APP_NAME,
             docker_enabled_for_synth=True,
-            synth=CodeBuildStep(
-                f"{APP_NAME}-synth",
-                project_name=f"{APP_NAME}-synth",
-                input=CodePipelineSource.connection(
-                    REPO, "main", connection_arn=connection_arn
-                ),
-                commands=commands,
-                role_policy_statements=[
-                    iam.PolicyStatement(
-                        actions=["sts:AssumeRole"],
-                        resources=["*"],
-                        conditions={
-                            "StringEquals": {
-                                "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
-                            }
-                        },
-                    )
-                ],
+            synth=build_step,
+        )
+
+    @property
+    def _pipeline_source(self) -> str:
+        return ssm.StringParameter.from_string_parameter_attributes(
+            self,
+            "connection-arn",
+            parameter_name="/quakeservices/codepipeline/connection-arn",
+        ).string_value
+
+    def _create_pipeline_build_step(self) -> CodeBuildStep:
+        commands: list[str] = [
+            "npm install --global aws-cdk",
+            "pip install -r deployment/requirements.txt",
+            "cdk synth",
+        ]
+        return CodeBuildStep(
+            f"{APP_NAME}-synth",
+            project_name=f"{APP_NAME}-synth",
+            input=CodePipelineSource.connection(
+                REPO, "main", connection_arn=self._pipeline_source
             ),
+            commands=commands,
+            env={"DOCKER_BUILDKIT": "1"},
+            role_policy_statements=[
+                iam.PolicyStatement(
+                    actions=["sts:AssumeRole"],
+                    resources=["*"],
+                    conditions={
+                        "StringEquals": {
+                            "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
+                        }
+                    },
+                )
+            ],
+        )
+
+    def _create_pipeline_test_step(self) -> ShellStep:
+        commands: list[str] = [
+            "npm install --global aws-cdk",
+            "pip install -r requirements.test.txt",
+            "pytest -v test/unit/cdk",
+        ]
+        return ShellStep(
+            "Test",
+            input=CodePipelineSource.connection(
+                REPO, "main", connection_arn=self._pipeline_source
+            ),
+            commands=commands,
         )
 
     def _create_infra_stage(self) -> None:
