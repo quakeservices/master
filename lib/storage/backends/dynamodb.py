@@ -92,7 +92,7 @@ class DynamoDbStorage(BaseStorage):
         result = self._get_item(address)
 
         if result:
-            server = Server(**result)
+            server = Server.parse_obj(result)
 
         return server
 
@@ -108,7 +108,7 @@ class DynamoDbStorage(BaseStorage):
 
         result = self._scan(game)
         for server in result:
-            servers.append(Server(**server))
+            servers.append(Server.parse_obj(server))
 
         return servers
 
