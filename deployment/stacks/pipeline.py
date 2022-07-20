@@ -25,6 +25,7 @@ class PipelineStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.pipeline_source = self._pipeline_source()
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
         self._create_master_stage()
@@ -60,7 +61,7 @@ class PipelineStack(Stack):
             f"{APP_NAME}-synth",
             project_name=f"{APP_NAME}-synth",
             input=CodePipelineSource.connection(
-                REPO, "main", connection_arn=self._pipeline_source
+                REPO, "main", connection_arn=self.pipeline_source
             ),
             commands=commands,
             env={"DOCKER_BUILDKIT": "1"},
@@ -86,7 +87,7 @@ class PipelineStack(Stack):
         return ShellStep(
             "Test",
             input=CodePipelineSource.connection(
-                REPO, "main", connection_arn=self._pipeline_source
+                REPO, "main", connection_arn=self.pipeline_source
             ),
             commands=commands,
         )
