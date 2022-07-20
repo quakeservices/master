@@ -25,7 +25,7 @@ class PipelineStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        self.pipeline_source = self._pipeline_source()
+        self.pipeline_source = self._pipeline_source
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
         self._create_master_stage()
