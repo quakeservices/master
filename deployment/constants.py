@@ -12,7 +12,12 @@ RECORDS: dict[str, list[dict[str, str]]] = {
         {
             "type": "TXT",
             "key": "_github-pages-challenge-quakeservices",
-            "value": "4cbb312cf881980e8b6ddef434f26bu",
+            "value": "4cbb312cf881980e8b6ddef434f26b",  # Quake Services Org
+        },
+        {
+            "type": "TXT",
+            "key": "_github-pages-challenge-quakeservices",
+            "value": "4cbb312cf881980e8b6ddef434f26bu",  # Quake Services Master
         },
         {
             "type": "CNAME",
