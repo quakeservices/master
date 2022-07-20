@@ -85,7 +85,7 @@ class InfraStack(Stack):
                 f"{domain}-{key}-txt",
                 zone=self.zones[domain],
                 record_name=key,
-                values=[record["value"]],
+                values=record["values"],
                 delete_existing=True,
             )
         elif record["type"] == "CNAME":
