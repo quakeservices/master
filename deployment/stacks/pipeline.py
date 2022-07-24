@@ -8,12 +8,7 @@ from constructs import Construct
 
 from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, REPO
 from deployment.environments import us_east_1, us_west_2
-from deployment.stacks.pipelines import (
-    PipelineInfraStage,
-    PipelineMasterStage,
-    PipelineWebBackendStage,
-    PipelineWebFrontendStage,
-)
+from deployment.stacks.pipelines import PipelineInfraStage, PipelineMasterStage
 
 
 class PipelineStack(Stack):
