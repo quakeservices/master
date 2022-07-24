@@ -7,4 +7,5 @@ source scripts/include/build-env
 scripts/build-master
 
 echo "+++ Running master server +++"
+docker-compose rm
 docker-compose up

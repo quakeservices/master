@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from storage.models.server import Server
+from master.storage.models.server import Server
 
 
 class BaseStorage:

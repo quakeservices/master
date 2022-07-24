@@ -6,14 +6,12 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'lib/master/**'
-      - 'lib/storage/**'
+      - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
   pull_request:
     paths:
-      - 'lib/master/**'
-      - 'lib/storage/**'
+      - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
 

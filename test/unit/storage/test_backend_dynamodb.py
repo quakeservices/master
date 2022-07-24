@@ -4,7 +4,7 @@ import boto3
 import pytest
 from moto import mock_dynamodb
 
-from lib.storage.models.server import Server
+from master.storage.models.server import Server
 
 
 class TestDynamodbBackend:
@@ -47,7 +47,7 @@ class TestDynamodbBackend:
 
     @pytest.fixture(scope="class")
     def storage(self, dynamodb):
-        from lib.storage.backends.dynamodb import DynamoDbStorage
+        from master.storage.backends.dynamodb import DynamoDbStorage
 
         return DynamoDbStorage()
 

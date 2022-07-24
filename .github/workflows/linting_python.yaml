@@ -7,16 +7,14 @@ on:
   push:
     paths:
       - 'deployment/**'
-      - 'lib/master/**'
-      - 'lib/storage/**'
+      - 'master/**'
       - 'test/unit/cdk/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
   pull_request:
     paths:
       - 'deployment/**'
-      - 'lib/master/**'
-      - 'lib/storage/**'
+      - 'master/**'
       - 'test/unit/cdk/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'

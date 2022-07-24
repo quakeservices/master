@@ -3,12 +3,11 @@ FROM ghcr.io/quakeservices/base:latest
 
 WORKDIR /usr/src/app
 
-COPY lib/masterserver/requirements.txt .
+COPY master/requirements.txt .
 
 RUN --mount=type=cache,target=/root/.cache/pip \
   python3 -m pip install -r requirements.txt
 
-COPY lib/masterserver /usr/src/app/
-COPY lib/storage /usr/src/app/storage/
+COPY . /usr/src/app/
 
-CMD [ "python3", "app.py" ]
+CMD [ "python3", "quakeservices.py" ]

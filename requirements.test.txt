@@ -20,30 +20,21 @@ aws-cdk-lib==2.33.0
     #   aws-cdk-aws-lambda-python-alpha
 black==22.6.0
     # via -r ./requirements.test.in
-boto3==1.24.33
+boto3==1.24.36
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.33
+boto3-stubs[dynamodb]==1.24.36.post1
+    # via -r ././master/requirements.txt
+botocore==1.27.36
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
-botocore==1.27.33
-    # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.33
+botocore-stubs==1.27.36
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3-stubs
 build==0.8.0
     # via pip-tools
@@ -59,10 +50,10 @@ charset-normalizer==2.1.0
     # via requests
 click==8.1.3
     # via
-    #   -r ./requirements.test.in
+    #   -r ././master/requirements.txt
     #   black
     #   pip-tools
-constructs==10.1.50
+constructs==10.1.55
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
@@ -91,9 +82,7 @@ jinja2==3.1.2
     # via moto
 jmespath==1.0.1
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3
     #   botocore
 jsii==1.62.0
@@ -108,17 +97,16 @@ markupsafe==2.1.1
     # via
     #   jinja2
     #   moto
+    #   werkzeug
 mccabe==0.7.0
     # via pylint
 moto[dynamodb]==3.1.16
     # via -r ./requirements.test.in
 mypy==0.971
     # via -r ./requirements.test.in
-mypy-boto3-dynamodb==1.24.27
+mypy-boto3-dynamodb==1.24.36.post1
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3-stubs
 mypy-extensions==0.4.3
     # via
@@ -143,7 +131,7 @@ platformdirs==2.5.2
 pluggy==1.0.0
     # via pytest
 proxy-protocol==0.8.1
-    # via -r ././lib/masterserver/requirements.txt
+    # via -r ././master/requirements.txt
 publication==0.0.3
     # via
     #   -r ././deployment/requirements.txt
@@ -155,7 +143,7 @@ py==1.11.0
 pycparser==2.21
     # via cffi
 pydantic==1.9.1
-    # via -r ././lib/masterserver/requirements.txt
+    # via -r ././master/requirements.txt
 pylint==2.14.5
     # via -r ./requirements.test.in
 pyparsing==3.0.9
@@ -172,9 +160,7 @@ pytest-mock==3.8.2
 python-dateutil==2.8.2
     # via
     #   -r ././deployment/requirements.txt
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   botocore
     #   jsii
     #   moto
@@ -193,16 +179,12 @@ responses==0.21.0
     # via moto
 s3transfer==0.6.0
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3
 six==1.16.0
     # via
     #   -r ././deployment/requirements.txt
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   python-dateutil
 tomli==2.0.1
     # via
@@ -215,18 +197,14 @@ tomli==2.0.1
     #   pytest
 tomlkit==0.11.1
     # via pylint
-types-s3transfer==0.6.0.post1
+types-s3transfer==0.6.0.post3
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3-stubs
 typing-extensions==4.3.0
     # via
     #   -r ././deployment/requirements.txt
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   boto3-stubs
     #   botocore-stubs
     #   jsii
@@ -236,15 +214,13 @@ typing-extensions==4.3.0
     #   pydantic
 urllib3==1.26.10
     # via
-    #   -r ././lib/masterserver/requirements.txt
-    #   -r ././lib/storage/requirements.txt
-    #   -r ././lib/web-backend/requirements.txt
+    #   -r ././master/requirements.txt
     #   botocore
     #   requests
     #   responses
 websocket-client==1.3.3
     # via docker
-werkzeug==2.1.2
+werkzeug==2.2.0
     # via moto
 wheel==0.37.1
     # via pip-tools

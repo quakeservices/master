@@ -28,11 +28,6 @@ norecursedirs = [
   ".venv",
   "node_modules"
 ]
-pythonpath = [
-  "lib/masterserver",
-  "lib/web-backend",
-  "lib/storage"
-]
 
 [tool.isort]
 profile = "black"

@@ -1,5 +1,6 @@
-from protocols.models import GameProtocol
 from pydantic import Field
+
+from master.protocols.models import GameProtocol
 
 
 class Idtech2Protocol(GameProtocol):

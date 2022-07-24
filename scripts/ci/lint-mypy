@@ -6,13 +6,8 @@ source scripts/include/build-env
 
 COMMAND='
 mypy
-  --exclude lib/masterserver/storage
-  --exclude lib/web-backend/storage
   deployment/
-  lib/clients/
-  lib/masterserver/
-  lib/web-backend/
-  lib/storage/
+  master/
 '
 
 echo "+++ Running mypy +++"

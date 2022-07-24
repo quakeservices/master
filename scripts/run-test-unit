@@ -6,8 +6,7 @@ source scripts/include/build-env
 
 COMMAND="
 pytest -v
-  --cov=lib/masterserver/
-  --cov=lib/storage/
+  --cov=master/
   test/unit/master
   test/unit/storage
 "

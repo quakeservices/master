@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from master import MasterServer
+from master.server import MasterServer
 
 
 def setup_logging(level: str = "INFO") -> None:

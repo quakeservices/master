@@ -1,3 +1,0 @@
--r ./storage/requirements.txt
-pydantic
-proxy-protocol

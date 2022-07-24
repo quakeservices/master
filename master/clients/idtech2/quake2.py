@@ -4,6 +4,8 @@ from enum import Enum
 
 import click
 
+from master.server.protocols.models.idtech2.quake2 import Quake2
+
 DEFAULT_HOST: str = socket.gethostbyname(socket.gethostname())
 DEFAULT_PORT: int = 27900
 

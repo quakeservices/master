@@ -1,9 +1,10 @@
 from typing import Optional
 
-from protocols.models import GameProtocol, Quake2
-from protocols.models.response import ProtocolResponse
 from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.v2 import ProxyProtocolV2
+
+from master.protocols.models import GameProtocol, Quake2
+from master.protocols.models.response import ProtocolResponse
 
 
 class Protocols:

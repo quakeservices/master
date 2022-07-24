@@ -2,7 +2,7 @@ from typing import Union
 
 import pytest
 
-from lib.masterserver.protocols.utilities import dictify_players, dictify_status
+from master.protocols.utilities import dictify_players, dictify_status
 
 
 class TestDictifyPlayers:

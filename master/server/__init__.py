@@ -1,25 +1,17 @@
 import signal
 import socket
 import threading
-from socketserver import ThreadingTCPServer
 from typing import Union
 
-from storage.backends.dynamodb import DynamoDbStorage
-
-from master import HealthCheckHandler, MasterHandler
-from master.threadpool import ThreadPoolServer
-
-
-class MasterServerTCP(ThreadingTCPServer):
-    daemon_threads = True
-    allow_reuse_address = True
-    allow_reuse_port = True
+from master.server.handlers import HealthCheckHandler, MasterHandler
+from master.server.servers import HealthCheckServer, ThreadPoolServer
+from master.storage.backends.dynamodb import DynamoDbStorage
 
 
 class MasterServer:
     master_server: ThreadPoolServer
     master_thread: threading.Thread
-    health_server: MasterServerTCP
+    health_server: HealthCheckServer
     health_thread: threading.Thread
     default_address: str = socket.gethostbyname(socket.gethostname())
     default_master_port: int = 27900
@@ -46,14 +38,14 @@ class MasterServer:
         )
 
     def _create_health_check_master(self, address: str, port: int) -> None:
-        self.health_server = MasterServerTCP(
+        self.health_server = HealthCheckServer(
             (address, port),
             HealthCheckHandler,
         )
 
     @staticmethod
     def _create_thread(
-        master: Union[ThreadPoolServer, MasterServerTCP], daemon: bool = True
+        master: Union[ThreadPoolServer, HealthCheckServer], daemon: bool = True
     ) -> threading.Thread:
         _thread = threading.Thread(target=master.serve_forever)
         _thread.daemon = daemon

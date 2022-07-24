@@ -1,8 +1,9 @@
 from typing import Optional
 
-from protocols.models import BaseProtocol, Headers
-from protocols.models.response import ProtocolResponse
 from pydantic import Field
+
+from master.protocols.models import BaseProtocol, Headers
+from master.protocols.models.response import ProtocolResponse
 
 
 class GameProtocol(BaseProtocol):

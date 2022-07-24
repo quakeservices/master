@@ -1,6 +1,4 @@
--r ./lib/storage/requirements.txt
--r ./lib/web-backend/requirements.txt
--r ./lib/masterserver/requirements.txt
+-r ./master/requirements.txt
 -r ./deployment/requirements.txt
 
 black
@@ -13,6 +11,5 @@ pytest-mock
 yamllint
 PyYAML
 pip-tools
-click
 
 moto[dynamodb]

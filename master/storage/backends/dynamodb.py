@@ -5,7 +5,6 @@ from typing import Any, Mapping, Optional, Sequence, Union
 
 from boto3.dynamodb.conditions import Attr
 from boto3.session import Session
-from constants import APP_NAME, DEFAULT_REGION
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
 from mypy_boto3_dynamodb.type_defs import (
     GetItemOutputTableTypeDef,
@@ -13,8 +12,10 @@ from mypy_boto3_dynamodb.type_defs import (
     ScanOutputTableTypeDef,
     UpdateItemOutputTableTypeDef,
 )
-from storage import BaseStorage
-from storage.models.server import Server
+
+from master.constants import APP_NAME, DEFAULT_REGION
+from master.storage import BaseStorage
+from master.storage.models.server import Server
 
 Item = dict[
     str,

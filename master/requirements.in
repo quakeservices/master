@@ -1,0 +1,5 @@
+pydantic
+proxy-protocol
+boto3
+boto3-stubs[dynamodb]
+click

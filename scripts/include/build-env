@@ -4,7 +4,7 @@ APP_NAME="quakeservices"
 CODE_DIR="/code"
 
 MASTER_NAME="master"
-MASTER_DIR="lib/masterserver"
+MASTER_DIR="master"
 MASTER_PORT="27900/udp"
 MASTER_HEALTHCHECK="8080/tcp"
 

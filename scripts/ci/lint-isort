@@ -7,11 +7,7 @@ source scripts/include/build-env
 COMMAND='
 isort
   --check-only
-  lib/clients
-  lib/masterserver
-  lib/web-backend
-  lib/storage
-  deployment
+  .
 '
 
 echo "+++ Running isort +++"

@@ -1,7 +1,7 @@
 import pytest
 
-from lib.masterserver.protocols import ProtocolResponse, Protocols
-from lib.masterserver.protocols.models import GameProtocol
+from master.protocols import ProtocolResponse, Protocols
+from master.protocols.models import GameProtocol
 
 
 class TestProtocols:

@@ -4,9 +4,9 @@ from ipaddress import ip_address
 from socketserver import DatagramRequestHandler
 from typing import Optional
 
-from protocols import ProtocolResponse, Protocols
-from storage.backends import DynamoDbStorage
-from storage.models.server import Server
+from master.protocols import ProtocolResponse, Protocols
+from master.storage.backends import DynamoDbStorage
+from master.storage.models.server import Server
 
 
 class MasterHandler(DatagramRequestHandler):
@@ -30,10 +30,12 @@ class MasterHandler(DatagramRequestHandler):
         )
         if protocol_response:
             response: Optional[bytes] = None
-            if protocol_response.header_type == "client":
+            if protocol_response.request_type == "client":
                 response = self._handle_client_request(protocol_response)
-            elif protocol_response.header_type in ("server", "any"):
+            elif protocol_response.request_type == "server":
                 response = self._handle_server_request(protocol_response)
+            elif protocol_response.request_type == "any":
+                response = self._handle_generic_request(protocol_response)
 
             if response:
                 self._send_response(response)
@@ -45,13 +47,12 @@ class MasterHandler(DatagramRequestHandler):
     def _handle_client_request(self, request: ProtocolResponse) -> bytes:
         logging.debug("Header belongs to client")
 
-        response_header: Optional[bytes] = request.response
         server_list: list[Server] = self.storage.get_servers(request.game)
         processed_server_list: list[bytes] = [
             self._pack_address(server.address) for server in server_list
         ]
 
-        return self._create_response(processed_server_list, response_header)
+        return self._create_response(processed_server_list, request.response)
 
     def _handle_server_request(self, request: ProtocolResponse) -> Optional[bytes]:
         logging.debug("Header belongs to server")
@@ -67,6 +68,12 @@ class MasterHandler(DatagramRequestHandler):
         self.storage.update_server(server)
 
         return request.response
+
+    def _handle_generic_request(self, request: ProtocolResponse) -> Optional[bytes]:
+        if request.response:
+            return request.response
+
+        return None
 
     @staticmethod
     def _create_response(
