@@ -1,6 +1,6 @@
 from typing import Any, Optional, Union
 
-from aws_cdk import RemovalPolicy, Stack
+from aws_cdk import Annotations, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
@@ -8,7 +8,8 @@ from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAINS, RECORDS
+from deployment.constants import APP_NAME, DOMAINS, RECORDS
+from deployment.types import Record
 
 
 class InfraStack(Stack):
@@ -70,16 +71,14 @@ class InfraStack(Stack):
 
     def _create_records(self) -> None:
         for domain, records in RECORDS.items():
-            for record in records:
-                self._create_route53_record(domain, record)
+            if "TXT" in records:
+                self._create_txt_records(domain, records["TXT"])
+            elif "CNAME" in records:
+                self._create_cname_records(domain, records["CNAME"])
 
-    def _create_route53_record(self, domain: str, record: dict[str, str]) -> None:
-        """
-        Create Route53 entries
-        """
-        entry: Optional[Union[route53.TxtRecord, route53.CnameRecord]] = None
-        key: str = record["key"]
-        if record["type"] == "TXT":
+    def _create_txt_records(self, domain: str, records: list[Record]) -> None:
+        for record in records:
+            key: str = record["key"]  # type: ignore
             entry = route53.TxtRecord(
                 self,
                 f"{domain}-{key}-txt",
@@ -88,15 +87,18 @@ class InfraStack(Stack):
                 values=record["values"],
                 delete_existing=True,
             )
-        elif record["type"] == "CNAME":
-            entry = route53.CnameRecord(
-                self,
-                f"{domain}-{key}-cname",
-                zone=self.zones[domain],
-                record_name=key,
-                domain_name=record["value"],
-                delete_existing=True,
-            )
-
-        if entry:
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
+
+    def _create_cname_records(self, domain: str, records: list[Record]) -> None:
+        for record in records:
+            key: str = record["key"]  # type: ignore
+            for value in record["values"]:
+                entry = route53.CnameRecord(
+                    self,
+                    f"{domain}-{key}-cname",
+                    zone=self.zones[domain],
+                    record_name=key,
+                    domain_name=value,
+                    delete_existing=True,
+                )
+                entry.apply_removal_policy(RemovalPolicy.DESTROY)
