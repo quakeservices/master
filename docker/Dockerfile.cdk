@@ -2,9 +2,12 @@
 FROM ghcr.io/quakeservices/base:latest
 
 RUN --mount=type=cache,target=/var/cache/apt \
-  wget --quiet https://deb.nodesource.com/setup_current.x -O /tmp/setup_current.x && \
+  wget \
+    --quiet https://deb.nodesource.com/setup_current.x \
+    --output-document /tmp/setup_current.x && \
   bash /tmp/setup_current.x && \
-  rm /tmp/setup_current.x
+  rm /tmp/setup_current.x && \
+  apt-get update
 
 RUN --mount=type=cache,target=/var/cache/apt \
   apt-get install -y --no-install-recommends \
