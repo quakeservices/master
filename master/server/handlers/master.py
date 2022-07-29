@@ -17,8 +17,10 @@ class MasterHandler(DatagramRequestHandler):
         request: bytes = b""
         while True:
             fragment: bytes = self.rfile.readline()
-            logging.debug(f"Recieved fragment {fragment!r} from {self.client_address}")
             if fragment != b"":
+                logging.debug(
+                    f"Recieved fragment {fragment!r} from {self.client_address}"
+                )
                 request = request + fragment
             else:
                 break
@@ -70,6 +72,7 @@ class MasterHandler(DatagramRequestHandler):
         return request.response
 
     def _handle_generic_request(self, request: ProtocolResponse) -> Optional[bytes]:
+        logging.debug("Header could belong to anything")
         if request.response:
             return request.response
 
