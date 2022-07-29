@@ -37,6 +37,8 @@ Item = dict[
     ],
 ]
 
+DEFAULT_SESSION = Session()
+
 
 class DynamoDbStorage(BaseStorage):
     table: Table
@@ -47,9 +49,9 @@ class DynamoDbStorage(BaseStorage):
         self,
         table_name: str = APP_NAME,
         region: str = DEFAULT_REGION,
-        session: Optional[Session] = None,
+        session: Optional[Session] = DEFAULT_SESSION,
     ):
-        _session = session or Session()
+        _session = session
         self.table = self._create_service_resource(table_name, region, _session)
 
     def _create_service_resource(
