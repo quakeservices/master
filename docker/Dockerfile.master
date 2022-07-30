@@ -10,4 +10,4 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . /usr/src/app/
 
-CMD [ "python3", "quakeservices.py" ]
+CMD [ "./qs.py", "--log-level", "debug", "--no-boto-logs" ]
