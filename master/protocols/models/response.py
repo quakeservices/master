@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
 from pydantic import Field
 
@@ -14,8 +14,10 @@ class ProtocolResponse(BaseProtocol):
             "True all other times"
         ),
     )
-    request_type: str
-    response_class: str
+    request_type: Literal["client", "server", "any"] = Field(
+        ..., description="Type of request"
+    )
+    response_class: Literal["ping", "heartbeat", "shutdown", "query"] = Field()
     response: Optional[bytes] = Field(default=None)
     players: list[Optional[dict[str, str]]] = Field(defaultfactory=list)
     details: dict[str, Union[str, int]] = Field(defaultfactory=dict)

@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from master.protocols.models import BaseProtocolHeaders, Headers
+from master.protocols.models import BaseProtocolHeader, Headers
 from master.protocols.models.idtech2 import Idtech2Protocol
 from master.protocols.models.response import ProtocolResponse
 from master.protocols.utilities import dictify_players, dictify_status
@@ -11,20 +11,20 @@ class Quake2(Idtech2Protocol):
     active: bool = True
     versions: list[str] = ["34"]
     headers: Headers = {
-        "ping": BaseProtocolHeaders(
+        "ping": BaseProtocolHeader(
             received=b"\xff\xff\xff\xffping",
             response=b"\xff\xff\xff\xffack",
             type="any",
         ),
-        "heartbeat": BaseProtocolHeaders(
+        "heartbeat": BaseProtocolHeader(
             received=b"\xff\xff\xff\xffheartbeat",
             response=b"\xff\xff\xff\xffack",
-            type="any",
+            type="server",
         ),
-        "shutdown": BaseProtocolHeaders(
+        "shutdown": BaseProtocolHeader(
             received=b"\xff\xff\xff\xffshutdown", type="server"
         ),
-        "query": BaseProtocolHeaders(received=b"query", type="client"),
+        "query": BaseProtocolHeader(received=b"query", type="client"),
     }
     valid_status_keys: list[str] = [
         "cheats",

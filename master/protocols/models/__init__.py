@@ -1,6 +1,6 @@
 from master.protocols.models.base import (
     BaseProtocol,
-    BaseProtocolHeaders,
+    BaseProtocolHeader,
     BaseProtocolPlayerStatus,
     Headers,
 )

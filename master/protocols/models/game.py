@@ -24,6 +24,8 @@ class GameProtocol(BaseProtocol):
         description="List of expected keys when parsing a server status",
         default_factory=list,
     )
+    split: str = Field(description="String to split received data")
+    newline: str = Field(description="String to lines", default="\n")
 
     def match_header(self, received_header: bytes) -> bool:
         raise NotImplementedError

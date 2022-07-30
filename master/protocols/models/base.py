@@ -10,7 +10,7 @@ class BaseProtocol(BaseModel):
         allow_mutation = False
 
 
-class BaseProtocolHeaders(BaseModel):
+class BaseProtocolHeader(BaseModel):
     received: bytes = Field(description="Header received from client/server")
     response: Optional[bytes] = Field(
         description="Header to prefix response to client/server", default=None
@@ -29,4 +29,4 @@ class BaseProtocolPlayerStatus(BaseModel):
     player: str = Field(description="Player name")
 
 
-Headers = Mapping[str, BaseProtocolHeaders]
+Headers = Mapping[str, BaseProtocolHeader]
