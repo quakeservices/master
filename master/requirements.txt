@@ -4,15 +4,15 @@
 #
 #    pip-compile ./master/requirements.in
 #
-boto3[crt]==1.24.39
+boto3[crt]==1.24.41
     # via -r ./master/requirements.in
-boto3-stubs[dynamodb]==1.24.38
+boto3-stubs[dynamodb]==1.24.41
     # via -r ./master/requirements.in
-botocore==1.27.39
+botocore==1.27.41
     # via
     #   boto3
     #   s3transfer
-botocore-stubs==1.27.39
+botocore-stubs==1.27.41
     # via boto3-stubs
 click==8.1.3
     # via -r ./master/requirements.in

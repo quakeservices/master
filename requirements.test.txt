@@ -12,27 +12,27 @@ attrs==21.4.0
     #   cattrs
     #   jsii
     #   pytest
-aws-cdk-aws-lambda-python-alpha==2.33.0a0
+aws-cdk-aws-lambda-python-alpha==2.34.2a0
     # via -r ././deployment/requirements.txt
-aws-cdk-lib==2.33.0
+aws-cdk-lib==2.34.2
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
 black==22.6.0
     # via -r ./requirements.test.in
-boto3[crt]==1.24.39
+boto3[crt]==1.24.41
     # via
     #   -r ././master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.38
+boto3-stubs[dynamodb]==1.24.41
     # via -r ././master/requirements.txt
-botocore==1.27.39
+botocore==1.27.41
     # via
     #   -r ././master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.39
+botocore-stubs==1.27.41
     # via
     #   -r ././master/requirements.txt
     #   boto3-stubs
@@ -53,7 +53,7 @@ click==8.1.3
     #   -r ././master/requirements.txt
     #   black
     #   pip-tools
-constructs==10.1.58
+constructs==10.1.61
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
@@ -85,7 +85,7 @@ jmespath==1.0.1
     #   -r ././master/requirements.txt
     #   boto3
     #   botocore
-jsii==1.63.1
+jsii==1.63.2
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
@@ -120,7 +120,7 @@ pathspec==0.9.0
     # via
     #   black
     #   yamllint
-pep517==0.12.0
+pep517==0.13.0
     # via build
 pip-tools==6.8.0
     # via -r ./requirements.test.in
