@@ -3,8 +3,13 @@ FROM ghcr.io/quakeservices/cdk:latest
 
 WORKDIR /tmp
 
-COPY docs/package.json /tmp
-COPY docs/package-lock.json /tmp
+COPY docs/package.json .
+COPY docs/package-lock.json .
 
 RUN --mount=type=cache,target=/root/.npm \
   npm install --global prettier
+
+COPY docs/requirements.txt .
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+  python3 -m pip install -r requirements.txt
