@@ -15,7 +15,7 @@ class BaseProtocolHeader(BaseModel):
     response: Optional[bytes] = Field(
         description="Header to prefix response to client/server", default=None
     )
-    type: Literal["any", "server", "client"] = Field(
+    header_type: Literal["any", "server", "client"] = Field(
         description=(
             "The type of header this correlates to; e.g."
             "some headers are only applicable to client requests"

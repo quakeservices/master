@@ -15,15 +15,17 @@ class ProtocolResponse(BaseProtocol):
         ),
     )
     request_type: Literal["client", "server", "any"] = Field(
-        ..., description="Type of request"
+        description="Type of request"
     )
-    response_class: Literal["ping", "heartbeat", "shutdown", "query"] = Field()
+    response_class: Literal["ping", "heartbeat", "shutdown", "query"] = Field(
+        description="Response class"
+    )
     response: Optional[bytes] = Field(default=None, description=("Response header"))
     players: list[Optional[dict[str, str]]] = Field(
-        defaultfactory=list,
+        default_factory=list,
         description=("List of server players if response belongs to a server"),
     )
     details: dict[str, Union[str, int]] = Field(
-        defaultfactory=dict,
+        default_factory=dict,
         description=("Server details if response belongs to a server"),
     )

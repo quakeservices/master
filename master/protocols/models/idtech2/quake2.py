@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 from master.protocols.models import BaseProtocolHeader, Headers
 from master.protocols.models.idtech2 import Idtech2Protocol
 from master.protocols.models.response import ProtocolResponse
@@ -14,17 +12,17 @@ class Quake2(Idtech2Protocol):
         "ping": BaseProtocolHeader(
             received=b"\xff\xff\xff\xffping",
             response=b"\xff\xff\xff\xffack",
-            type="any",
+            header_type="any",
         ),
         "heartbeat": BaseProtocolHeader(
             received=b"\xff\xff\xff\xffheartbeat",
             response=b"\xff\xff\xff\xffack",
-            type="server",
+            header_type="server",
         ),
         "shutdown": BaseProtocolHeader(
-            received=b"\xff\xff\xff\xffshutdown", type="server"
+            received=b"\xff\xff\xff\xffshutdown", header_type="server"
         ),
-        "query": BaseProtocolHeader(received=b"query", type="client"),
+        "query": BaseProtocolHeader(received=b"query", header_type="client"),
     }
     valid_status_keys: list[str] = [
         "cheats",
@@ -60,7 +58,7 @@ class Quake2(Idtech2Protocol):
 
         for header_name, header in self.headers.items():
             if received_header == header.received:
-                response_map["request_type"] = header.type
+                response_map["request_type"] = header.header_type
                 response_map["game"] = self.game
                 response_map["response"] = header.response
                 response_map["response_class"] = header_name
