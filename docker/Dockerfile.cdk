@@ -16,13 +16,13 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 WORKDIR /tmp
 
-COPY deployment/package.json /tmp
-COPY deployment/package-lock.json /tmp
+COPY deployment/package.json .
+COPY deployment/package-lock.json .
 
 RUN --mount=type=cache,target=/root/.npm \
-  npm install --global
+  npm install --global aws-cdk
 
-COPY deployment/requirements.txt /tmp
+COPY deployment/requirements.txt .
 
 RUN --mount=type=cache,target=/root/.cache/pip \
   python3 -m pip install -r requirements.txt
