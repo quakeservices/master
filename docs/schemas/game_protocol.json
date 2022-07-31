@@ -18,8 +18,8 @@
           "type": "string",
           "format": "binary"
         },
-        "type": {
-          "title": "Type",
+        "header_type": {
+          "title": "Header Type",
           "description": "The type of header this correlates to; e.g.some headers are only applicable to client requests",
           "default": "any",
           "enum": [

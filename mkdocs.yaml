@@ -12,5 +12,8 @@ nav:
   - Deployment:
       - Local: deployment/local.md
       - AWS: deployment/aws.md
+  - Schema:
+      - Game Protocol: schemas/game_protocol.md
+      - Protocol Response: schemas/protocol_response.md
   - Reference:
       - External: references/external.md

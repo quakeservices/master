@@ -8,7 +8,6 @@ deploymnet/
 .mypy_cache
 .pytest_cache/
 docker/
-docs/
 scripts/
 test/
 cdk.py
