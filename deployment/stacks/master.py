@@ -93,7 +93,7 @@ class MasterStack(Stack):
         self.table.grant_read_write_data(self.task.task_role)
 
     def _grant_credentials_read_to_task(self) -> None:
-        self.credentials.grant_read(self.task.execution_role)
+        self.credentials.grant_read(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
         return ecs.ContainerImage.from_registry(
