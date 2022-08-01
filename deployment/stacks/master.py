@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from aws_cdk import Duration, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
@@ -6,6 +6,7 @@ from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_elasticloadbalancingv2 as elb
+from aws_cdk import aws_iam as iam
 from aws_cdk import aws_logs as logs
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
@@ -93,7 +94,11 @@ class MasterStack(Stack):
         self.table.grant_read_write_data(self.task.task_role)
 
     def _grant_credentials_read_to_task(self) -> None:
-        self.credentials.grant_read(self.task.task_role)
+        execution_role: Optional[iam.IRole] = self.task.execution_role
+        if not execution_role:
+            execution_role = self.task.obtain_execution_role()
+
+        self.credentials.grant_read(execution_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
         return ecs.ContainerImage.from_registry(
