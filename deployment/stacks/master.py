@@ -154,6 +154,7 @@ class MasterStack(Stack):
             service_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             cluster=self.cluster,
             task_definition=self.task,
+            assign_public_ip=True,
         )
 
     def _create_network_load_balancer(self) -> elb.NetworkLoadBalancer:
