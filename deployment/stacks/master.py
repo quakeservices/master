@@ -9,6 +9,7 @@ from aws_cdk import aws_elasticloadbalancingv2 as elb
 from aws_cdk import aws_logs as logs
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
+from aws_cdk import aws_secretsmanager as secretsmanager
 from constructs import Construct
 
 from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAIN_NAME
@@ -36,7 +37,9 @@ class MasterStack(Stack):
 
         self.table = self._create_table()
         self.task = self._create_master_task()
-        self._grant_read_write_to_task()
+        self.credentials = self._get_ghcr_credentials()
+        self._grant_credentials_read_to_task()
+        self._grant_table_read_write_to_task()
         self._create_task_container()
         self.nlb = self._create_network_load_balancer()
         self._create_service_and_nlb()
@@ -56,6 +59,11 @@ class MasterStack(Stack):
     def _get_ecr_repository(self) -> ecr.IRepository:
         return ecr.Repository.from_repository_name(
             self, "repository", repository_name=APP_NAME
+        )
+
+    def _get_ghcr_credentials(self) -> secretsmanager.ISecret:
+        return secretsmanager.Secret.from_secret_name_v2(
+            self, "ghcr", secret_name=f"{APP_NAME}/github"
         )
 
     def _create_table(self) -> dynamodb.Table:
@@ -81,11 +89,17 @@ class MasterStack(Stack):
             self, "task", memory_limit_mib=self.MASTER_MEMORY, cpu=self.MASTER_CPU
         )
 
-    def _grant_read_write_to_task(self) -> None:
+    def _grant_table_read_write_to_task(self) -> None:
         self.table.grant_read_write_data(self.task.task_role)
 
+    def _grant_credentials_read_to_task(self) -> None:
+        self.credentials.grant_read(self.task.execution_role)
+
     def _define_container_image(self) -> ecs.ContainerImage:
-        return ecs.ContainerImage.from_registry("ghcr.io/quakeservices/master:latest")
+        return ecs.ContainerImage.from_registry(
+            "ghcr.io/quakeservices/master:latest",
+            credentials=self.credentials,
+        )
 
     def _create_task_container(self) -> None:
         """
@@ -141,6 +155,7 @@ class MasterStack(Stack):
         """
         Create Network Load Balancer
         """
+        # TODO: Move to Infra
         return elb.NetworkLoadBalancer(
             self,
             "nlb",
