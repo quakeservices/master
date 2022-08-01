@@ -57,7 +57,7 @@ class DynamoDbStorage(BaseStorage):
     def _create_service_resource(
         self, table_name: str, region: str, session: Session
     ) -> Table:
-        if os.getenv("DEPLOYMENT_ENVIRONMENT") == "development":
+        if os.getenv("DEPLOYMENT_ENVIRONMENT") == "dev":
             # We're in development so use dynamodb-local
             self.dynamodb = session.resource(
                 "dynamodb",

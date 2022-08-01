@@ -133,6 +133,7 @@ class MasterStack(Stack):
             stop_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
             logging=log_settings,
             memory_reservation_mib=self.MASTER_MEMORY,
+            environment={"DEPLOYMENT_ENVIRONMENT": DEPLOYMENT_ENVIRONMENT},
         )
 
         container.add_port_mappings(

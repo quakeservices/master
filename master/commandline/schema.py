@@ -1,12 +1,21 @@
+import logging
 import os
+import sys
 
 import click
-from json_schema_for_humans.generate import generate_from_file_object
-from json_schema_for_humans.generation_configuration import GenerationConfiguration
 from pydantic import schema_json_of  # pylint: disable=no-name-in-module
 
 from master.protocols.models.game import GameProtocol
 from master.protocols.models.response import ProtocolResponse
+
+# json_schema_for_humans isn't part of the `master` build and doesn't need to be
+# if we can't load it we're probably not meant to
+try:
+    from json_schema_for_humans.generate import generate_from_file_object
+    from json_schema_for_humans.generation_configuration import GenerationConfiguration
+except ModuleNotFoundError:
+    logging.info("Unable to load json_schema_for_humans, skipping...")
+    sys.exit(1)
 
 schema_path: str = "docs/schemas"
 schemas: list[dict] = [

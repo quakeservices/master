@@ -26,7 +26,7 @@ services:
       - "27900:27900/udp"
       - "8080:8080/tcp"
     environment:
-      DEPLOYMENT_ENVIRONMENT: 'development'
+      DEPLOYMENT_ENVIRONMENT: 'dev'
       AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
       AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
       REGION: 'us-west-2'

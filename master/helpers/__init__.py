@@ -20,5 +20,5 @@ def setup_logging(log_level: str, boto_logs: bool) -> None:
 
 def setup_environment() -> None:
     if not os.getenv("DEPLOYMENT_ENVIRONMENT", None):
-        os.environ["DEPLOYMENT_ENVIRONMENT"] = "development"
-        logging.info("DEPLOYMENT_ENVIRONMENT unset. Setting to 'development'")
+        os.environ["DEPLOYMENT_ENVIRONMENT"] = "dev"
+        logging.info("DEPLOYMENT_ENVIRONMENT unset. Setting to 'dev'")
