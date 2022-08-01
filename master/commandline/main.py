@@ -1,13 +1,15 @@
 import click
 
 from master.commandline.client import client_cli
+from master.commandline.database import database_cli
 from master.commandline.schema import schema_cli
 from master.commandline.server import server_cli
 from master.helpers import setup_environment, setup_logging
 
 
 @click.command(
-    cls=click.CommandCollection, sources=[server_cli, client_cli, schema_cli]
+    cls=click.CommandCollection,
+    sources=[server_cli, client_cli, schema_cli, database_cli],
 )
 @click.option(
     "--log-level",

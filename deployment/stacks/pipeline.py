@@ -21,23 +21,22 @@ class PipelineStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         self.pipeline_source = self._pipeline_source
-        self.connection = CodePipelineSource.connection(
-            REPO, "main", connection_arn=self.pipeline_source
-        )
+        self.connection = self._pipeline_connection
         self.pipeline = self._create_pipeline()
         self._create_infra_stage()
         self._create_master_stage()
 
     def _create_pipeline(self) -> CodePipeline:
-        test_step = self._create_pipeline_test_step()
+        # test_step = self._create_pipeline_test_step()
         build_step = self._create_pipeline_build_step()
-        build_step.add_step_dependency(test_step)
+        # build_step.add_step_dependency(test_step)
 
         return CodePipeline(
             self,
             "pipeline",
             pipeline_name=APP_NAME,
             docker_enabled_for_synth=True,
+            docker_enabled_for_self_mutation=True,
             synth=build_step,
         )
 
@@ -48,6 +47,12 @@ class PipelineStack(Stack):
             "connection-arn",
             parameter_name="/quakeservices/codepipeline/connection-arn",
         ).string_value
+
+    @property
+    def _pipeline_connection(self) -> CodePipelineSource:
+        return CodePipelineSource.connection(
+            REPO, "main", connection_arn=self.pipeline_source
+        )
 
     def _create_pipeline_build_step(self) -> CodeBuildStep:
         commands: list[str] = [

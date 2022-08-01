@@ -85,9 +85,7 @@ class MasterStack(Stack):
         self.table.grant_read_write_data(self.task.task_role)
 
     def _define_container_image(self) -> ecs.ContainerImage:
-        return ecs.ContainerImage.from_asset(
-            file="docker/Dockerfile.master", directory="."
-        )
+        return ecs.ContainerImage.from_registry("ghcr.io/quakeservices/master:latest")
 
     def _create_task_container(self) -> None:
         """

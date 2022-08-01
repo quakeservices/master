@@ -1,13 +1,9 @@
-import json
 import os
 
 import click
-from json_schema_for_humans.generate import (
-    generate_from_file_object,
-    generate_from_filename,
-)
+from json_schema_for_humans.generate import generate_from_file_object
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
-from pydantic import schema_json_of
+from pydantic import schema_json_of  # pylint: disable=no-name-in-module
 
 from master.protocols.models.game import GameProtocol
 from master.protocols.models.response import ProtocolResponse

@@ -5,8 +5,16 @@ name: Build
 
 # yamllint disable-line rule:truthy
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: [Linting Docker, Linting Python, Testing Master]
+    types:
+      - completed
+    branches: [main]
+    paths:
+      - 'docker/**'
+      - 'master/**'
+      - 'test/unit/master/**'
+      - 'test/unit/storage/**'
 
 jobs:
   build:
@@ -28,7 +36,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push base
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -38,3 +46,14 @@ jobs:
           cache-to: type=gha
           tags: |
             ghcr.io/quakeservices/base:latest
+
+      - name: Build and push master
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: docker/Dockerfile.master
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha
+          tags: |
+            ghcr.io/quakeservices/master:latest
