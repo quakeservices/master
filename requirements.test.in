@@ -1,5 +1,6 @@
--r ./master/requirements.txt
 -r ./deployment/requirements.txt
+-r ./docs/requirements.txt
+-r ./master/requirements.txt
 
 black
 isort

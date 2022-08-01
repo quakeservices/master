@@ -4,15 +4,15 @@
 #
 #    pip-compile ./master/requirements.in
 #
-boto3[crt]==1.24.41
+boto3[crt]==1.24.42
     # via -r ./master/requirements.in
-boto3-stubs[dynamodb]==1.24.41
+boto3-stubs[dynamodb]==1.24.42
     # via -r ./master/requirements.in
-botocore==1.27.41
+botocore==1.27.42
     # via
     #   boto3
     #   s3transfer
-botocore-stubs==1.27.41
+botocore-stubs==1.27.42.post3
     # via boto3-stubs
 click==8.1.3
     # via -r ./master/requirements.in
@@ -32,12 +32,11 @@ s3transfer==0.6.0
     # via boto3
 six==1.16.0
     # via python-dateutil
-types-s3transfer==0.6.0.post3
+types-s3transfer==0.6.0.post4
     # via boto3-stubs
 typing-extensions==4.3.0
     # via
     #   boto3-stubs
-    #   botocore-stubs
     #   mypy-boto3-dynamodb
     #   proxy-protocol
     #   pydantic

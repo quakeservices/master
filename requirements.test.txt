@@ -20,19 +20,19 @@ aws-cdk-lib==2.34.2
     #   aws-cdk-aws-lambda-python-alpha
 black==22.6.0
     # via -r ./requirements.test.in
-boto3[crt]==1.24.41
+boto3[crt]==1.24.42
     # via
     #   -r ././master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.41
+boto3-stubs[dynamodb]==1.24.42
     # via -r ././master/requirements.txt
-botocore==1.27.41
+botocore==1.27.42
     # via
     #   -r ././master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.41
+botocore-stubs==1.27.42.post3
     # via
     #   -r ././master/requirements.txt
     #   boto3-stubs
@@ -43,17 +43,23 @@ cattrs==22.1.0
     #   -r ././deployment/requirements.txt
     #   jsii
 certifi==2022.6.15
-    # via requests
+    # via
+    #   -r ././docs/requirements.txt
+    #   requests
 cffi==1.15.1
     # via cryptography
 charset-normalizer==2.1.0
-    # via requests
+    # via
+    #   -r ././docs/requirements.txt
+    #   requests
 click==8.1.3
     # via
+    #   -r ././docs/requirements.txt
     #   -r ././master/requirements.txt
     #   black
+    #   json-schema-for-humans
     #   pip-tools
-constructs==10.1.61
+constructs==10.1.63
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
@@ -62,6 +68,10 @@ coverage[toml]==6.4.2
     # via pytest-cov
 cryptography==37.0.4
     # via moto
+dataclasses-json==0.5.7
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
 dill==0.3.5.1
     # via pylint
 docker==5.0.3
@@ -70,8 +80,14 @@ exceptiongroup==1.0.0rc8
     # via
     #   -r ././deployment/requirements.txt
     #   cattrs
+htmlmin==0.1.12
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
 idna==3.3
-    # via requests
+    # via
+    #   -r ././docs/requirements.txt
+    #   requests
 iniconfig==1.1.1
     # via pytest
 isort==5.10.1
@@ -79,7 +95,10 @@ isort==5.10.1
     #   -r ./requirements.test.in
     #   pylint
 jinja2==3.1.2
-    # via moto
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
+    #   moto
 jmespath==1.0.1
     # via
     #   -r ././master/requirements.txt
@@ -91,13 +110,29 @@ jsii==1.63.2
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
     #   constructs
+json-schema-for-humans==0.41.6
+    # via -r ././docs/requirements.txt
 lazy-object-proxy==1.7.1
     # via astroid
+markdown2==2.4.3
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
 markupsafe==2.1.1
     # via
+    #   -r ././docs/requirements.txt
     #   jinja2
     #   moto
     #   werkzeug
+marshmallow==3.17.0
+    # via
+    #   -r ././docs/requirements.txt
+    #   dataclasses-json
+    #   marshmallow-enum
+marshmallow-enum==1.5.1
+    # via
+    #   -r ././docs/requirements.txt
+    #   dataclasses-json
 mccabe==0.7.0
     # via pylint
 moto[dynamodb]==3.1.16
@@ -110,11 +145,15 @@ mypy-boto3-dynamodb==1.24.36.post1
     #   boto3-stubs
 mypy-extensions==0.4.3
     # via
+    #   -r ././docs/requirements.txt
     #   black
     #   mypy
+    #   typing-inspect
 packaging==21.3
     # via
+    #   -r ././docs/requirements.txt
     #   build
+    #   marshmallow
     #   pytest
 pathspec==0.9.0
     # via
@@ -145,10 +184,16 @@ pycparser==2.21
     # via cffi
 pydantic==1.9.1
     # via -r ././master/requirements.txt
+pygments==2.12.0
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
 pylint==2.14.5
     # via -r ./requirements.test.in
 pyparsing==3.0.9
-    # via packaging
+    # via
+    #   -r ././docs/requirements.txt
+    #   packaging
 pytest==7.1.2
     # via
     #   -r ./requirements.test.in
@@ -165,15 +210,22 @@ python-dateutil==2.8.2
     #   botocore
     #   jsii
     #   moto
-pytz==2022.1
-    # via moto
+pytz==2021.3
+    # via
+    #   -r ././docs/requirements.txt
+    #   json-schema-for-humans
+    #   moto
 pyyaml==6.0
     # via
+    #   -r ././docs/requirements.txt
     #   -r ./requirements.test.in
+    #   json-schema-for-humans
     #   yamllint
 requests==2.28.1
     # via
+    #   -r ././docs/requirements.txt
     #   docker
+    #   json-schema-for-humans
     #   moto
     #   responses
 responses==0.21.0
@@ -203,23 +255,29 @@ typeguard==2.13.3
     #   -r ././deployment/requirements.txt
     #   constructs
     #   jsii
-types-s3transfer==0.6.0.post3
+types-s3transfer==0.6.0.post4
     # via
     #   -r ././master/requirements.txt
     #   boto3-stubs
 typing-extensions==4.3.0
     # via
     #   -r ././deployment/requirements.txt
+    #   -r ././docs/requirements.txt
     #   -r ././master/requirements.txt
     #   boto3-stubs
-    #   botocore-stubs
     #   jsii
     #   mypy
     #   mypy-boto3-dynamodb
     #   proxy-protocol
     #   pydantic
+    #   typing-inspect
+typing-inspect==0.7.1
+    # via
+    #   -r ././docs/requirements.txt
+    #   dataclasses-json
 urllib3==1.26.11
     # via
+    #   -r ././docs/requirements.txt
     #   -r ././master/requirements.txt
     #   botocore
     #   requests
