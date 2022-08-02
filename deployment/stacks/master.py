@@ -145,6 +145,27 @@ class MasterStack(Stack):
             )
         )
 
+    def _create_security_group(self) -> ec2.ISecurityGroup:
+        security_group = ec2.SecurityGroup(
+            self,
+            "sg",
+            vpc=self.vpc,
+            allow_all_outbound=True,
+            security_group_name=f"{APP_NAME}-master-sg",
+        )
+
+        security_group.add_ingress_rule(
+            ec2.Peer.any_ipv4(),
+            ec2.Port.udp(self.MASTER_PORT),
+            "Allow master access from anywhere",
+        )
+        security_group.add_ingress_rule(
+            ec2.Peer.ipv4(self.vpc.vpc_cidr_block),
+            ec2.Port.tcp(self.MASTER_HEALTHCHECK_PORT),
+            "Allow healthcheck from the vpc",
+        )
+        return security_group
+
     def _create_service(self) -> ecs.FargateService:
         """
         Create service
@@ -156,6 +177,7 @@ class MasterStack(Stack):
             cluster=self.cluster,
             task_definition=self.task,
             assign_public_ip=True,
+            security_groups=[self._create_security_group()],
         )
 
     def _create_network_load_balancer(self) -> elb.NetworkLoadBalancer:
