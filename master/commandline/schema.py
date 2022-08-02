@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 
 import click
 from pydantic import schema_json_of  # pylint: disable=no-name-in-module
@@ -14,8 +13,7 @@ try:
     from json_schema_for_humans.generate import generate_from_file_object
     from json_schema_for_humans.generation_configuration import GenerationConfiguration
 except ModuleNotFoundError:
-    logging.info("Unable to load json_schema_for_humans, skipping...")
-    sys.exit(1)
+    click.echo("Unable to load json_schema_for_humans, skipping...")
 
 schema_path: str = "docs/schemas"
 schemas: list[dict] = [
