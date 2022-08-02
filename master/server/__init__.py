@@ -45,9 +45,9 @@ class MasterServer:
 
     @staticmethod
     def _create_thread(
-        master: Union[ThreadPoolServer, HealthCheckServer], daemon: bool = True
+        server: Union[ThreadPoolServer, HealthCheckServer], daemon: bool = True
     ) -> threading.Thread:
-        _thread = threading.Thread(target=master.serve_forever)
+        _thread = threading.Thread(target=server.serve_forever)
         _thread.daemon = daemon
         _thread.start()
         return _thread
