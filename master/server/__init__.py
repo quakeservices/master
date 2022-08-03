@@ -1,6 +1,7 @@
 import signal
 import socket
 import threading
+import time
 from typing import Union
 
 from master.server.handlers import HealthCheckHandler, MasterHandler
@@ -62,7 +63,7 @@ class MasterServer:
             self.health_thread = self._create_thread(self.health_server)
             try:
                 while self.alive():
-                    continue
+                    time.sleep(5)
             except KeyboardInterrupt:
                 pass
             finally:
