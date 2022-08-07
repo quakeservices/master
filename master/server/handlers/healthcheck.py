@@ -15,5 +15,5 @@ RESPONSE: bytes = (
 
 class HealthCheckHandler(StreamRequestHandler):
     def handle(self) -> None:
-        logging.debug("Received health check ping")
+        # logging.debug("Received health check ping")
         self.wfile.write(RESPONSE)
