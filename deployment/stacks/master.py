@@ -94,7 +94,7 @@ class MasterStack(Stack):
         )
 
     def _grant_table_read_write_to_task(self) -> None:
-        self.table.grant_read_write_data(self.task.task.execution_role)
+        self.table.grant_read_write_data(self.task.execution_role)
 
     def _grant_credentials_read_to_task(self) -> None:
         execution_role: Optional[iam.IRole] = self.task.execution_role
