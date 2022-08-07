@@ -17,7 +17,7 @@ from master.helpers import setup_environment, setup_logging
     type=click.Choice(["info", "warn", "debug"], case_sensitive=False),
     default="info",
 )
-@click.option("--boto-logs/--no-boto-logs", default=False)
-def cli(log_level: str, boto_logs: bool) -> None:
+@click.option("--hide-boto-logs", is_flag=True)
+def cli(log_level: str, hide_boto_logs: bool) -> None:
     setup_environment()
-    setup_logging(log_level, boto_logs)
+    setup_logging(log_level, hide_boto_logs)

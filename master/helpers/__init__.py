@@ -3,8 +3,8 @@ import os
 import sys
 
 
-def setup_logging(log_level: str, boto_logs: bool) -> None:
-    if boto_logs:
+def setup_logging(log_level: str, hide_boto_logs: bool) -> None:
+    if hide_boto_logs:
         logging.getLogger("boto3").propagate = False
         logging.getLogger("botocore").propagate = False
 

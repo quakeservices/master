@@ -14,7 +14,7 @@ class MasterServer:
     master_thread: threading.Thread
     health_server: HealthCheckServer
     health_thread: threading.Thread
-    default_address: str = socket.gethostbyname(socket.gethostname())
+    default_address: str = "0.0.0.0"
     default_master_port: int = 27900
     default_health_port: int = 8080
 

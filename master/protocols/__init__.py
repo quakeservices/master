@@ -1,23 +1,17 @@
+import logging
 from typing import Optional
-
-from proxyprotocol import ProxyProtocolResult
-from proxyprotocol.v2 import ProxyProtocolV2
 
 from master.protocols.models import GameProtocol, Quake2
 from master.protocols.models.response import ProtocolResponse
 
 
 class Protocols:
-    pp = ProxyProtocolV2()
     protocols: list[GameProtocol] = [Quake2()]
 
     def _check_proxy_protocol(self, request: bytes) -> bytes:
-        if len(request) > 8:
-            if self.pp.is_valid(request):
-                raise NotImplementedError
-                # TODO: Fixme
-                # result: ProxyProtocolResult = self.pp.parse(request)
-
+        """
+        Not implemented
+        """
         return request
 
     def _find_protocol(self, request_header: bytes) -> Optional[GameProtocol]:
