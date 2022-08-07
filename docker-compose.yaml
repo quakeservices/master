@@ -14,14 +14,22 @@ services:
       - "8000:8000/tcp"
     environment:
       REGION: 'us-west-2'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://dynamodb-local:8000"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - default
 
-  master:
+  server:
     depends_on:
-      - "dynamodb-local"
+      - dynamodb-local
     links:
-      - "dynamodb-local"
+      - dynamodb-local
+    container_name: server
     image: ghcr.io/quakeservices/master:latest
-    container_name: master
     ports:
       - "27900:27900/udp"
       - "8080:8080/tcp"
@@ -30,3 +38,9 @@ services:
       AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
       AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
       REGION: 'us-west-2'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://server:8080"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

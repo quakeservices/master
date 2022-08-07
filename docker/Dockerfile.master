@@ -10,4 +10,4 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . /usr/src/app/
 
-CMD [ "./qs.py", "--log-level", "debug", "--no-boto-logs", "server", "run"]
+CMD [ "./qs.py", "--log-level", "debug", "--hide-boto-logs", "server", "run"]
