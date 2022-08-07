@@ -8,15 +8,15 @@ attrs==21.4.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-aws-lambda-python-alpha==2.34.2a0
+aws-cdk-aws-lambda-python-alpha==2.35.0a0
     # via -r ./deployment/requirements.in
-aws-cdk-lib==2.34.2
+aws-cdk-lib==2.35.0
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
 cattrs==22.1.0
     # via jsii
-constructs==10.1.63
+constructs==10.1.69
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
@@ -40,6 +40,8 @@ six==1.16.0
     # via python-dateutil
 typeguard==2.13.3
     # via
+    #   aws-cdk-aws-lambda-python-alpha
+    #   aws-cdk-lib
     #   constructs
     #   jsii
 typing-extensions==4.3.0

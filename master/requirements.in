@@ -1,5 +1,4 @@
 pydantic
-proxy-protocol
 boto3[crt]
 boto3-stubs[dynamodb]
 click
