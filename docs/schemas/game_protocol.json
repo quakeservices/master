@@ -22,17 +22,11 @@
           "title": "Header Type",
           "description": "The type of header this correlates to; e.g.some headers are only applicable to client requests",
           "default": "any",
-          "enum": [
-            "any",
-            "server",
-            "client"
-          ],
+          "enum": ["any", "server", "client"],
           "type": "string"
         }
       },
-      "required": [
-        "received"
-      ]
+      "required": ["received"]
     },
     "GameProtocol": {
       "title": "GameProtocol",
@@ -96,13 +90,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "engine",
-        "game",
-        "versions",
-        "headers",
-        "split"
-      ]
+      "required": ["engine", "game", "versions", "headers", "split"]
     }
   }
 }

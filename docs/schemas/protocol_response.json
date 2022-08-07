@@ -20,22 +20,13 @@
         "request_type": {
           "title": "Request Type",
           "description": "Type of request",
-          "enum": [
-            "client",
-            "server",
-            "any"
-          ],
+          "enum": ["client", "server", "any"],
           "type": "string"
         },
         "response_class": {
           "title": "Response Class",
           "description": "Response class",
-          "enum": [
-            "ping",
-            "heartbeat",
-            "shutdown",
-            "query"
-          ],
+          "enum": ["ping", "heartbeat", "shutdown", "query"],
           "type": "string"
         },
         "response": {
@@ -71,11 +62,7 @@
           }
         }
       },
-      "required": [
-        "game",
-        "request_type",
-        "response_class"
-      ]
+      "required": ["game", "request_type", "response_class"]
     }
   }
 }
