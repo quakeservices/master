@@ -13,7 +13,7 @@ from mypy_boto3_dynamodb.type_defs import (
     UpdateItemOutputTableTypeDef,
 )
 
-from master.constants import APP_NAME, DEFAULT_REGION
+from master.constants import APP_NAME, DEFAULT_REGION, DEPLOYMENT_ENVIRONMENT
 from master.storage import BaseStorage
 from master.storage.models.server import Server
 
@@ -38,6 +38,7 @@ Item = dict[
 ]
 
 DEFAULT_SESSION = Session()
+DEFAULT_TABLE_NAME = f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}"
 
 
 class DynamoDbStorage(BaseStorage):
@@ -47,7 +48,7 @@ class DynamoDbStorage(BaseStorage):
 
     def __init__(
         self,
-        table_name: str = APP_NAME,
+        table_name: str = DEFAULT_TABLE_NAME,
         region: str = DEFAULT_REGION,
         session: Optional[Session] = DEFAULT_SESSION,
     ):
@@ -57,7 +58,7 @@ class DynamoDbStorage(BaseStorage):
     def _create_service_resource(
         self, table_name: str, region: str, session: Session
     ) -> Table:
-        if os.getenv("DEPLOYMENT_ENVIRONMENT", "prod") == "dev":
+        if DEPLOYMENT_ENVIRONMENT == "dev":
             # We're in development so use dynamodb-local
             self.dynamodb = session.resource(
                 "dynamodb",
@@ -72,7 +73,7 @@ class DynamoDbStorage(BaseStorage):
         return self.dynamodb.Table(table_name)
 
     def initialise(self, table_name: str = APP_NAME) -> None:
-        if os.getenv("DEPLOYMENT_ENVIRONMENT", "prod") == "dev":
+        if DEPLOYMENT_ENVIRONMENT == "dev":
             self._create_table(table_name)
 
     def _create_table(self, table_name: str) -> None:
