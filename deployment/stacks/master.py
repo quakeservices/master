@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from aws_cdk import Duration, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
@@ -15,12 +15,15 @@ from constructs import Construct
 
 from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAIN_NAME
 
+AVAILABLE_CPU = Literal[512, 1024, 2048, 4096, 5120, 6144, 7168, 8192]
+AVAILABLE_RAM = Literal[256, 1024, 2048, 3072, 4096]
+
 
 class MasterStack(Stack):
     MASTER_PORT: int = 27900
     MASTER_HEALTHCHECK_PORT: int = 8080
-    MASTER_CPU: int = 256
-    MASTER_MEMORY: int = 512
+    MASTER_CPU: AVAILABLE_CPU = 512
+    MASTER_MEMORY: AVAILABLE_RAM = 1024
     DEFAULT_TIMEOUT: int = 15
 
     def __init__(
