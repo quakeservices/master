@@ -97,7 +97,7 @@ class DynamoDbStorage(BaseStorage):
 
     def get_server(self, address: str, game: Optional[str] = None) -> Optional[Server]:
         server: Optional[Server] = None
-        result = self._get_item(address)
+        result: Optional[Item] = self._query_item(address, game)
 
         if result:
             server = Server.parse_obj(result)
@@ -120,7 +120,7 @@ class DynamoDbStorage(BaseStorage):
 
         return servers
 
-    def _scan(self, game: Optional[str]) -> list[Item]:
+    def _scan(self, game: Optional[str] = None) -> list[Item]:
         response: ScanOutputTableTypeDef
         if game:
             response = self.table.scan(
@@ -156,3 +156,15 @@ class DynamoDbStorage(BaseStorage):
             return True
 
         return False
+
+    def _query_item(self, address: str, game: str, limit: int = 1) -> Optional[Item]:
+        result = self.table.query(
+            Limit=limit,
+            ConsistentRead=True,
+            ReturnConsumedCapacity="NONE",
+            FilterExpression=Attr("server").eq(address) & Attr("game").eq(game),
+        )
+
+        if result["Count"] == limit:
+            items: list[Item] = result.get("Items")
+            return items[0]
