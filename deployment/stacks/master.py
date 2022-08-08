@@ -73,6 +73,7 @@ class MasterStack(Stack):
     def _create_table(self) -> dynamodb.Table:
         """
         Partition key = server_ip:server_port
+        Sort key = game
         """
         return dynamodb.Table(
             self,
@@ -80,7 +81,10 @@ class MasterStack(Stack):
             table_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             partition_key=dynamodb.Attribute(
-                name="server", type=dynamodb.AttributeType.STRING
+                name="address", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="game", type=dynamodb.AttributeType.STRING
             ),
             removal_policy=RemovalPolicy.DESTROY,
         )
