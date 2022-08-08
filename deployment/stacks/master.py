@@ -83,9 +83,6 @@ class MasterStack(Stack):
             partition_key=dynamodb.Attribute(
                 name="address", type=dynamodb.AttributeType.STRING
             ),
-            sort_key=dynamodb.Attribute(
-                name="game", type=dynamodb.AttributeType.STRING
-            ),
             removal_policy=RemovalPolicy.DESTROY,
         )
 
