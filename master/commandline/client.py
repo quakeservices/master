@@ -113,7 +113,13 @@ def _setup_socket(timeout: float, quiet: bool) -> socket.socket:
             f"Binding client to {DEFAULT_CLIENT_ADDRESS}:{DEFAULT_CLIENT_PORT}..."
         )
 
-    sock.bind((DEFAULT_CLIENT_ADDRESS, DEFAULT_CLIENT_PORT))
+    try:
+        sock.bind((DEFAULT_CLIENT_ADDRESS, DEFAULT_CLIENT_PORT))
+    except OSError:
+        click.echo(f"Unable to bind to {DEFAULT_CLIENT_ADDRESS}:{DEFAULT_CLIENT_PORT}")
+        click.echo(f"Trying {DEFAULT_CLIENT_ADDRESS}:{DEFAULT_CLIENT_PORT + 1}")
+        sock.bind((DEFAULT_CLIENT_ADDRESS, DEFAULT_CLIENT_PORT + 1))
+
     sock.settimeout(timeout)
     return sock
 
