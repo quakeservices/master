@@ -41,16 +41,6 @@ class Quake2(Idtech2Protocol):
         "version",
     ]
 
-    def match_header(self, received_header: bytes) -> bool:
-        if not self.active:
-            return False
-
-        for _, header_data in self.headers.items():
-            if header_data.received == received_header:
-                return True
-
-        return False
-
     def process_data(
         self, received_header: bytes, data: list[bytes]
     ) -> ProtocolResponse:
@@ -69,9 +59,16 @@ class Quake2(Idtech2Protocol):
                 break
 
         if len(data) >= 1:
-            response_map["details"] = dictify_status(data[0], self.encoding, self.split)
+            response_map["details"] = dictify_status(
+                data=data[0],
+                encoding=self.encoding,
+                split=self.split,
+                valid_status_keys=self.valid_status_keys,
+            )
 
         if len(data) >= 2:
-            response_map["players"] = dictify_players(data[1:], self.encoding)
+            response_map["players"] = dictify_players(
+                data=data[1:], encoding=self.encoding
+            )
 
         return ProtocolResponse.parse_obj(response_map)

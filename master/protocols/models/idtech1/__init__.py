@@ -4,8 +4,8 @@ from master.protocols.models import GameProtocol
 from master.protocols.models.response import ProtocolResponse
 
 
-class Idtech2Protocol(GameProtocol):
-    engine: str = "idtech2"
+class Idtech1Protocol(GameProtocol):
+    engine: str = "idtech1"
     split: str = "\\"
 
     def process_data(

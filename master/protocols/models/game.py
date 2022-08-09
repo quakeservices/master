@@ -28,7 +28,14 @@ class GameProtocol(BaseProtocol):
     newline: str = Field(description="String to lines", default="\n")
 
     def match_header(self, received_header: bytes) -> bool:
-        raise NotImplementedError
+        if not self.active:
+            return False
+
+        for _, header_data in self.headers.items():
+            if header_data.received == received_header:
+                return True
+
+        return False
 
     def process_data(
         self, received_header: bytes, data: list[bytes]

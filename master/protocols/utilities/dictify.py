@@ -19,8 +19,12 @@ def dictify_players(data: list[bytes], encoding: str) -> list[Optional[dict[str,
 
 
 def dictify_status(
-    data: bytes, encoding: str, split: str, max_length: int = 128
-) -> dict:
+    data: bytes,
+    encoding: str,
+    split: str,
+    max_length: int = 128,
+    valid_status_keys: Optional[list[str]] = None,
+) -> dict[str, Union[str, int]]:
     """
     Convert a byte string into a dict
     Also convert strings to integers if possible
@@ -39,13 +43,18 @@ def dictify_status(
     # ['a', 1, 'b', 2]
     # turns into
     # {'a': 1, 'b': 2}
-    zip_status = zip(list_status[0::2], list_status[1::2])
+    dict_status: dict[str, str] = dict(zip(list_status[0::2], list_status[1::2]))
 
     # For each key:value;
     # Truncate if it's longer than 128 characters
     # Coalesce strings into integers if possible
+    # Remove any keys that aren't part of the expected
     status: dict[str, Union[str, int]] = {}
-    for status_k, status_v in zip_status:
+    for status_k, status_v in dict_status.items():
+        if valid_status_keys and status_k not in valid_status_keys:
+            del dict_status[status_k]
+            continue
+
         if len(status_v) > max_length:
             status_v = status_v[:max_length]
 
