@@ -1,6 +1,6 @@
 import click
 
-from master.clients.main import _generate_request
+from master.client.main import _generate_request
 from master.constants import (
     DEFAULT_BUFFER,
     DEFAULT_CLIENT_ADDRESS,
