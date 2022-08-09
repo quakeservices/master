@@ -16,7 +16,7 @@ aws-cdk-lib==2.35.0
     #   aws-cdk-aws-lambda-python-alpha
 cattrs==22.1.0
     # via jsii
-constructs==10.1.69
+constructs==10.1.70
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
