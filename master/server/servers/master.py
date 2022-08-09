@@ -1,9 +1,9 @@
 import signal
-import socket
 import threading
 import time
 from typing import Union
 
+from master.constants import DEFAULT_MASTER_PORT
 from master.server.handlers import HealthCheckHandler, MasterHandler
 from master.server.servers import HealthCheckServer, ThreadPoolServer
 from master.storage.backends.dynamodb import DynamoDbStorage
@@ -15,7 +15,7 @@ class MasterServer:
     health_server: HealthCheckServer
     health_thread: threading.Thread
     default_address: str = "0.0.0.0"
-    default_master_port: int = 27900
+    default_master_port: int = DEFAULT_MASTER_PORT
     default_health_port: int = 8080
 
     def __init__(

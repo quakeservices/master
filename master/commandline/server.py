@@ -1,8 +1,6 @@
-import logging
-
 import click
 
-from master.server import MasterServer
+from master.server.main import _run
 
 
 @click.group()
@@ -22,10 +20,4 @@ def run() -> None:
     """
     Run the masterserver
     """
-    logging.info("Starting master server.")
-
-    masterserver = MasterServer()
-    masterserver.initialise()
-    masterserver.start()
-
-    logging.info("Master server stopped.")
+    _run()
