@@ -25,5 +25,11 @@ RECORDS: Records = {
                 "values": ["quakeservices.github.io"],
             }
         ],
+        "A": [
+            {
+                "key": "mel",
+                "values": ["45.121.209.140"],
+            }
+        ],
     }
 }

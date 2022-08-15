@@ -75,6 +75,8 @@ class InfraStack(Stack):
                 self._create_txt_records(domain, records["TXT"])
             elif "CNAME" in records:
                 self._create_cname_records(domain, records["CNAME"])
+            elif "A" in records:
+                self._create_a_records(domain, records["A"])
 
     def _create_txt_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
@@ -102,3 +104,19 @@ class InfraStack(Stack):
                     delete_existing=True,
                 )
                 entry.apply_removal_policy(RemovalPolicy.DESTROY)
+
+    def _create_a_records(self, domain: str, records: list[Record]) -> None:
+        for record in records:
+            key: str = record["key"]  # type: ignore
+            target: route53.RecordTarget = route53.RecordTarget.from_ip_addresses(
+                record["values"]
+            )
+            entry = route53.ARecord(
+                self,
+                f"{domain}-{key}-a",
+                zone=self.zones[domain],
+                record_name=key,
+                target=target,
+                delete_existing=True,
+            )
+            entry.apply_removal_policy(RemovalPolicy.DESTROY)
