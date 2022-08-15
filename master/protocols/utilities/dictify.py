@@ -51,10 +51,6 @@ def dictify_status(
     # Remove any keys that aren't part of the expected
     status: dict[str, Union[str, int]] = {}
     for status_k, status_v in dict_status.items():
-        if valid_status_keys and status_k not in valid_status_keys:
-            del dict_status[status_k]
-            continue
-
         if len(status_v) > max_length:
             status_v = status_v[:max_length]
 

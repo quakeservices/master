@@ -63,7 +63,6 @@ class Quake2(Idtech2Protocol):
                 data=data[0],
                 encoding=self.encoding,
                 split=self.split,
-                valid_status_keys=self.valid_status_keys,
             )
 
         if len(data) >= 2:
