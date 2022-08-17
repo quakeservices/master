@@ -87,7 +87,6 @@ class InfraStack(Stack):
                 zone=self.zones[domain],
                 record_name=key,
                 values=record["values"],
-                delete_existing=True,
             )
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
 
@@ -101,7 +100,6 @@ class InfraStack(Stack):
                     zone=self.zones[domain],
                     record_name=key,
                     domain_name=value,
-                    delete_existing=True,
                 )
                 entry.apply_removal_policy(RemovalPolicy.DESTROY)
 
@@ -117,6 +115,5 @@ class InfraStack(Stack):
                 zone=self.zones[domain],
                 record_name=key,
                 target=target,
-                delete_existing=True,
             )
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
