@@ -1,9 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import Field
 
 from master.protocols.models import BaseProtocol, Headers
-from master.protocols.models.response import ProtocolResponse
 
 
 class GameProtocol(BaseProtocol):
@@ -24,7 +23,10 @@ class GameProtocol(BaseProtocol):
         description="List of expected keys when parsing a server status",
         default_factory=list,
     )
-    split: str = Field(description="String to split received data")
+    split_details: str = Field(description="String to split received server details")
+    split_players: str = Field(
+        description="String to split received player information"
+    )
     newline: str = Field(description="String to lines", default="\n")
 
     def match_header(self, received_header: bytes) -> bool:
@@ -37,7 +39,22 @@ class GameProtocol(BaseProtocol):
 
         return False
 
-    def process_data(
-        self, received_header: bytes, data: list[bytes]
-    ) -> ProtocolResponse:
-        raise NotImplementedError
+    def process_request(
+        self, received_header: bytes
+    ) -> dict[str, Union[str, bool, bytes]]:
+
+        for header_name, header in self.headers.items():
+            if received_header == header.received:
+                active: bool = True
+                if header_name == "shutdown":
+                    active = False
+
+                return {
+                    "request_type": header.header_type,
+                    "game": self.game,
+                    "response": header.response,
+                    "response_class": header_name,
+                    "active": active,
+                }
+
+        return {}

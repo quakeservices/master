@@ -80,12 +80,20 @@ def client() -> None:
     help=("Type of request to send"),
 )
 @click.option(
-    "--data",
+    "--details",
     nargs=2,
     type=str,
     multiple=True,
     default=None,
-    help=("Data to send with the request"),
+    help=("Details to send with the request"),
+)
+@click.option(
+    "--players",
+    nargs=3,
+    type=str,
+    multiple=True,
+    default=None,
+    help=("Players to send with the request"),
 )
 @click.option(
     "--wait-for-response",
@@ -96,6 +104,12 @@ def client() -> None:
         "Useful for requests that don't have a response defined but will return something."
     ),
 )
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    help=("Dry run - don't actually send anything."),
+)
 @click.option("--quiet", is_flag=True)
 def send(
     protocol: str,
@@ -104,15 +118,25 @@ def send(
     client_host: str,
     client_port: int,
     request: str,
-    data: tuple[tuple[str]],
+    details: tuple[tuple[str, str]],
+    players: tuple[tuple[str, str, str]],
     timeout: float,
     buffer: int,
     wait_for_response: bool,
     quiet: bool,
+    dry_run: bool,
 ) -> None:
     """
     Sends a request (header.received) and returns the expected
     response (header.response) and actual response
+
+    \b
+    Adding details: <key> <value>
+              e.g.: map q2dm1
+
+    \b
+    Adding players: <score> <ping> <name>
+              e.g.: 10 3 player
     """
     _generate_request(
         protocol=PROTOCOLS[protocol],
@@ -121,9 +145,11 @@ def send(
         client_host=client_host,
         client_port=client_port,
         request=request,
-        data=data,
+        details=details,
+        players=players,
         timeout=timeout,
         buffer=buffer,
         wait_for_response=wait_for_response,
         quiet=quiet,
+        dry_run=dry_run,
     )

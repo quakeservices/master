@@ -1,6 +1,7 @@
 import logging
 from typing import Optional
 
+from master.protocols.decoder import Decoder
 from master.protocols.models import GameProtocol, Quake2
 from master.protocols.models.response import ProtocolResponse
 
@@ -25,10 +26,13 @@ class Protocols:
         response: Optional[ProtocolResponse] = None
 
         parsed_request: bytes = self._check_proxy_protocol(request)
-        request_header, *status = parsed_request.splitlines()
+        request_header, *_ = parsed_request.splitlines()
 
         protocol = self._find_protocol(request_header)
         if protocol:
-            response = protocol.process_data(request_header, status)
+            _response = protocol.process_request(request_header)
+            decoder = Decoder(protocol)
+            _response.update(decoder.decode(parsed_request))
+            response = ProtocolResponse.parse_obj(_response)
 
         return response
