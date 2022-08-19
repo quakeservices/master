@@ -28,7 +28,6 @@ class Decoder:
 
     def decode(self, data: bytes) -> dict:
         result: ResultTypeDict = {"details": {}, "players": []}
-
         newline: bytes = self.protocol.newline.encode(self.protocol.encoding)
         lines: list[bytes] = [line for line in data.split(newline) if line]
 
@@ -117,7 +116,7 @@ class Decoder:
 
         For example:
             Input:
-                b"1 3 player 1\n5 5 player 2\n"
+                [b'1 3 "player 1", b'5 5 "player 2"']
             Output:
                 [
                     {"score": "1", "ping": "3", "name": "player 1"},
