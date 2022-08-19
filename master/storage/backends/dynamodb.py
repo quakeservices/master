@@ -72,7 +72,7 @@ class DynamoDbStorage(BaseStorage):
 
         return self.dynamodb.Table(table_name)
 
-    def initialise(self, table_name: str = APP_NAME) -> None:
+    def initialise(self, table_name: str = DEFAULT_TABLE_NAME) -> None:
         if DEPLOYMENT_ENVIRONMENT == "dev":
             self._create_table(table_name)
 
