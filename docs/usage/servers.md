@@ -27,8 +27,8 @@ It's recommended that this be set as part of your server config for simplicity a
 <!-- prettier-ignore-start -->
 !!! warning
 
-  Always use the hostname `master.quake.services` and not any of the addresses that it resolves to.
-  The reason for this is that due to the nature of the AWS Load Balancer service those IP addresses may change without notice.
+    Always use the hostname `master.quake.services` and not any of the addresses that it resolves to.
+    The reason for this is that due to the nature of the AWS Load Balancer service those IP addresses may change without notice.
 <!-- prettier-ignore-end -->
 
 ## FAQ
