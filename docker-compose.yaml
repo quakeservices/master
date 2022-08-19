@@ -33,6 +33,13 @@ services:
     ports:
       - "27900:27900/udp"
       - "8080:8080/tcp"
+    command: [
+      "./qs.py",
+      "--log-level", "debug",
+      "--hide-boto-logs",
+      "server",
+      "run"
+    ]
     environment:
       DEPLOYMENT_ENVIRONMENT: 'dev'
       AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
