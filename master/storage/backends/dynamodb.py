@@ -168,3 +168,4 @@ class DynamoDbStorage(BaseStorage):
         if result["Count"] == limit:
             items: list[Item] = result.get("Items")
             return items[0]
+        return None
