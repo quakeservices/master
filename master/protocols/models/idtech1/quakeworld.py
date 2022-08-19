@@ -2,7 +2,7 @@ from master.protocols.models import BaseProtocolHeader, Headers
 from master.protocols.models.idtech1 import Idtech1Protocol
 
 
-class Quakeworld(Idtech1Protocol):
+class QuakeWorld(Idtech1Protocol):
     game: str = "quakeworld"
     active: bool = False
     versions: list[str] = ["28"]

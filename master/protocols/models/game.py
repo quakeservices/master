@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import Field
 
@@ -29,32 +29,12 @@ class GameProtocol(BaseProtocol):
     )
     newline: str = Field(description="String to lines", default="\n")
 
-    def match_header(self, received_header: bytes) -> bool:
+    def match_header(self, received_header: bytes) -> tuple[bool, Optional[str]]:
         if not self.active:
-            return False
+            return False, None
 
-        for _, header_data in self.headers.items():
-            if header_data.received == received_header:
-                return True
+        for response_class, header in self.headers.items():
+            if received_header.startswith(header.received):
+                return True, response_class
 
-        return False
-
-    def process_request(
-        self, received_header: bytes
-    ) -> dict[str, Union[str, bool, bytes]]:
-
-        for header_name, header in self.headers.items():
-            if received_header == header.received:
-                active: bool = True
-                if header_name == "shutdown":
-                    active = False
-
-                return {
-                    "request_type": header.header_type,
-                    "game": self.game,
-                    "response": header.response,
-                    "response_class": header_name,
-                    "active": active,
-                }
-
-        return {}
+        return False, None
