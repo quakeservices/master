@@ -20,14 +20,14 @@ This script will:
 - Remove any old docker-compose containers
 - Start `master` container and `dynamodb-local` container.
 
-Documenation for [dynamodb-local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
+Documentation for [dynamodb-local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
 
 ## Testing
 
 All testing is done within containers, with the `test` container (`docker/Docker.test`) being the main container used for all testing.
 Because of this it's built on top of the `cdk` container (`docker/Docker.cdk`).
 
-Note that none of the test scripts will build the `test` container by default. This is to avoid building it everytime tests are run and help speed up development.
+Note that none of the test scripts will build the `test` container by default. This is to avoid building it every time tests are run and help speed up development.
 
 To build the `test` container run `./scripts/build-test`
 
@@ -47,7 +47,7 @@ This script will:
 
 - Run tests within `test/unit/cdk`
 
-These are split out into their own test suite as they're fairly independant of the main application code.
+These are split out into their own test suite as they're fairly independent of the main application code.
 
 ## Linting
 
