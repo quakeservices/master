@@ -23,17 +23,17 @@
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/definitions/GameProtocol                                                |
 
-| Property                                  | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ----------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| + [engine](#engine)                       | No      | string          | No         | -          | Engine            |
-| + [game](#game)                           | No      | string          | No         | -          | Game              |
-| - [encoding](#encoding)                   | No      | string          | No         | -          | Encoding          |
-| - [active](#active)                       | No      | boolean         | No         | -          | Active            |
-| + [versions](#versions)                   | No      | array of string | No         | -          | Versions          |
-| + [headers](#headers)                     | No      | object          | No         | -          | Headers           |
-| - [valid_status_keys](#valid_status_keys) | No      | array of string | No         | -          | Valid Status Keys |
-| + [split](#split)                         | No      | string          | No         | -          | Split             |
-| - [newline](#newline)                     | No      | string          | No         | -          | Newline           |
+| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
+| + [engine](#engine )                       | No      | string          | No         | -          | Engine            |
+| + [game](#game )                           | No      | string          | No         | -          | Game              |
+| - [encoding](#encoding )                   | No      | string          | No         | -          | Encoding          |
+| - [active](#active )                       | No      | boolean         | No         | -          | Active            |
+| + [versions](#versions )                   | No      | array of string | No         | -          | Versions          |
+| + [headers](#headers )                     | No      | object          | No         | -          | Headers           |
+| - [valid_status_keys](#valid_status_keys ) | No      | array of string | No         | -          | Valid Status Keys |
+| + [split](#split )                         | No      | string          | No         | -          | Split             |
+| - [newline](#newline )                     | No      | string          | No         | -          | Newline           |
 
 ## <a name="engine"></a>1. [Required] Property `GameProtocol > engine`
 
@@ -109,9 +109,9 @@
 
 **Description:** Header definitions
 
-| Property                                                | Pattern | Type   | Deprecated | Definition                          | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------- | ----------------- |
-| - [additionalProperties](#headers_additionalProperties) | No      | object | No         | In #/definitions/BaseProtocolHeader | -                 |
+| Property                                                 | Pattern | Type   | Deprecated | Definition                          | Title/Description |
+| -------------------------------------------------------- | ------- | ------ | ---------- | ----------------------------------- | ----------------- |
+| - [additionalProperties](#headers_additionalProperties ) | No      | object | No         | In #/definitions/BaseProtocolHeader | -                 |
 
 ### <a name="headers_additionalProperties"></a>6.1. [Optional] Property `GameProtocol > headers > BaseProtocolHeader`
 
@@ -120,11 +120,11 @@
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/definitions/BaseProtocolHeader                                          |
 
-| Property                                                   | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| + [received](#headers_additionalProperties_received)       | No      | string           | No         | -          | Received          |
-| - [response](#headers_additionalProperties_response)       | No      | string           | No         | -          | Response          |
-| - [header_type](#headers_additionalProperties_header_type) | No      | enum (of string) | No         | -          | Header Type       |
+| Property                                                    | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| + [received](#headers_additionalProperties_received )       | No      | string           | No         | -          | Received          |
+| - [response](#headers_additionalProperties_response )       | No      | string           | No         | -          | Response          |
+| - [header_type](#headers_additionalProperties_header_type ) | No      | enum (of string) | No         | -          | Header Type       |
 
 #### <a name="headers_additionalProperties_received"></a>6.1.1. [Required] Property `GameProtocol > headers > BaseProtocolHeader > received`
 
@@ -157,10 +157,9 @@
 **Description:** The type of header this correlates to; e.g.some headers are only applicable to client requests
 
 Must be one of:
-
-- "any"
-- "server"
-- "client"
+* "any"
+* "server"
+* "client"
 
 ## <a name="valid_status_keys"></a>7. [Optional] Property `GameProtocol > valid_status_keys`
 
@@ -207,6 +206,5 @@ Must be one of:
 
 **Description:** String to lines
 
----
-
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2022-07-31 at 11:50:03 +1000
+----------------------------------------------------------------------------------------------------------------------------
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2022-08-20 at 09:20:44 +1000
