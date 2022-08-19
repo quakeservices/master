@@ -105,10 +105,11 @@ class InfraStack(Stack):
 
     def _create_a_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
+            # TODO: Remove type ignore
             key: str = record["key"]  # type: ignore
-            target: route53.RecordTarget = route53.RecordTarget.from_ip_addresses(
-                record["values"]
-            )
+            value: str = record["values"]  # type: ignore
+
+            target: route53.RecordTarget = route53.RecordTarget.from_ip_addresses(value)
             entry = route53.ARecord(
                 self,
                 f"{domain}-{key}-a",
