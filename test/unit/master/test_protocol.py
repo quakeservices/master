@@ -69,13 +69,13 @@ generate_response_fixtures = [
 
 class TestProtocols:
     @pytest.fixture(scope="class")
-    def protocols(self):
+    def protocols(self) -> Protocols:
         return Protocols()
 
-    def test_protocols_load(self, protocols):
+    def test_protocols_load(self, protocols: Protocols):
         assert len(protocols.protocols) >= 1
 
-    def test_protocols__check_proxy_protocol(self, protocols):
+    def test_protocols_check_proxy_protocol(self, protocols: Protocols):
         header = b"hello world"
         result = protocols._check_proxy_protocol(header)
         assert result == header
@@ -83,7 +83,7 @@ class TestProtocols:
     @pytest.mark.parametrize(
         "test_input,expected_protocol,expected_response_class", find_protocol_fixtures
     )
-    def test_protocols__find_protocol(
+    def test_protocols_find_protocol(
         self,
         protocols: Protocols,
         test_input: bytes,
@@ -98,7 +98,7 @@ class TestProtocols:
         "test_protocol,test_request,test_response_class,expected_protocol_response",
         generate_response_fixtures,
     )
-    def test_protocols__generate_response(
+    def test_protocols_generate_response(
         self,
         protocols: Protocols,
         test_protocol: GameProtocol,
