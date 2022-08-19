@@ -31,13 +31,13 @@ class Encoder:
             _details: list[str] = [
                 split.join([key, value]) for key, value in details.items()
             ]
-            _details.insert(0, split)
             result: str = split.join(_details)
+            result = split + result
             return result.encode(self.protocol.encoding)
 
         return b""
 
-    def _encode_players(self, players: Optional[list[dict[str, str]]]) -> bytes:
+    def _encode_players(self, players: Optional[list[dict[str, str]]] = None) -> bytes:
         if players:
             result: str = self.protocol.newline.join(
                 [
