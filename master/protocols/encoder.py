@@ -42,7 +42,7 @@ class Encoder:
             result: str = self.protocol.newline.join(
                 [
                     self.protocol.split_players.join(
-                        [player["score"], player["ping"], player["name"]]
+                        [player["score"], player["ping"], f'"{player["name"]}"']
                     )
                     for player in players
                 ]
