@@ -1,8 +1,10 @@
-# Overview
+# Master Server
 
-[![Build Status](https://github.com/quakeservices/master/actions/workflows/master.yaml/badge.svg)](https://github.com/quakeservices/master/actions/workflows/master.yaml)
+This project aims to replicate the functionality of the idSoftware master server (satan.idsoftware.com) in Python.
 
-This project as an attempt to replicate the idSoftware master server for Quake 2 (satan.idsoftware.com) in Python 3.
+Currently the server is available for testing purposes on `master.quake.services`. For more information on usage [here](https://docs.quake.services/usage/servers/).
+
+## Project Goals
 
 Core goals:
 -  Respond to queries from server browsers such as qstat
@@ -15,4 +17,4 @@ Stretch goals:
 -  Aggregation of existing master server lists
 -  Support IPv6 servers and clients
 
-Documentation and additional information can be found here: [Documentation](https://github.com/quakeservices/documentation/)
+Documentation and additional information can be found here: [Documentation](https://docs.quake.services/)
