@@ -73,9 +73,9 @@ class InfraStack(Stack):
         for domain, records in RECORDS.items():
             if "TXT" in records:
                 self._create_txt_records(domain, records["TXT"])
-            elif "CNAME" in records:
+            if "CNAME" in records:
                 self._create_cname_records(domain, records["CNAME"])
-            elif "A" in records:
+            if "A" in records:
                 self._create_a_records(domain, records["A"])
 
     def _create_txt_records(self, domain: str, records: list[Record]) -> None:
