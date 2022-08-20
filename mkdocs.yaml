@@ -4,7 +4,7 @@ theme: material
 nav:
   - Home: index.md
   - Usage:
-      - Server Administrators: usage/servers.md
+      - Servers: usage/servers.md
       - Clients: usage/clients.md
   - Development:
       - Environment: development/environment.md
