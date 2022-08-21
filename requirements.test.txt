@@ -20,19 +20,19 @@ aws-cdk-lib==2.35.0
     #   aws-cdk-aws-lambda-python-alpha
 black==22.6.0
     # via -r requirements.test.in
-boto3[crt]==1.24.46
+boto3[crt]==1.24.47
     # via
     #   -r ./master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.46
+boto3-stubs[dynamodb]==1.24.47
     # via -r ./master/requirements.txt
-botocore==1.27.46
+botocore==1.27.47
     # via
     #   -r ./master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.46
+botocore-stubs==1.27.47
     # via
     #   -r ./master/requirements.txt
     #   boto3-stubs
@@ -64,7 +64,7 @@ constructs==10.1.70
     #   -r ./deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
-coverage[toml]==6.4.3
+coverage[toml]==6.4.4
     # via pytest-cov
 cryptography==37.0.4
     # via moto
@@ -74,7 +74,7 @@ dataclasses-json==0.5.7
     #   json-schema-for-humans
 dill==0.3.5.1
     # via pylint
-docker==5.0.3
+docker==6.0.0
     # via moto
 exceptiongroup==1.0.0rc8
     # via
@@ -134,7 +134,7 @@ marshmallow-enum==1.5.1
     #   dataclasses-json
 mccabe==0.7.0
     # via pylint
-moto[dynamodb]==3.1.17
+moto[dynamodb]==4.0.0
     # via -r requirements.test.in
 mypy==0.971
     # via -r requirements.test.in
@@ -152,6 +152,7 @@ packaging==21.3
     # via
     #   -r ./docs/requirements.txt
     #   build
+    #   docker
     #   marshmallow
     #   pytest
 pathspec==0.9.0
@@ -245,7 +246,7 @@ tomli==2.0.1
     #   pep517
     #   pylint
     #   pytest
-tomlkit==0.11.2
+tomlkit==0.11.4
     # via pylint
 typeguard==2.13.3
     # via
@@ -282,6 +283,7 @@ urllib3==1.26.11
     #   -r ./docs/requirements.txt
     #   -r ./master/requirements.txt
     #   botocore
+    #   docker
     #   requests
     #   responses
 websocket-client==1.3.3
