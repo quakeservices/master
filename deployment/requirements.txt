@@ -4,26 +4,26 @@
 #
 #    pip-compile ./deployment/requirements.in
 #
-attrs==21.4.0
+attrs==22.1.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-aws-lambda-python-alpha==2.35.0a0
+aws-cdk-aws-lambda-python-alpha==2.38.1a0
     # via -r ./deployment/requirements.in
-aws-cdk-lib==2.35.0
+aws-cdk-lib==2.38.1
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
 cattrs==22.1.0
     # via jsii
-constructs==10.1.70
+constructs==10.1.84
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
 exceptiongroup==1.0.0rc8
     # via cattrs
-jsii==1.63.2
+jsii==1.65.0
     # via
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
