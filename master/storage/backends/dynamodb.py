@@ -1,14 +1,14 @@
 import logging
-import os
 from decimal import Decimal
+from threading import Lock
 from typing import Any, Mapping, Optional, Sequence, Union
 
+import cachetools
 from boto3.dynamodb.conditions import Attr
 from boto3.session import Session
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
 from mypy_boto3_dynamodb.type_defs import (
     GetItemOutputTableTypeDef,
-    PutItemOutputTableTypeDef,
     ScanOutputTableTypeDef,
     UpdateItemOutputTableTypeDef,
 )
@@ -37,6 +37,8 @@ Item = dict[
     ],
 ]
 
+# TODO: maxsize=number of active protocols
+CACHE = cachetools.TTLCache(maxsize=3, ttl=60)
 DEFAULT_SESSION = Session()
 DEFAULT_TABLE_NAME = f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}"
 
@@ -120,6 +122,11 @@ class DynamoDbStorage(BaseStorage):
 
         return servers
 
+    @cachetools.cached(
+        cache=CACHE,
+        key=cachetools.keys.methodkey,
+        lock=Lock(),
+    )
     def _scan(self, game: Optional[str] = None) -> list[Item]:
         response: ScanOutputTableTypeDef
         if game:
