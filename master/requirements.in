@@ -2,3 +2,5 @@ pydantic
 boto3[crt]
 boto3-stubs[dynamodb]
 click
+cachetools
+types-cachetools

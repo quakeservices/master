@@ -38,6 +38,8 @@ botocore-stubs==1.27.58
     #   boto3-stubs
 build==0.8.0
     # via pip-tools
+cachetools==5.2.0
+    # via -r ././master/requirements.txt
 cattrs==22.1.0
     # via
     #   -r ././deployment/requirements.txt
@@ -259,6 +261,8 @@ types-awscrt==0.14.0
     # via
     #   -r ././master/requirements.txt
     #   botocore-stubs
+types-cachetools==5.2.1
+    # via -r ././master/requirements.txt
 types-s3transfer==0.6.0.post4
     # via
     #   -r ././master/requirements.txt
