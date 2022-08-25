@@ -243,7 +243,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_serviceService7DDC3B7C(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::ECS::Service",
@@ -265,11 +264,11 @@ class TestQuakeservicesMaster:
                 ],
                 "NetworkConfiguration": {
                     "AwsvpcConfiguration": {
-                        "AssignPublicIp": "DISABLED",
+                        "AssignPublicIp": "ENABLED",
                         "SecurityGroups": [
                             {"Fn::GetAtt": [Match.any_value(), "GroupId"]}
                         ],
-                        "Subnets": ["p-12345", "p-67890"],
+                        "Subnets": ["s-12345", "s-67890"],
                     }
                 },
                 "ServiceName": Match.any_value(),
