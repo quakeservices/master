@@ -80,7 +80,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_task117DF50A(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::ECS::TaskDefinition",
@@ -94,7 +93,7 @@ class TestQuakeservicesMaster:
                             "Retries": 3,
                             "Timeout": 5,
                         },
-                        "Image": {"Fn::Sub": Match.any_value()},
+                        "Image": "ghcr.io/quakeservices/master:latest",
                         "LogConfiguration": {
                             "LogDriver": "awslogs",
                             "Options": {
@@ -103,7 +102,7 @@ class TestQuakeservicesMaster:
                                 "awslogs-region": "us-west-2",
                             },
                         },
-                        "MemoryReservation": 512,
+                        "MemoryReservation": 1024,
                         "Name": Match.any_value(),
                         "PortMappings": [
                             {"ContainerPort": 27900, "Protocol": Match.any_value()},
@@ -111,12 +110,24 @@ class TestQuakeservicesMaster:
                         ],
                         "StartTimeout": 15,
                         "StopTimeout": 15,
+                        "RepositoryCredentials": {
+                            "CredentialsParameter": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:",
+                                        {"Ref": "AWS::Partition"},
+                                        ":secretsmanager:us-west-2:123456789012:secret:quakeservices/github",
+                                    ],
+                                ]
+                            }
+                        },
                     }
                 ],
-                "Cpu": "256",
+                "Cpu": "512",
                 "ExecutionRoleArn": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
                 "Family": Match.any_value(),
-                "Memory": "512",
+                "Memory": "1024",
                 "NetworkMode": "awsvpc",
                 "RequiresCompatibilities": ["FARGATE"],
                 "TaskRoleArn": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
