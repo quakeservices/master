@@ -19,9 +19,9 @@ class TestQuakeservicesMaster:
         stack_template.has_resource_properties(
             "AWS::DynamoDB::Table",
             {
-                "KeySchema": [{"AttributeName": "server", "KeyType": "HASH"}],
+                "KeySchema": [{"AttributeName": "address", "KeyType": "HASH"}],
                 "AttributeDefinitions": [
-                    {"AttributeName": "server", "AttributeType": Match.any_value()}
+                    {"AttributeName": "address", "AttributeType": Match.any_value()}
                 ],
                 "BillingMode": "PAY_PER_REQUEST",
                 "TableName": Match.any_value(),
@@ -45,7 +45,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_taskTaskRoleDefaultPolicy08F0FEF8(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::IAM::Policy",
@@ -81,7 +80,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_task117DF50A(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::ECS::TaskDefinition",
@@ -95,7 +93,7 @@ class TestQuakeservicesMaster:
                             "Retries": 3,
                             "Timeout": 5,
                         },
-                        "Image": {"Fn::Sub": Match.any_value()},
+                        "Image": "ghcr.io/quakeservices/master:latest",
                         "LogConfiguration": {
                             "LogDriver": "awslogs",
                             "Options": {
@@ -104,7 +102,7 @@ class TestQuakeservicesMaster:
                                 "awslogs-region": "us-west-2",
                             },
                         },
-                        "MemoryReservation": 512,
+                        "MemoryReservation": 1024,
                         "Name": Match.any_value(),
                         "PortMappings": [
                             {"ContainerPort": 27900, "Protocol": Match.any_value()},
@@ -112,12 +110,24 @@ class TestQuakeservicesMaster:
                         ],
                         "StartTimeout": 15,
                         "StopTimeout": 15,
+                        "RepositoryCredentials": {
+                            "CredentialsParameter": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:",
+                                        {"Ref": "AWS::Partition"},
+                                        ":secretsmanager:us-west-2:123456789012:secret:quakeservices/github",
+                                    ],
+                                ]
+                            }
+                        },
                     }
                 ],
-                "Cpu": "256",
+                "Cpu": "512",
                 "ExecutionRoleArn": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
                 "Family": Match.any_value(),
-                "Memory": "512",
+                "Memory": "1024",
                 "NetworkMode": "awsvpc",
                 "RequiresCompatibilities": ["FARGATE"],
                 "TaskRoleArn": {"Fn::GetAtt": [Match.any_value(), "Arn"]},
@@ -233,7 +243,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_serviceService7DDC3B7C(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::ECS::Service",
@@ -255,11 +264,11 @@ class TestQuakeservicesMaster:
                 ],
                 "NetworkConfiguration": {
                     "AwsvpcConfiguration": {
-                        "AssignPublicIp": "DISABLED",
+                        "AssignPublicIp": "ENABLED",
                         "SecurityGroups": [
                             {"Fn::GetAtt": [Match.any_value(), "GroupId"]}
                         ],
-                        "Subnets": ["p-12345", "p-67890"],
+                        "Subnets": ["s-12345", "s-67890"],
                     }
                 },
                 "ServiceName": Match.any_value(),
@@ -267,12 +276,11 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_serviceSecurityGroupF051F0EB(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::EC2::SecurityGroup",
             {
-                "GroupDescription": "test-master/service/SecurityGroup",
+                "GroupDescription": "test-master/sg",
                 "SecurityGroupEgress": [
                     {
                         "CidrIp": "0.0.0.0/0",

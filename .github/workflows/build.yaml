@@ -13,8 +13,6 @@ on:
     paths:
       - 'docker/**'
       - 'master/**'
-      - 'test/unit/master/**'
-      - 'test/unit/storage/**'
 
 jobs:
   build:

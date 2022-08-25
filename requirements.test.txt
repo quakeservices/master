@@ -20,19 +20,19 @@ aws-cdk-lib==2.38.1
     #   aws-cdk-aws-lambda-python-alpha
 black==22.6.0
     # via -r ./requirements.test.in
-boto3[crt]==1.24.58
+boto3[crt]==1.24.59
     # via
     #   -r ././master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.58
+boto3-stubs[dynamodb]==1.24.59
     # via -r ././master/requirements.txt
-botocore==1.27.58
+botocore==1.27.59
     # via
     #   -r ././master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.58
+botocore-stubs==1.27.59
     # via
     #   -r ././master/requirements.txt
     #   boto3-stubs
@@ -61,7 +61,7 @@ click==8.1.3
     #   black
     #   json-schema-for-humans
     #   pip-tools
-constructs==10.1.84
+constructs==10.1.86
     # via
     #   -r ././deployment/requirements.txt
     #   aws-cdk-aws-lambda-python-alpha
@@ -290,7 +290,7 @@ urllib3==1.26.12
     #   docker
     #   requests
     #   responses
-websocket-client==1.3.3
+websocket-client==1.4.0
     # via docker
 werkzeug==2.1.2
     # via moto
