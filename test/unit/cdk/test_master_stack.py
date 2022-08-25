@@ -45,7 +45,6 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_taskTaskRoleDefaultPolicy08F0FEF8(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::IAM::Policy",
