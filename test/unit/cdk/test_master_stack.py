@@ -19,9 +19,9 @@ class TestQuakeservicesMaster:
         stack_template.has_resource_properties(
             "AWS::DynamoDB::Table",
             {
-                "KeySchema": [{"AttributeName": "server", "KeyType": "HASH"}],
+                "KeySchema": [{"AttributeName": "address", "KeyType": "HASH"}],
                 "AttributeDefinitions": [
-                    {"AttributeName": "server", "AttributeType": Match.any_value()}
+                    {"AttributeName": "address", "AttributeType": Match.any_value()}
                 ],
                 "BillingMode": "PAY_PER_REQUEST",
                 "TableName": Match.any_value(),
