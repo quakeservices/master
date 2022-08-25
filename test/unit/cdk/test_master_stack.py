@@ -276,12 +276,11 @@ class TestQuakeservicesMaster:
             },
         )
 
-    @pytest.mark.skip(reason="Too lazy to refactor tests just yet")
     def test_serviceSecurityGroupF051F0EB(self, stack_template):
         stack_template.has_resource_properties(
             "AWS::EC2::SecurityGroup",
             {
-                "GroupDescription": "test-master/service/SecurityGroup",
+                "GroupDescription": "test-master/sg",
                 "SecurityGroupEgress": [
                     {
                         "CidrIp": "0.0.0.0/0",
