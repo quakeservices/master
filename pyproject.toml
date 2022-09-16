@@ -1,6 +1,6 @@
 [project]
-name = "infer_pyproject"
-version = "0.0.1"
+name = "quakeservices"
+version = "0.2.1"
 description = "idTech master server implimented in Python"
 authors = [
     "Gary Brandon <gary.brandon@gmail.com>"
@@ -8,9 +8,9 @@ authors = [
 license = "BSD"
 readme = "README.md"
 python = "^3.10"
-homepage = "https://www.quake.services"
+homepage = "https://github.com/quakeservices/master"
 repository = "https://github.com/quakeservices/master"
-documentation = "TBD"
+documentation = "https://docs.quake.services"
 
 [tool.black]
 extend-exclude = '''
