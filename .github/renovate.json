@@ -5,6 +5,11 @@
     "docker:enableMajor",
     "group:all"
   ],
+  "enabledManagers": [
+    "dockerfile",
+    "npm",
+    "pip-compile"
+  ],
   "pip-compile": {
     "fileMatch": [
       "(^|/)requirements.*\\.in$"
