@@ -2,13 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
+    "docker:enableMajor",
     "group:all"
   ],
   "pip-compile": {
-    "fileMatch": ["(^|/)requirements.*\\.in$"],
-    "managerBranchPrefix": "python-"
-  },
-  "js": {
-    "managerBranchPrefix": "js-"
-  },
+    "fileMatch": [
+      "(^|/)requirements.*\\.in$"
+    ]
+  }
 }
