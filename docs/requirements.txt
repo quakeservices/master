@@ -4,7 +4,7 @@
 #
 #    pip-compile ./docs/requirements.in
 #
-certifi==2022.6.15
+certifi==2022.9.24
     # via requests
 charset-normalizer==2.1.1
     # via requests
@@ -14,17 +14,19 @@ dataclasses-json==0.5.7
     # via json-schema-for-humans
 htmlmin==0.1.12
     # via json-schema-for-humans
-idna==3.3
+idna==3.4
     # via requests
 jinja2==3.1.2
     # via json-schema-for-humans
-json-schema-for-humans==0.41.8
+json-schema-for-humans==0.42.1
     # via -r ./docs/requirements.in
-markdown2==2.4.3
+markdown2==2.4.5
     # via json-schema-for-humans
 markupsafe==2.1.1
-    # via jinja2
-marshmallow==3.17.1
+    # via
+    #   jinja2
+    #   json-schema-for-humans
+marshmallow==3.18.0
     # via
     #   dataclasses-json
     #   marshmallow-enum
@@ -44,7 +46,7 @@ pyyaml==6.0
     # via json-schema-for-humans
 requests==2.28.1
     # via json-schema-for-humans
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     # via typing-inspect
 typing-inspect==0.8.0
     # via dataclasses-json

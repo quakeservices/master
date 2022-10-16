@@ -8,22 +8,22 @@ attrs==22.1.0
     # via
     #   cattrs
     #   jsii
-aws-cdk-aws-lambda-python-alpha==2.38.1a0
+aws-cdk-aws-lambda-python-alpha==2.46.0a0
     # via -r ./deployment/requirements.in
-aws-cdk-lib==2.38.1
+aws-cdk-lib==2.46.0
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
 cattrs==22.1.0
     # via jsii
-constructs==10.1.86
+constructs==10.1.131
     # via
     #   -r ./deployment/requirements.in
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
-exceptiongroup==1.0.0rc8
+exceptiongroup==1.0.0rc9
     # via cattrs
-jsii==1.65.0
+jsii==1.69.0
     # via
     #   aws-cdk-aws-lambda-python-alpha
     #   aws-cdk-lib
@@ -44,5 +44,5 @@ typeguard==2.13.3
     #   aws-cdk-lib
     #   constructs
     #   jsii
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     # via jsii
