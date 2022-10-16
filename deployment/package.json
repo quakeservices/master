@@ -1,6 +1,6 @@
 {
   "name": "deployment",
   "dependencies": {
-    "aws-cdk": "2.38.1"
+    "aws-cdk": "2.46.0"
   }
 }
