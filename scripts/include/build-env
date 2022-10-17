@@ -1,24 +1,25 @@
+#!/usr/bin/env bash
 # vim: filetype=sh
 
-APP_NAME="quakeservices"
-CODE_DIR="/code"
+export APP_NAME="quakeservices"
+export CODE_DIR="/code"
 
-MASTER_NAME="master"
-MASTER_DIR="master"
-MASTER_PORT="27900/udp"
-MASTER_HEALTHCHECK="8080/tcp"
+export MASTER_NAME="master"
+export MASTER_DIR="master"
+export MASTER_PORT="27900/udp"
+export MASTER_HEALTHCHECK="8080/tcp"
 
-AWS_DEFAULT_REGION="us-west-2"
+export AWS_DEFAULT_REGION="us-west-2"
 
-DOCKER_SOCKET="/var/run/docker.sock"
+export DOCKER_SOCKET="/var/run/docker.sock"
 
-BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
-BASE_DOCKER_TAG="docker.io/${APP_NAME}/base"
-MASTER_GHCR_TAG="ghcr.io/${APP_NAME}/master"
-MASTER_DOCKER_TAG="docker.io/${APP_NAME}/master"
-CDK_GHCR_TAG="ghcr.io/${APP_NAME}/cdk"
-CDK_DOCKER_TAG="docker.io/${APP_NAME}/cdk"
-DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
-DOCS_DOCKER_TAG="docker.io/${APP_NAME}/docs"
-TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
-TEST_DOCKER_TAG="docker.io/${APP_NAME}/test"
+export BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
+export BASE_DOCKER_TAG="docker.io/${APP_NAME}/base"
+export MASTER_GHCR_TAG="ghcr.io/${APP_NAME}/master"
+export MASTER_DOCKER_TAG="docker.io/${APP_NAME}/master"
+export CDK_GHCR_TAG="ghcr.io/${APP_NAME}/cdk"
+export CDK_DOCKER_TAG="docker.io/${APP_NAME}/cdk"
+export DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
+export DOCS_DOCKER_TAG="docker.io/${APP_NAME}/docs"
+export TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
+export TEST_DOCKER_TAG="docker.io/${APP_NAME}/test"
