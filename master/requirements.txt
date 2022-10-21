@@ -14,6 +14,8 @@ botocore==1.27.92
     #   s3transfer
 botocore-stubs==1.27.92
     # via boto3-stubs
+cachetools==5.2.0
+    # via -r ./master/requirements.in
 click==8.1.3
     # via -r requirements.in
 jmespath==1.0.1
@@ -32,6 +34,8 @@ six==1.16.0
     # via python-dateutil
 types-awscrt==0.14.7
     # via botocore-stubs
+types-cachetools==5.2.1
+    # via -r ./master/requirements.in
 types-s3transfer==0.6.0.post4
     # via boto3-stubs
 typing-extensions==4.4.0
