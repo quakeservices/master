@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.test.in
 #
-astroid==2.12.11
+astroid==2.12.12
     # via pylint
 attrs==22.1.0
     # via
@@ -20,19 +20,19 @@ aws-cdk-lib==2.46.0
     #   aws-cdk-aws-lambda-python-alpha
 black==22.10.0
     # via -r requirements.test.in
-boto3[crt]==1.24.91
+boto3[crt]==1.24.92
     # via
     #   -r ./master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.24.91
+boto3-stubs[dynamodb]==1.24.92
     # via -r ./master/requirements.txt
-botocore==1.27.91
+botocore==1.27.92
     # via
     #   -r ./master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.27.91
+botocore-stubs==1.27.92
     # via
     #   -r ./master/requirements.txt
     #   boto3-stubs
@@ -72,7 +72,7 @@ dataclasses-json==0.5.7
     # via
     #   -r ./docs/requirements.txt
     #   json-schema-for-humans
-dill==0.3.5.1
+dill==0.3.6
     # via pylint
 docker==6.0.0
     # via moto
@@ -124,6 +124,7 @@ markupsafe==2.1.1
     #   jinja2
     #   json-schema-for-humans
     #   moto
+    #   werkzeug
 marshmallow==3.18.0
     # via
     #   -r ./docs/requirements.txt
@@ -135,7 +136,7 @@ marshmallow-enum==1.5.1
     #   dataclasses-json
 mccabe==0.7.0
     # via pylint
-moto[dynamodb]==4.0.7
+moto[dynamodb]==4.0.8
     # via -r requirements.test.in
 mypy==0.982
     # via -r requirements.test.in
@@ -187,7 +188,7 @@ pygments==2.13.0
     # via
     #   -r ./docs/requirements.txt
     #   json-schema-for-humans
-pylint==2.15.4
+pylint==2.15.5
     # via -r requirements.test.in
 pyparsing==3.0.9
     # via
@@ -293,7 +294,7 @@ urllib3==1.26.12
     #   responses
 websocket-client==1.4.1
     # via docker
-werkzeug==2.1.2
+werkzeug==2.2.2
     # via moto
 wheel==0.37.1
     # via pip-tools
