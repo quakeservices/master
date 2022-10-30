@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from pydantic import Field
 
@@ -20,12 +20,12 @@ class ProtocolResponse(BaseProtocol):
     response_class: Literal["ping", "heartbeat", "shutdown", "query"] = Field(
         description="Response class"
     )
-    response: Optional[bytes] = Field(default=None, description=("Response header"))
-    players: list[Optional[dict[str, str]]] = Field(
+    response: bytes | None = Field(default=None, description=("Response header"))
+    players: list[dict[str, str]] | None = Field(
         default_factory=list,
         description=("List of server players if response belongs to a server"),
     )
-    details: dict[str, Union[str, int]] = Field(
+    details: dict[str, str | int] | None = Field(
         default_factory=dict,
         description=("Server details if response belongs to a server"),
     )
