@@ -11,7 +11,7 @@ for file in $FILES; do
   DIR=$(dirname "$file")
   COMMAND="cd $DIR && npm update && cd -"
   if [ -z "$CI" ]; then
-    scripts/include/run-test-container "$COMMAND"
+    scripts/include/run-test-container $COMMAND
   else
     $COMMAND
   fi

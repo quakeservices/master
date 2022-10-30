@@ -12,7 +12,7 @@ isort
 
 echo "+++ Running isort +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container "$COMMAND"
+  scripts/include/run-test-container $COMMAND
 else
   $COMMAND
 fi

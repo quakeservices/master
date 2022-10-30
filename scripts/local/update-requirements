@@ -10,7 +10,7 @@ for file in $FILES; do
   echo "Upgrading $file"
   COMMAND="pip-compile --upgrade $file"
   if [ -z "$CI" ]; then
-    scripts/include/run-test-container "$COMMAND"
+    scripts/include/run-test-container $COMMAND
   else
     $COMMAND
   fi

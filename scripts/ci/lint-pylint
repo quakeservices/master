@@ -14,7 +14,7 @@ pylint
 
 echo "+++ Running Pylint +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container "$COMMAND"
+  scripts/include/run-test-container $COMMAND
 else
   $COMMAND
 fi
