@@ -6,7 +6,7 @@ from typing import Union
 from master.constants import DEFAULT_MASTER_PORT
 from master.server.handlers import HealthCheckHandler, MasterHandler
 from master.server.servers import HealthCheckServer, ThreadPoolServer
-from master.storage.backends.dynamodb import DynamoDbStorage
+from master.storage import storage
 
 
 class MasterServer:
@@ -53,9 +53,15 @@ class MasterServer:
         _thread.start()
         return _thread
 
-    def initialise(self) -> None:
-        storage = DynamoDbStorage()
-        storage.initialise()
+    def initialise(self, storage_backend: str) -> None:
+        """
+        Anything that needs to be run before start is called.
+        """
+        storage_class = storage(backend=storage_backend)
+        if storage_class:
+            storage_class.initialise()
+        else:
+            raise Exception("Storage not found, skippinig initialisation")
 
     def start(self) -> None:
         with self.master_server, self.health_server:

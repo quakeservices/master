@@ -5,31 +5,31 @@ from socketserver import DatagramRequestHandler
 from typing import Optional
 
 from master.protocols import ProtocolResponse, Protocols
-from master.storage.backends import DynamoDbStorage
+from master.storage import storage
 from master.storage.models.server import Server
 
 
 class MasterHandler(DatagramRequestHandler):
     def handle(self) -> None:
-        self.protocols = Protocols()
-        self.storage = DynamoDbStorage()
+        protocols = Protocols()
+        storage_class = storage(backend="dynamodb")
+        if storage_class:
+            self.storage = storage_class()
 
         request: bytes = b""
         while True:
             fragment: bytes = self.rfile.readline()
             if fragment != b"":
                 logging.debug(
-                    f"Recieved fragment {fragment!r} from {self.client_address}"
+                    "Recieved fragment %s from %s", fragment, self.client_address
                 )
                 request = request + fragment
             else:
                 break
 
-        logging.info(f"Recieved {request!r} from {self.client_address}")
+        logging.info("Recieved %s from %s", request, self.client_address)
 
-        protocol_response: Optional[ProtocolResponse] = self.protocols.parse_request(
-            request
-        )
+        protocol_response: Optional[ProtocolResponse] = protocols.parse_request(request)
         if protocol_response:
             response: Optional[bytes] = None
             if protocol_response.request_type == "client":
@@ -43,7 +43,7 @@ class MasterHandler(DatagramRequestHandler):
                 self._send_response(response)
 
     def _send_response(self, response: bytes) -> None:
-        logging.debug(f"Sending {response!r} to {self.client_address}")
+        logging.debug("Sending %s to %s", response, self.client_address)
         self.wfile.write(response)
 
     def _handle_client_request(self, request: ProtocolResponse) -> bytes:
