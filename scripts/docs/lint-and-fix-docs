@@ -7,7 +7,7 @@ COMMAND='prettier --write docs/'
 
 echo "+++ Running prettier +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-docs-container "$COMMAND"
+  scripts/include/run-docs-container $COMMAND
 else
   $COMMAND
 fi
