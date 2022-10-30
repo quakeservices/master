@@ -14,7 +14,7 @@ class MasterHandler(DatagramRequestHandler):
         protocols = Protocols()
         storage_class = storage(backend="dynamodb")
         if storage_class:
-            self.storage = storage_class()
+            self.storage = storage_class()  # pylint: disable=not-callable
 
         request: bytes = b""
         while True:
