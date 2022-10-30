@@ -1,39 +1,46 @@
+# pylint: disable=protected-access
 import os
 
-import boto3
 import pytest
 from moto import mock_dynamodb
 
 from master.storage.models.server import Server
 
 
+# mypy: allow-untyped-defs
+@pytest.mark.storage_dynamodb
 class TestDynamodbBackend:
-    @pytest.fixture(scope="class")
-    def aws_credentials(self) -> None:
-        """Mocked AWS Credentials for moto."""
-        os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-        os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-        os.environ["AWS_SECURITY_TOKEN"] = "testing"
-        os.environ["AWS_SESSION_TOKEN"] = "testing"
-        os.environ["AWS_DEFAULT_REGION"] = "us-west-2"
+    table_name: str = "testing"
+    region_name: str = "us-west-2"
 
     @pytest.fixture(scope="class")
-    def dynamodb(self, aws_credentials):
+    def storage(self):
         with mock_dynamodb():
-            yield boto3.client("dynamodb", region_name="us-west-2")
+            # Import storage module after the mock has been initialised
+            # pylint: disable=import-outside-toplevel
+            from boto3.session import Session
+            from moto.core import patch_resource
 
-    @pytest.fixture(scope="class")
-    def table(self, dynamodb) -> None:
-        dynamodb.create_table(
-            TableName="quakeservices",
-            BillingMode="PAY_PER_REQUEST",
-            KeySchema=[
-                {"AttributeName": "address", "KeyType": "HASH"},
-            ],
-            AttributeDefinitions=[
-                {"AttributeName": "address", "AttributeType": "S"},
-            ],
-        )
+            from master.storage import storage
+
+            storage_class = storage("dynamodb")
+
+            session: Session = Session(
+                aws_access_key_id="testing",
+                aws_secret_access_key="testing",
+                aws_session_token="testing",
+                region_name=self.region_name,
+            )
+
+            resource = storage_class._create_service_resource(self.region_name, session)
+            patch_resource(resource)
+            storage_class._create_table(resource, self.table_name)
+
+            storage_instance = storage_class(
+                table_name=self.table_name, region=self.region_name, session=session
+            )
+
+            yield storage_instance
 
     @pytest.fixture(scope="class")
     def server(self) -> Server:
@@ -45,30 +52,24 @@ class TestDynamodbBackend:
             players=[{"name": "test-player", "ping": 4, "score": 10}],
         )
 
-    @pytest.fixture(scope="class")
-    def storage(self, dynamodb):
-        from master.storage.backends.dynamodb import DynamoDbStorage
-
-        return DynamoDbStorage()
-
-    @pytest.mark.skip(reason="TODO: Fix dynamodb mock")
-    def test_update_server(self, storage, table, server) -> None:
+    def test_update_server(self, storage, server) -> None:
         result = storage.update_server(server)
         assert result
 
-    @pytest.mark.skip(reason="TODO: Fix dynamodb mock")
-    def test_create_server(self, storage, table, server) -> None:
+    def test_create_server(self, storage, server) -> None:
         result = storage.create_server(server)
         assert result
 
-    @pytest.mark.skip(reason="TODO: Fix dynamodb mock")
-    def test_get_server(self, storage, table, server) -> None:
+    def test_get_server(self, storage, server) -> None:
         result = storage.get_server(address="127.0.0.1:27900", game="test-game")
         assert result is not None
         assert result.address == server.address
 
-    @pytest.mark.skip(reason="TODO: Fix dynamodb mock")
-    def test_get_servers(self, storage, table, server):
+    def test_get_server_none(self, storage, server) -> None:
+        result = storage.get_server(address="127.0.0.2:27900", game="test-game")
+        assert result is None
+
+    def test_get_servers(self, storage, server):
         expected_result = [server]
         actual_result = storage.get_servers(game="test-game")
         assert actual_result == expected_result
