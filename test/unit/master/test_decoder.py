@@ -71,6 +71,7 @@ decode_players_fixtures = [
 ]
 
 
+@pytest.mark.decoder
 class TestDecoder:
     @pytest.fixture(scope="class")
     def decoder(self) -> Decoder:

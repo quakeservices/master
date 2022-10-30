@@ -67,6 +67,7 @@ generate_response_fixtures = [
 ]
 
 
+@pytest.mark.protocols
 class TestProtocols:
     @pytest.fixture(scope="class")
     def protocols(self) -> Protocols:

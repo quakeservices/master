@@ -36,7 +36,7 @@ class TestDynamodbBackend:
             patch_resource(resource)
             storage_class._create_table(resource, self.table_name)
 
-            storage_instance = storage_class(
+            storage_instance = storage_class(  # pylint: disable=not-callable
                 table_name=self.table_name, region=self.region_name, session=session
             )
 
