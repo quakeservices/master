@@ -20,15 +20,15 @@
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/definitions/ProtocolResponse                                            |
 
-| Property                             | Pattern | Type             | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| + [game](#game )                     | No      | string           | No         | -          | Game              |
-| - [active](#active )                 | No      | boolean          | No         | -          | Active            |
-| + [request_type](#request_type )     | No      | enum (of string) | No         | -          | Request Type      |
-| + [response_class](#response_class ) | No      | enum (of string) | No         | -          | Response Class    |
-| - [response](#response )             | No      | string           | No         | -          | Response          |
-| - [players](#players )               | No      | array of object  | No         | -          | Players           |
-| - [details](#details )               | No      | object           | No         | -          | Details           |
+| Property                            | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| + [game](#game)                     | No      | string           | No         | -          | Game              |
+| - [active](#active)                 | No      | boolean          | No         | -          | Active            |
+| + [request_type](#request_type)     | No      | enum (of string) | No         | -          | Request Type      |
+| + [response_class](#response_class) | No      | enum (of string) | No         | -          | Response Class    |
+| - [response](#response)             | No      | string           | No         | -          | Response          |
+| - [players](#players)               | No      | array of object  | No         | -          | Players           |
+| - [details](#details)               | No      | object           | No         | -          | Details           |
 
 ## <a name="game"></a>1. [Required] Property `ProtocolResponse > game`
 
@@ -59,9 +59,10 @@
 **Description:** Type of request
 
 Must be one of:
-* "client"
-* "server"
-* "any"
+
+- "client"
+- "server"
+- "any"
 
 ## <a name="response_class"></a>4. [Required] Property `ProtocolResponse > response_class`
 
@@ -73,10 +74,11 @@ Must be one of:
 **Description:** Response class
 
 Must be one of:
-* "ping"
-* "heartbeat"
-* "shutdown"
-* "query"
+
+- "ping"
+- "heartbeat"
+- "shutdown"
+- "query"
 
 ## <a name="response"></a>5. [Optional] Property `ProtocolResponse > response`
 
@@ -115,9 +117,9 @@ Must be one of:
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **Additional properties** | [[Should-conform]](#players_items_additionalProperties "Each additional property must conform to the following schema") |
 
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [additionalProperties](#players_items_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [additionalProperties](#players_items_additionalProperties) | No      | string | No         | -          | -                 |
 
 #### <a name="players_items_additionalProperties"></a>6.1.1. Property `ProtocolResponse > players > players items > additionalProperties`
 
@@ -134,9 +136,9 @@ Must be one of:
 
 **Description:** Server details if response belongs to a server
 
-| Property                                                 | Pattern | Type        | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
-| - [additionalProperties](#details_additionalProperties ) | No      | Combination | No         | -          | -                 |
+| Property                                                | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [additionalProperties](#details_additionalProperties) | No      | Combination | No         | -          | -                 |
 
 ### <a name="details_additionalProperties"></a>7.1. [Optional] Property `ProtocolResponse > details > additionalProperties`
 
@@ -159,5 +161,6 @@ Must be one of:
 | Type | `integer` |
 | ---- | --------- |
 
-----------------------------------------------------------------------------------------------------------------------------
+---
+
 Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2022-08-20 at 09:20:44 +1000
