@@ -5,4 +5,3 @@ source scripts/include/build-env
 
 scripts/ci/lint-yaml
 scripts/ci/lint-docker
-scripts/ci/lint-docs
