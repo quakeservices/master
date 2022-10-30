@@ -5,7 +5,7 @@ cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 
 COMMAND="
-pytest -v
+pytest -vv
   --cov=master/
   test/unit/master
   test/unit/storage

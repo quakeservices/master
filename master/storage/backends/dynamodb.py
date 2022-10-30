@@ -1,20 +1,19 @@
 import logging
-import os
 from decimal import Decimal
 from typing import Any, Mapping, Optional, Sequence, Union
 
-from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Attr, Key
 from boto3.session import Session
 from mypy_boto3_dynamodb.service_resource import DynamoDBServiceResource, Table
 from mypy_boto3_dynamodb.type_defs import (
     GetItemOutputTableTypeDef,
-    PutItemOutputTableTypeDef,
+    QueryOutputTableTypeDef,
     ScanOutputTableTypeDef,
     UpdateItemOutputTableTypeDef,
 )
 
 from master.constants import APP_NAME, DEFAULT_REGION, DEPLOYMENT_ENVIRONMENT
-from master.storage import BaseStorage
+from master.storage.base import BaseStorage
 from master.storage.models.server import Server
 
 Item = dict[
@@ -52,15 +51,25 @@ class DynamoDbStorage(BaseStorage):
         region: str = DEFAULT_REGION,
         session: Optional[Session] = DEFAULT_SESSION,
     ):
-        _session = session
-        self.table = self._create_service_resource(table_name, region, _session)
+        self.dynamodb = self._create_service_resource(region, session)
+        self.table = self._get_table(self.dynamodb, table_name)
 
+    @classmethod
+    def initialise(cls) -> None:
+        if DEPLOYMENT_ENVIRONMENT == "dev":
+            resource: DynamoDBServiceResource = cls._create_service_resource()
+            cls._create_table(resource)
+
+    @staticmethod
     def _create_service_resource(
-        self, table_name: str, region: str, session: Session
-    ) -> Table:
+        region: str = DEFAULT_REGION, session: Session = DEFAULT_SESSION
+    ) -> DynamoDBServiceResource:
+
+        resource: DynamoDBServiceResource
+
         if DEPLOYMENT_ENVIRONMENT == "dev":
             # We're in development so use dynamodb-local
-            self.dynamodb = session.resource(
+            resource = session.resource(
                 "dynamodb",
                 region_name=region,
                 endpoint_url="http://dynamodb-local:8000",
@@ -68,29 +77,36 @@ class DynamoDbStorage(BaseStorage):
         else:
             # We're in production or (unit) testing so use real endpoint
             # dynamodb client will be mocked out in unit testing
-            self.dynamodb = session.resource("dynamodb", region_name=region)
+            resource = session.resource("dynamodb", region_name=region)
 
-        return self.dynamodb.Table(table_name)
+        return resource
 
-    def initialise(self, table_name: str = DEFAULT_TABLE_NAME) -> None:
-        if DEPLOYMENT_ENVIRONMENT == "dev":
-            self._create_table(table_name)
-
-    def _create_table(self, table_name: str) -> None:
-        logging.debug(f"Creating table {table_name}")
+    @classmethod
+    def _create_table(
+        cls, resource: DynamoDBServiceResource, table_name: str = DEFAULT_TABLE_NAME
+    ) -> None:
         try:
-            self.dynamodb.create_table(
+            logging.debug("Creating table %s", table_name)
+            resource.create_table(
                 TableName=table_name,
                 BillingMode="PAY_PER_REQUEST",
                 KeySchema=[
-                    {"AttributeName": self.primary_key, "KeyType": "HASH"},
+                    {"AttributeName": cls.primary_key, "KeyType": "HASH"},
                 ],
                 AttributeDefinitions=[
-                    {"AttributeName": self.primary_key, "AttributeType": "S"},
+                    {"AttributeName": cls.primary_key, "AttributeType": "S"},
                 ],
             )
-        except self.dynamodb.meta.client.exceptions.ResourceInUseException:
+        except resource.meta.client.exceptions.ResourceInUseException:
             logging.debug("Table already exists, skipping creation.")
+        else:
+            logging.debug("Table created.")
+
+    @classmethod
+    def _get_table(
+        cls, resource: DynamoDBServiceResource, table_name: str = DEFAULT_TABLE_NAME
+    ) -> Table:
+        return resource.Table(table_name)
 
     def create_server(self, server: Server) -> bool:
         return self.update_server(server)
@@ -103,13 +119,6 @@ class DynamoDbStorage(BaseStorage):
             server = Server.parse_obj(result)
 
         return server
-
-    def _get_item(self, address: str) -> Item:
-        response: GetItemOutputTableTypeDef = self.table.get_item(
-            Key={"address": address}
-        )
-        item = response["Item"]
-        return item
 
     def get_servers(self, game: Optional[str] = None) -> list[Server]:
         servers: list = []
@@ -158,14 +167,49 @@ class DynamoDbStorage(BaseStorage):
         return False
 
     def _query_item(self, address: str, game: str, limit: int = 1) -> Optional[Item]:
-        result = self.table.query(
-            Limit=limit,
-            ConsistentRead=True,
-            ReturnConsumedCapacity="NONE",
-            FilterExpression=Attr("server").eq(address) & Attr("game").eq(game),
-        )
+        items: Optional[list[Item]] = None
+        try:
+            result: QueryOutputTableTypeDef = self.table.query(
+                Limit=limit,
+                ConsistentRead=True,
+                ReturnConsumedCapacity="NONE",
+                KeyConditionExpression=Key(self.primary_key).eq(address),
+                FilterExpression=Attr("game").eq(game),
+            )
+        except (
+            self.dynamodb.meta.client.exceptions.InternalServerError,
+            self.dynamodb.meta.client.exceptions.ProvisionedThroughputExceededException,
+            self.dynamodb.meta.client.exceptions.RequestLimitExceeded,
+            self.dynamodb.meta.client.exceptions.ResourceNotFoundException,
+        ) as exception:
+            self._log_exception("_query_item", exception)
+        else:
+            items = result.get("Items", None)
+            if items:
+                return items.pop()
+        return None
 
-        if result["Count"] == limit:
-            items: list[Item] = result.get("Items")
-            return items[0]
+    @staticmethod
+    def _log_exception(method: str, exception: Any) -> None:
+        logging.error("Method %s caught exception: ", method)
+        logging.error(exception.message)
+
+    def _get_item(self, address: str) -> Optional[Item]:
+        """
+        Unused
+        """
+        try:
+            response: GetItemOutputTableTypeDef = self.table.get_item(
+                Key={"address": address}
+            )
+        except (
+            self.dynamodb.meta.client.exceptions.InternalServerError,
+            self.dynamodb.meta.client.exceptions.ProvisionedThroughputExceededException,
+            self.dynamodb.meta.client.exceptions.RequestLimitExceeded,
+            self.dynamodb.meta.client.exceptions.ResourceNotFoundException,
+        ) as exception:
+            self._log_exception("_get_item", exception)
+        else:
+            return response["Item"]
+
         return None
