@@ -28,6 +28,12 @@ norecursedirs = [
   ".venv",
   "node_modules"
 ]
+markers = [
+  "encoder",
+  "decoder",
+  "protocols",
+  "storage_dynamodb",
+]
 
 [tool.isort]
 profile = "black"
