@@ -1,7 +1,6 @@
-import signal
+import logging
 import threading
 import time
-from typing import Union
 
 from master.constants import DEFAULT_MASTER_PORT
 from master.server.handlers import HealthCheckHandler, MasterHandler
@@ -24,36 +23,34 @@ class MasterServer:
         master_port: int = default_master_port,
         health_port: int = default_health_port,
     ):
-        self._create_master_master(address, master_port)
-        self._create_health_check_master(address, health_port)
-        # self._setup_signals()
+        self.master_server = self._create_master_master(address, master_port)
+        self.health_server = self._create_health_check_master(address, health_port)
 
-    def _setup_signals(self) -> None:
-        signal.signal(signal.SIGINT, self.shutdown())
-        signal.signal(signal.SIGTERM, self.shutdown())
-
-    def _create_master_master(self, address: str, port: int) -> None:
-        self.master_server = ThreadPoolServer(
+    @staticmethod
+    def _create_master_master(address: str, port: int) -> ThreadPoolServer:
+        return ThreadPoolServer(
             (address, port),
             MasterHandler,
         )
 
-    def _create_health_check_master(self, address: str, port: int) -> None:
-        self.health_server = HealthCheckServer(
+    @staticmethod
+    def _create_health_check_master(address: str, port: int) -> HealthCheckServer:
+        return HealthCheckServer(
             (address, port),
             HealthCheckHandler,
         )
 
     @staticmethod
     def _create_thread(
-        server: Union[ThreadPoolServer, HealthCheckServer], daemon: bool = True
+        server: ThreadPoolServer | HealthCheckServer, name: str
     ) -> threading.Thread:
-        _thread = threading.Thread(target=server.serve_forever)
-        _thread.daemon = daemon
+        _thread = threading.Thread(target=server.serve_forever, name=name, daemon=True)
+        logging.debug("Starting thread %s", name)
         _thread.start()
         return _thread
 
-    def initialise(self, storage_backend: str) -> None:
+    @staticmethod
+    def initialise(storage_backend: str) -> None:
         """
         Anything that needs to be run before start is called.
         """
@@ -61,15 +58,15 @@ class MasterServer:
         if storage_class:
             storage_class.initialise()
         else:
-            raise Exception("Storage not found, skippinig initialisation")
+            raise Exception("Storage not found, unable to initialise")
 
     def start(self) -> None:
         with self.master_server, self.health_server:
-            self.master_thread = self._create_thread(self.master_server)
-            self.health_thread = self._create_thread(self.health_server)
+            self.master_thread = self._create_thread(self.master_server, "master")
+            self.health_thread = self._create_thread(self.health_server, "healthcheck")
             try:
                 while self.alive():
-                    time.sleep(5)
+                    time.sleep(3)
             except KeyboardInterrupt:
                 pass
             finally:

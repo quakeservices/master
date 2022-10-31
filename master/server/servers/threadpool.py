@@ -15,8 +15,7 @@ class ThreadPoolServer(ThreadingMixIn, UDPServer):
     # pylint: disable=arguments-differ
     def serve_forever(self) -> None:  # type: ignore
         for _ in range(self.thread_pool_size):
-            thread = threading.Thread(target=self.process_request_thread)
-            thread.daemon = True
+            thread = threading.Thread(target=self.process_request_thread, daemon=True)
             thread.start()
 
         while True:
