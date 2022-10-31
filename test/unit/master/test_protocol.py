@@ -65,6 +65,18 @@ generate_response_fixtures = [
         id="shutdown",
     ),
 ]
+parse_request_fixtures = [
+    pytest.param(
+        b"\xff\xff\xff\xffping",
+        quake2_protocol_response_ping,
+        id="knownrequest",
+    ),
+    pytest.param(
+        b"rAnDoMgArBaGeeee",
+        None,
+        id="unknownrequest",
+    ),
+]
 
 
 @pytest.mark.protocols
@@ -73,10 +85,10 @@ class TestProtocols:
     def protocols(self) -> Protocols:
         return Protocols()
 
-    def test_protocols_load(self, protocols: Protocols):
+    def test_protocols_load(self, protocols: Protocols) -> None:
         assert len(protocols.protocols) >= 1
 
-    def test_protocols_check_proxy_protocol(self, protocols: Protocols):
+    def test_protocols_check_proxy_protocol(self, protocols: Protocols) -> None:
         header = b"hello world"
         result = protocols._check_proxy_protocol(header)
         assert result == header
@@ -90,7 +102,7 @@ class TestProtocols:
         test_input: bytes,
         expected_protocol: GameProtocol,
         expected_response_class: str,
-    ):
+    ) -> None:
         protocol, response_class = protocols._find_protocol(test_input)
         assert protocol == expected_protocol
         assert response_class == expected_response_class
@@ -106,8 +118,17 @@ class TestProtocols:
         test_request: bytes,
         test_response_class: str,
         expected_protocol_response: ProtocolResponse,
-    ):
+    ) -> None:
         protocol_response = protocols._generate_response(
             test_protocol, test_request, test_response_class
         )
         assert protocol_response == expected_protocol_response
+
+    @pytest.mark.parametrize(
+        "req,expected",
+        parse_request_fixtures,
+    )
+    def test_parse_request(
+        self, protocols: Protocols, req: bytes, expected: ProtocolResponse | None
+    ) -> None:
+        assert protocols.parse_request(req) == expected
