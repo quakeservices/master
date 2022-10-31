@@ -9,28 +9,32 @@ from master.protocols.models.response import ProtocolResponse
 class Protocols:
     protocols: list[GameProtocol] = ALL_ACTIVE_PROTOCOLS
 
-    def _check_proxy_protocol(self, request: bytes) -> bytes:
+    @staticmethod
+    def _check_proxy_protocol(request: bytes) -> bytes:
         """
         Check if request contains ProxyProtocol headers and strip them out if so.
         Not currently required so not implemented.
         """
         return request
 
+    @classmethod
     def _find_protocol(
-        self, request_header: bytes
+        cls,
+        request_header: bytes,
     ) -> tuple[Optional[GameProtocol], Optional[str]]:
         """
         Find the protocol that matches a given header
         """
-        for protocol in self.protocols:
+        for protocol in cls.protocols:
             match, response_class = protocol.match_header(request_header)
             if match:
                 return protocol, response_class
 
         return None, None
 
+    @staticmethod
     def _generate_response(
-        self, protocol: GameProtocol, request: bytes, response_class: str
+        protocol: GameProtocol, request: bytes, response_class: str
     ) -> ProtocolResponse:
         """
         Decode the request into a ProtocolResponse
@@ -38,14 +42,15 @@ class Protocols:
         decoder = Decoder(protocol, response_class)
         return decoder.generate_protocol_response(request)
 
-    def parse_request(self, request: bytes) -> Optional[ProtocolResponse]:
-        parsed_request: bytes = self._check_proxy_protocol(request)
+    @classmethod
+    def parse_request(cls, request: bytes) -> Optional[ProtocolResponse]:
+        parsed_request: bytes = cls._check_proxy_protocol(request)
         first_line, *_ = parsed_request.splitlines()
         # Shouldn't need more than the first 16 bytes of the header
         request_header: bytes = first_line[:16]
 
-        protocol, response_class = self._find_protocol(request_header)
+        protocol, response_class = cls._find_protocol(request_header)
         if protocol:
-            return self._generate_response(protocol, request, response_class)
+            return cls._generate_response(protocol, request, response_class)
 
         return None

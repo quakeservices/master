@@ -11,18 +11,18 @@ def setup_logging(
         logging.getLogger("botocore").propagate = False
 
     if show_time:
-        format = "%(asctime)s %(levelname)s %(message)s"
+        log_format = "%(asctime)s %(levelname)s %(message)s"
     else:
-        format = "%(levelname)s %(message)s"
+        log_format = "%(levelname)s %(message)s"
 
     logging.basicConfig(
         stream=sys.stdout,
         level=getattr(logging, log_level.upper()),
-        format=format,
+        format=log_format,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logging.info(f"Logging set to {log_level.upper()}")
+    logging.info("Logging set to %s", log_level.upper())
 
 
 def setup_environment() -> None:
