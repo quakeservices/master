@@ -18,7 +18,7 @@ idna==3.4
     # via requests
 jinja2==3.1.2
     # via json-schema-for-humans
-json-schema-for-humans==0.42.1
+json-schema-for-humans==0.43.1
     # via -r requirements.in
 markdown2==2.4.6
     # via json-schema-for-humans
@@ -26,7 +26,7 @@ markupsafe==2.1.1
     # via
     #   jinja2
     #   json-schema-for-humans
-marshmallow==3.18.0
+marshmallow==3.19.0
     # via
     #   dataclasses-json
     #   marshmallow-enum

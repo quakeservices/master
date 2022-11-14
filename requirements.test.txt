@@ -20,19 +20,19 @@ aws-cdk-lib==2.46.0
     #   aws-cdk-aws-lambda-python-alpha
 black==22.10.0
     # via -r requirements.test.in
-boto3[crt]==1.25.5
+boto3[crt]==1.26.3
     # via
     #   -r ./master/requirements.txt
     #   moto
-boto3-stubs[dynamodb]==1.25.5
+boto3-stubs[dynamodb]==1.26.3
     # via -r ./master/requirements.txt
-botocore==1.28.5
+botocore==1.29.3
     # via
     #   -r ./master/requirements.txt
     #   boto3
     #   moto
     #   s3transfer
-botocore-stubs==1.28.5
+botocore-stubs==1.29.3
     # via
     #   -r ./master/requirements.txt
     #   boto3-stubs
@@ -136,9 +136,9 @@ mccabe==0.7.0
     # via pylint
 moto[dynamodb]==4.0.9
     # via -r requirements.test.in
-mypy==0.982
+mypy==0.991
     # via -r requirements.test.in
-mypy-boto3-dynamodb==1.25.0
+mypy-boto3-dynamodb==1.26.0.post1
     # via
     #   -r ./master/requirements.txt
     #   boto3-stubs
@@ -155,15 +155,15 @@ packaging==21.3
     #   docker
     #   marshmallow
     #   pytest
-pathspec==0.10.1
+pathspec==0.10.2
     # via
     #   black
     #   yamllint
 pep517==0.13.0
     # via build
-pip-tools==6.9.0
+pip-tools==6.10.0
     # via -r requirements.test.in
-platformdirs==2.5.3
+platformdirs==2.5.4
     # via
     #   black
     #   pylint
@@ -246,7 +246,7 @@ typeguard==2.13.3
     #   aws-cdk-lib
     #   constructs
     #   jsii
-types-awscrt==0.15.1
+types-awscrt==0.15.2
     # via
     #   -r ./master/requirements.txt
     #   botocore-stubs
@@ -254,7 +254,7 @@ types-s3transfer==0.6.0.post4
     # via
     #   -r ./master/requirements.txt
     #   boto3-stubs
-types-toml==0.10.8
+types-toml==0.10.8.1
     # via responses
 typing-extensions==4.4.0
     # via
@@ -283,7 +283,7 @@ websocket-client==1.4.2
     # via docker
 werkzeug==2.2.2
     # via moto
-wheel==0.38.2
+wheel==0.38.4
     # via pip-tools
 wrapt==1.14.1
     # via astroid
