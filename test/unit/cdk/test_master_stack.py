@@ -247,6 +247,10 @@ class TestQuakeservicesMaster:
         stack_template.has_resource_properties(
             "AWS::ECS::Service",
             {
+                "CapacityProviderStrategy": [
+                    {"CapacityProvider": "FARGATE_SPOT", "Weight": 0},
+                    {"CapacityProvider": "FARGATE", "Weight": 1},
+                ],
                 "Cluster": Match.any_value(),
                 "DeploymentConfiguration": {
                     "MaximumPercent": 200,
@@ -254,7 +258,6 @@ class TestQuakeservicesMaster:
                 },
                 "EnableECSManagedTags": False,
                 "HealthCheckGracePeriodSeconds": 60,
-                "LaunchType": "FARGATE",
                 "LoadBalancers": [
                     {
                         "ContainerName": Match.any_value(),
