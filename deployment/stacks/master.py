@@ -91,7 +91,14 @@ class MasterStack(Stack):
         Create master task
         """
         return ecs.FargateTaskDefinition(
-            self, "task", memory_limit_mib=self.MASTER_MEMORY, cpu=self.MASTER_CPU
+            self,
+            "task",
+            memory_limit_mib=self.MASTER_MEMORY,
+            cpu=self.MASTER_CPU,
+            runtime_platform=ecs.RuntimePlatform(
+                cpu_architecture=ecs.CpuArchitecture.X86_64,
+                operating_system_family=ecs.OperatingSystemFamily.LINUX,
+            ),
         )
 
     def _grant_table_read_write_to_task(self) -> None:
@@ -174,6 +181,10 @@ class MasterStack(Stack):
         """
         Create service
         """
+        provider_strategy = [
+            ecs.CapacityProviderStrategy(capacity_provider="FARGATE_SPOT", weight=0),
+            ecs.CapacityProviderStrategy(capacity_provider="FARGATE", weight=1),
+        ]
         return ecs.FargateService(
             self,
             "service",
@@ -182,6 +193,7 @@ class MasterStack(Stack):
             task_definition=self.task,
             assign_public_ip=True,
             security_groups=[self._create_security_group()],
+            capacity_provider_strategies=provider_strategy,
         )
 
     def _create_network_load_balancer(self) -> elb.NetworkLoadBalancer:
