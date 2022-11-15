@@ -58,8 +58,6 @@ exclude = [
   "cdk.out",
   ".venv"
 ]
-
-# for strict mypy: (this is the tricky one :-))
 disallow_untyped_defs = true
 
 [tool.pydantic-mypy]
@@ -67,3 +65,52 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
+
+[tool.poetry]
+name = "quakeservices"
+version = "0.2.1"
+description = "idTech master server implimented in Python"
+authors = [
+    "Gary Brandon <gary.brandon@gmail.com>"
+]
+license = "BSD"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = "^1.10.2"
+
+
+[tool.poetry.group.cdk.dependencies]
+aws-cdk-lib = "^2.50.0"
+aws-cdk-aws-lambda-python-alpha = "^2.50.0a0"
+constructs = "^10.1.160"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+mypy = "^0.991"
+pylint = "^2.15.5"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+pytest-mock = "^3.10.0"
+yamllint = "^1.28.0"
+pyyaml = "^6.0"
+types-pyyaml = "^6.0.12.2"
+moto = {extras = ["dynamodb"], version = "^4.0.9"}
+poetry = "^1.2.2"
+
+
+[tool.poetry.group.docs.dependencies]
+json-schema-for-humans = "^0.43.1"
+
+
+[tool.poetry.group.master.dependencies]
+boto3 = "^1.26.9"
+boto3-stubs = {extras = ["dynamodb"], version = "^1.26.9"}
+click = "^8.1.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
