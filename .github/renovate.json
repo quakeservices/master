@@ -8,11 +8,6 @@
   "enabledManagers": [
     "dockerfile",
     "npm",
-    "pip-compile"
-  ],
-  "pip-compile": {
-    "fileMatch": [
-      "(^|/)requirements.*\\.in$"
-    ]
-  }
+    "poetry"
+  ]
 }

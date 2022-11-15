@@ -6,10 +6,12 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
   pull_request:
     paths:
+      - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
 

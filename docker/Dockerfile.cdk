@@ -22,7 +22,6 @@ COPY deployment/package-lock.json .
 RUN --mount=type=cache,target=/root/.npm \
   npm install --global aws-cdk
 
-COPY deployment/requirements.txt .
-
 RUN --mount=type=cache,target=/root/.cache/pip \
-  python3 -m pip install -r requirements.txt
+  POETRY_VIRTUALENVS_CREATE=false \
+  poetry install --with "cdk"
