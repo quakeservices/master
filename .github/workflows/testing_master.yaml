@@ -28,8 +28,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
 
       - uses: actions/setup-python@v4
         with:
@@ -38,7 +36,9 @@ jobs:
       - name: Install dependencies
         env:
           POETRY_VIRTUALENVS_CREATE: false
-        run: poetry install --with 'master,dev'
+        run: |
+          pipx install poetry
+          poetry install --with 'master,dev'
 
       - name: "Unit tests"
         run: scripts/run-test-unit
