@@ -26,8 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install poetry
-        run: pipx install poetry
 
       - uses: actions/setup-python@v4
         with:
@@ -37,8 +35,9 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
         run: |
+          pipx install poetry
           poetry install --with 'cdk'
-          npm install aws-cdk@latest
+          npm install --global aws-cdk
 
       - name: "CDK unit tests"
         run: scripts/run-test-cdk
