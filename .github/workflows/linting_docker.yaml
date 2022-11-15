@@ -6,9 +6,11 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - '.github/workflows/linting_docker.yaml'
       - 'docker/**'
   pull_request:
     paths:
+      - '.github/workflows/linting_docker.yaml'
       - 'docker/**'
 
 concurrency:

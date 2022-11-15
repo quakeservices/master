@@ -1,4 +1,0 @@
-pydantic
-boto3[crt]
-boto3-stubs[dynamodb]
-click

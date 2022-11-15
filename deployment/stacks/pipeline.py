@@ -3,6 +3,7 @@ from typing import Any
 from aws_cdk import Stack
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_ssm as ssm
+from aws_cdk.aws_codebuild import BuildEnvironment
 from aws_cdk.pipelines import CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep
 from constructs import Construct
 
@@ -57,7 +58,7 @@ class PipelineStack(Stack):
     def _create_pipeline_build_step(self) -> CodeBuildStep:
         commands: list[str] = [
             "npm install --global aws-cdk",
-            "pip install -r deployment/requirements.txt",
+            "poetry install --with cdk",
             "cdk synth",
         ]
         return CodeBuildStep(
@@ -65,7 +66,7 @@ class PipelineStack(Stack):
             project_name=f"{APP_NAME}-synth",
             input=self.connection,
             commands=commands,
-            env={"DOCKER_BUILDKIT": "1"},
+            env={"DOCKER_BUILDKIT": "1", "POETRY_VIRTUALENVS_CREATE": "false"},
             role_policy_statements=[
                 iam.PolicyStatement(
                     actions=["sts:AssumeRole"],
@@ -82,7 +83,7 @@ class PipelineStack(Stack):
     def _create_pipeline_test_step(self) -> ShellStep:
         commands: list[str] = [
             "npm install --global aws-cdk",
-            "pip install -r requirements.test.txt",
+            "poetry install --with cdk",
             "pytest -v test/unit/cdk",
         ]
         return ShellStep(
