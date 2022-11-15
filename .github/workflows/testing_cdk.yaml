@@ -34,6 +34,7 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
         run: |
+          python -m pip install poetry
           poetry install --with 'cdk'
           npm install aws-cdk@latest
 
