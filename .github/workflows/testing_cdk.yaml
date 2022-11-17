@@ -51,9 +51,9 @@ jobs:
         with:
           path: .venv
           key: "
-            venv
-            -${{ runner.os }}
-            -${{ steps.setup-python.outputs.python-version }}
+            venv\
+            -${{ runner.os }}\
+            -${{ steps.setup-python.outputs.python-version }}\
             -${{ hashFiles('**/poetry.lock') }}"
 
       - name: Install dependencies
