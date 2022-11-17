@@ -32,24 +32,28 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          virtualenvs-in-project: false
+          installer-parallel: true
+
       - name: Install dependencies
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
         run: |
-          pipx install poetry
-          poetry install --with '*'
+          poetry install --no-interaction --with '*'
 
       - name: "Linting: black"
-        run: poetry run scripts/ci/lint-black
+        run: scripts/ci/lint-black
 
       - name: "Linting: isort"
-        run: poetry run scripts/ci/lint-isort
+        run: scripts/ci/lint-isort
         if: always()
 
       - name: "Linting: pylint"
-        run: poetry run scripts/ci/lint-pylint
+        run: scripts/ci/lint-pylint
         if: always()
 
       - name: "Linting: mypy"
-        run: poetry run scripts/ci/lint-mypy
+        run: scripts/ci/lint-mypy
         if: always()
