@@ -181,10 +181,7 @@ class MasterStack(Stack):
         """
         Create service
         """
-        provider_strategy = [
-            ecs.CapacityProviderStrategy(capacity_provider="FARGATE_SPOT", weight=0),
-            ecs.CapacityProviderStrategy(capacity_provider="FARGATE", weight=1),
-        ]
+        provider_strategy = []
         return ecs.FargateService(
             self,
             "service",
@@ -193,7 +190,9 @@ class MasterStack(Stack):
             task_definition=self.task,
             assign_public_ip=True,
             security_groups=[self._create_security_group()],
-            capacity_provider_strategies=provider_strategy,
+            capacity_provider_strategies=[
+                ecs.CapacityProviderStrategy(capacity_provider="FARGATE_SPOT"),
+            ],
         )
 
     def _create_network_load_balancer(self) -> elb.NetworkLoadBalancer:

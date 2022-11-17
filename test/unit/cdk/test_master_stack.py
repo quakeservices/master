@@ -248,8 +248,7 @@ class TestQuakeservicesMaster:
             "AWS::ECS::Service",
             {
                 "CapacityProviderStrategy": [
-                    {"CapacityProvider": "FARGATE_SPOT", "Weight": 0},
-                    {"CapacityProvider": "FARGATE", "Weight": 1},
+                    {"CapacityProvider": "FARGATE_SPOT"},
                 ],
                 "Cluster": Match.any_value(),
                 "DeploymentConfiguration": {
