@@ -24,21 +24,36 @@ concurrency:
 jobs:
   testing:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-
-      - uses: actions/setup-python@v4
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        id: setup-python
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.2.2
+          installer-parallel: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          pipx install poetry
-          poetry install --with 'master,dev'
+          poetry install --no-interaction --with 'master,dev'
 
       - name: "Unit tests"
         run: scripts/run-test-unit
