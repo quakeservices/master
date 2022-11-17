@@ -60,4 +60,4 @@ jobs:
           poetry install --no-interaction --with 'master,dev'
 
       - name: "Unit tests"
-        run: scripts/run-test-unit
+        run: poetry run scripts/run-test-unit
