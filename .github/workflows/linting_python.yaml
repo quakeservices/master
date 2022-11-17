@@ -40,16 +40,16 @@ jobs:
           poetry install --with '*'
 
       - name: "Linting: black"
-        run: scripts/ci/lint-black
+        run: poetry run scripts/ci/lint-black
 
       - name: "Linting: isort"
-        run: scripts/ci/lint-isort
+        run: poetry run scripts/ci/lint-isort
         if: always()
 
       - name: "Linting: pylint"
-        run: scripts/ci/lint-pylint
+        run: poetry run scripts/ci/lint-pylint
         if: always()
 
       - name: "Linting: mypy"
-        run: scripts/ci/lint-mypy
+        run: poetry run scripts/ci/lint-mypy
         if: always()
