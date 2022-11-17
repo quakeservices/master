@@ -5,12 +5,16 @@ name: Testing Master
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "main"
     paths:
       - '.github/workflows/testing_master.yaml'
       - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
   pull_request:
+    branches:
+      - "main"
     paths:
       - '.github/workflows/testing_master.yaml'
       - 'master/**'

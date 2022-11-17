@@ -9,7 +9,8 @@ on:
     workflows: [Linting Docker, Linting Python, Linting YAML, Testing Master]
     types:
       - completed
-    branches: [main]
+    branches:
+      - "main"
     paths:
       - '.github/workflows/build.yaml'
       - 'docker/**'

@@ -5,11 +5,15 @@ name: Linting Docs
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "main"
     paths:
       - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
   pull_request:
+    branches:
+      - "main"
     paths:
       - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
