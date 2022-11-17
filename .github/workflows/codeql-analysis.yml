@@ -44,9 +44,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: "venv
-            -${{ runner.os }}
-            -${{ steps.setup-python.outputs.python-version }}
+          key: "venv\
+            -${{ runner.os }}\
+            -${{ steps.setup-python.outputs.python-version }}\
             -${{ hashFiles('**/poetry.lock') }}"
 
       - name: Install dependencies
