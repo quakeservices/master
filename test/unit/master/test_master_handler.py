@@ -7,6 +7,7 @@ from master.server.handlers.master import MasterHandler
 
 
 @pytest.mark.master_handler
+@pytest.mark.unit_test
 class TestMasterHandler:
     @pytest.mark.parametrize(
         "address,expected",

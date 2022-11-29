@@ -4,6 +4,8 @@ from aws_cdk.assertions import Match, Template
 from deployment.stacks import InfraStack
 
 
+@pytest.mark.cdk
+@pytest.mark.unit_test
 class TestQuakeservicesInfra:
     @pytest.fixture(scope="class")
     def stack_template(self, stack_app, stack_env_us_west_2):

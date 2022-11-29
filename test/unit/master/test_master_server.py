@@ -8,6 +8,7 @@ from master.server.servers.master import MasterServer
 
 
 @pytest.mark.master_server
+@pytest.mark.unit_test
 class TestMasterServer:
     def test_create_master_server(self) -> None:
         server = MasterServer._create_master_master("127.0.0.1", 29710)
