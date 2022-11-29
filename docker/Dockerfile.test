@@ -1,8 +1,5 @@
 # syntax=docker/dockerfile:1
 FROM ghcr.io/quakeservices/cdk:latest
 
-WORKDIR /code
-
 RUN --mount=type=cache,target=/root/.cache/pip \
-  POETRY_VIRTUALENVS_CREATE=false \
   poetry install --with '*'

@@ -7,21 +7,13 @@ RUN --mount=type=cache,target=/var/cache/apt \
     --output-document /tmp/setup_current.x && \
   bash /tmp/setup_current.x && \
   rm /tmp/setup_current.x && \
-  apt-get update
-
-RUN --mount=type=cache,target=/var/cache/apt \
+  apt-get update && \
   apt-get install -y --no-install-recommends \
     docker \
     nodejs
-
-WORKDIR /tmp
-
-COPY deployment/package.json .
-COPY deployment/package-lock.json .
 
 RUN --mount=type=cache,target=/root/.npm \
   npm install --global aws-cdk
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  POETRY_VIRTUALENVS_CREATE=false \
-  poetry install --with "cdk"
+  poetry install --no-interaction --with "cdk"

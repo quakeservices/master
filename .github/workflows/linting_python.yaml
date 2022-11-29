@@ -12,6 +12,8 @@ on:
       - 'deployment/**'
       - 'master/**'
       - 'test/**'
+      - 'pyproject.toml'
+      - 'poetry.lock'
   pull_request:
     branches:
       - "main"
@@ -20,6 +22,8 @@ on:
       - 'deployment/**'
       - 'master/**'
       - 'test/**'
+      - 'pyproject.toml'
+      - 'poetry.lock'
 
 concurrency:
   # yamllint disable-line rule:line-length

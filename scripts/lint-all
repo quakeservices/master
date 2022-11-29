@@ -3,6 +3,6 @@ cd "$(git rev-parse --show-toplevel)" || exit
 
 source scripts/include/build-env
 
-scripts/lint-python
-scripts/lint-infra
-scripts/ci/lint-docs
+for script in scripts/ci/lint-*; do
+  $script
+done

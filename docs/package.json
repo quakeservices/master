@@ -1,6 +1,0 @@
-{
-  "name": "docs",
-  "dependencies": {
-    "prettier": "2.7.1"
-  }
-}

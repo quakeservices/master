@@ -4,15 +4,11 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 1
 source scripts/include/build-env
 
-COMMAND='
-mypy
-  deployment/
-  master/
-'
+COMMAND="mypy deployment/ master/"
 
 echo "+++ Running mypy +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container $COMMAND
+  scripts/include/run-test-container "$COMMAND"
 else
   $COMMAND
 fi

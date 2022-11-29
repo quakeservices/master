@@ -12,4 +12,4 @@ docker run --interactive \
            --mount=type=bind,source="$(pwd)",target="$(pwd)" \
            --workdir "$(pwd)" \
            "${APP_NAME}/test:latest" \
-           "${@:-bash}"
+           bash -c "${@:-bash}"

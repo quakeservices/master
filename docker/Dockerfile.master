@@ -3,10 +3,9 @@ FROM ghcr.io/quakeservices/base:latest
 
 WORKDIR /usr/src/app
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  POETRY_VIRTUALENVS_CREATE=false \
-  poetry install --with master
-
 COPY . /usr/src/app/
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+  poetry install --no-interaction --with 'master'
 
 CMD [ "./qs.py", "--log-level", "debug", "--hide-boto-logs", "server", "run"]

@@ -11,6 +11,9 @@ on:
       - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
+      - 'pyproject.toml'
+      - 'package-lock.json'
+      - 'poetry.lock'
   pull_request:
     branches:
       - "main"
@@ -18,6 +21,9 @@ on:
       - '.github/workflows/linting_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
+      - 'pyproject.toml'
+      - 'package-lock.json'
+      - 'poetry.lock'
 
 concurrency:
   # yamllint disable-line rule:line-length

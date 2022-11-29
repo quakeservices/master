@@ -1,6 +1,0 @@
-{
-  "name": "deployment",
-  "dependencies": {
-    "aws-cdk": "2.50.0"
-  }
-}

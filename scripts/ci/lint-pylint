@@ -4,17 +4,11 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 1
 source scripts/include/build-env
 
-COMMAND='
-pylint
-    --errors-only
-    master
-    deployment
-    test
-'
+COMMAND="pylint --errors-only master deployment test"
 
 echo "+++ Running Pylint +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container $COMMAND
+  scripts/include/run-test-container "$COMMAND"
 else
   $COMMAND
 fi

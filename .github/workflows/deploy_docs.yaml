@@ -13,6 +13,8 @@ on:
       - '.github/workflows/deploy_docs.yaml'
       - 'mkdocs.yaml'
       - 'docs/**'
+      - 'pyproject.toml'
+      - 'package-lock.json'
 
 concurrency:
   # yamllint disable-line rule:line-length
@@ -54,8 +56,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          poetry install --no-interaction --with 'docs'
+        run: poetry install --no-interaction --with 'docs'
 
       - name: Deploy documenation
-        run: mkdocs gh-deploy --force
+        run: poetry run mkdocs gh-deploy --force

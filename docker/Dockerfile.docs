@@ -1,14 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM ghcr.io/quakeservices/cdk:latest
 
-WORKDIR /tmp
-
-COPY docs/package.json .
-COPY docs/package-lock.json .
-
 RUN --mount=type=cache,target=/root/.npm \
   npm install --global prettier
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  POETRY_VIRTUALENVS_CREATE=false \
   poetry install --with docs
