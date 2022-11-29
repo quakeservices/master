@@ -181,7 +181,6 @@ class MasterStack(Stack):
         """
         Create service
         """
-        provider_strategy = []
         return ecs.FargateService(
             self,
             "service",

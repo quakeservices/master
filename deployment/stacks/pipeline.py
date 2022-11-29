@@ -11,6 +11,13 @@ from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, REPO
 from deployment.environments import us_east_1, us_west_2
 from deployment.stacks.pipelines import PipelineInfraStage, PipelineMasterStage
 
+BOOTSTRAP_COMMANDS: list[str] = [
+    "npm install --global aws-cdk",
+    "python3 -m pip install poetry",
+    "poetry config virtualenvs.create false",
+    "poetry install --with cdk",
+]
+
 
 class PipelineStack(Stack):
     def __init__(
@@ -57,8 +64,7 @@ class PipelineStack(Stack):
 
     def _create_pipeline_build_step(self) -> CodeBuildStep:
         commands: list[str] = [
-            "npm install --global aws-cdk",
-            "poetry install --with cdk",
+            *BOOTSTRAP_COMMANDS,
             "cdk synth",
         ]
         return CodeBuildStep(
@@ -66,7 +72,9 @@ class PipelineStack(Stack):
             project_name=f"{APP_NAME}-synth",
             input=self.connection,
             commands=commands,
-            env={"DOCKER_BUILDKIT": "1", "POETRY_VIRTUALENVS_CREATE": "false"},
+            env={
+                "DOCKER_BUILDKIT": "1",
+            },
             role_policy_statements=[
                 iam.PolicyStatement(
                     actions=["sts:AssumeRole"],
@@ -82,8 +90,7 @@ class PipelineStack(Stack):
 
     def _create_pipeline_test_step(self) -> ShellStep:
         commands: list[str] = [
-            "npm install --global aws-cdk",
-            "poetry install --with cdk",
+            *BOOTSTRAP_COMMANDS,
             "pytest -v test/unit/cdk",
         ]
         return ShellStep(
