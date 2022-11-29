@@ -3,8 +3,14 @@ from typing import Any
 from aws_cdk import Stack
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_ssm as ssm
-from aws_cdk.aws_codebuild import BuildEnvironment
-from aws_cdk.pipelines import CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep
+from aws_cdk.aws_codebuild import BuildEnvironment, LinuxBuildImage
+from aws_cdk.pipelines import (
+    CodeBuildOptions,
+    CodeBuildStep,
+    CodePipeline,
+    CodePipelineSource,
+    ShellStep,
+)
 from constructs import Construct
 
 from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, REPO
@@ -13,7 +19,7 @@ from deployment.stacks.pipelines import PipelineInfraStage, PipelineMasterStage
 
 BOOTSTRAP_COMMANDS: list[str] = [
     "npm install --global aws-cdk",
-    "python3 -m pip install poetry",
+    "pip install poetry==1.2.2",
     "poetry config virtualenvs.create false",
     "poetry install --with cdk",
 ]
@@ -46,6 +52,11 @@ class PipelineStack(Stack):
             docker_enabled_for_synth=True,
             docker_enabled_for_self_mutation=True,
             synth=build_step,
+            code_build_defaults=CodeBuildOptions(
+                build_environment=BuildEnvironment(
+                    build_image=LinuxBuildImage.STANDARD_6_0
+                )
+            ),
         )
 
     @property
