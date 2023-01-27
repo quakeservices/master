@@ -38,8 +38,8 @@ poetry = "^1.2.2"
 
 
 [tool.poetry.group.docs.dependencies]
-json-schema-for-humans = "^0.43.1"
-mkdocs-material = "^8.5.10"
+json-schema-for-humans = "^0.44.0"
+mkdocs-material = "^9.0.0"
 
 
 [tool.poetry.group.master.dependencies]
