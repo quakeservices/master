@@ -1,0 +1,68 @@
+{
+  "title": "ProtocolResponse schema",
+  "$ref": "#/definitions/ProtocolResponse",
+  "definitions": {
+    "ProtocolResponse": {
+      "title": "ProtocolResponse",
+      "type": "object",
+      "properties": {
+        "game": {
+          "title": "Game",
+          "description": "Name of the game",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "description": "False in the event of a server sending a 'shutdown' requestTrue all other times",
+          "default": true,
+          "type": "boolean"
+        },
+        "request_type": {
+          "title": "Request Type",
+          "description": "Type of request",
+          "enum": ["client", "server", "any"],
+          "type": "string"
+        },
+        "response_class": {
+          "title": "Response Class",
+          "description": "Response class",
+          "enum": ["ping", "heartbeat", "shutdown", "query"],
+          "type": "string"
+        },
+        "response": {
+          "title": "Response",
+          "description": "Response header",
+          "type": "string",
+          "format": "binary"
+        },
+        "players": {
+          "title": "Players",
+          "description": "List of server players if response belongs to a server",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "details": {
+          "title": "Details",
+          "description": "Server details if response belongs to a server",
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        }
+      },
+      "required": ["game", "request_type", "response_class"]
+    }
+  }
+}

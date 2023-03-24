@@ -1,0 +1,96 @@
+{
+  "title": "GameProtocol schema",
+  "$ref": "#/definitions/GameProtocol",
+  "definitions": {
+    "BaseProtocolHeader": {
+      "title": "BaseProtocolHeader",
+      "type": "object",
+      "properties": {
+        "received": {
+          "title": "Received",
+          "description": "Header received from client/server",
+          "type": "string",
+          "format": "binary"
+        },
+        "response": {
+          "title": "Response",
+          "description": "Header to prefix response to client/server",
+          "type": "string",
+          "format": "binary"
+        },
+        "header_type": {
+          "title": "Header Type",
+          "description": "The type of header this correlates to; e.g.some headers are only applicable to client requests",
+          "default": "any",
+          "enum": ["any", "server", "client"],
+          "type": "string"
+        }
+      },
+      "required": ["received"]
+    },
+    "GameProtocol": {
+      "title": "GameProtocol",
+      "type": "object",
+      "properties": {
+        "engine": {
+          "title": "Engine",
+          "description": "Short name of the engine; e.g.: idtech2",
+          "type": "string"
+        },
+        "game": {
+          "title": "Game",
+          "description": "Short name of the engine; e.g.: quake2",
+          "type": "string"
+        },
+        "encoding": {
+          "title": "Encoding",
+          "description": "Encoding to use when decoding data received",
+          "default": "latin1",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "description": "Whether the protocol is active and will be checked against received headers",
+          "default": false,
+          "type": "boolean"
+        },
+        "versions": {
+          "title": "Versions",
+          "description": "Versions of the game this protocol applies to",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "headers": {
+          "title": "Headers",
+          "description": "Header definitions",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/BaseProtocolHeader"
+          }
+        },
+        "valid_status_keys": {
+          "title": "Valid Status Keys",
+          "description": "List of expected keys when parsing a server status",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "split": {
+          "title": "Split",
+          "description": "String to split received data",
+          "type": "string"
+        },
+        "newline": {
+          "title": "Newline",
+          "description": "String to lines",
+          "default": "\n",
+          "type": "string"
+        }
+      },
+      "required": ["engine", "game", "versions", "headers", "split"]
+    }
+  }
+}

@@ -1,0 +1,1412 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../deployment/aws/">
+      
+      
+        <link rel="next" href="../protocol_response/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.4">
+    
+    
+      
+        <title>Game Protocol - Quake Services</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.240905d7.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gameprotocol-schema" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Quake Services" class="md-header__button md-logo" aria-label="Quake Services" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Quake Services
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Game Protocol
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Quake Services" class="md-nav__button md-logo" aria-label="Quake Services" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Quake Services
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/servers/" class="md-nav__link">
+        Servers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/clients/" class="md-nav__link">
+        Clients
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Development
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Development
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/environment/" class="md-nav__link">
+        Environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Deployment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Deployment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/local/" class="md-nav__link">
+        Local
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/aws/" class="md-nav__link">
+        AWS
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Schema
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Schema
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Game Protocol
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Game Protocol
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-required-property-gameprotocol-engine" class="md-nav__link">
+    1. [Required] Property GameProtocol &gt; engine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-required-property-gameprotocol-game" class="md-nav__link">
+    2. [Required] Property GameProtocol &gt; game
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-optional-property-gameprotocol-encoding" class="md-nav__link">
+    3. [Optional] Property GameProtocol &gt; encoding
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-optional-property-gameprotocol-active" class="md-nav__link">
+    4. [Optional] Property GameProtocol &gt; active
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-required-property-gameprotocol-versions" class="md-nav__link">
+    5. [Required] Property GameProtocol &gt; versions
+  </a>
+  
+    <nav class="md-nav" aria-label="5. [Required] Property GameProtocol &gt; versions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-gameprotocol-versions-versions-items" class="md-nav__link">
+    5.1. GameProtocol &gt; versions &gt; versions items
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-required-property-gameprotocol-headers" class="md-nav__link">
+    6. [Required] Property GameProtocol &gt; headers
+  </a>
+  
+    <nav class="md-nav" aria-label="6. [Required] Property GameProtocol &gt; headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-optional-property-gameprotocol-headers-baseprotocolheader" class="md-nav__link">
+    6.1. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#611-required-property-gameprotocol-headers-baseprotocolheader-received" class="md-nav__link">
+    6.1.1. [Required] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; received
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#612-optional-property-gameprotocol-headers-baseprotocolheader-response" class="md-nav__link">
+    6.1.2. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; response
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#613-optional-property-gameprotocol-headers-baseprotocolheader-header_type" class="md-nav__link">
+    6.1.3. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; header_type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-optional-property-gameprotocol-valid_status_keys" class="md-nav__link">
+    7. [Optional] Property GameProtocol &gt; valid_status_keys
+  </a>
+  
+    <nav class="md-nav" aria-label="7. [Optional] Property GameProtocol &gt; valid_status_keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-gameprotocol-valid_status_keys-valid_status_keys-items" class="md-nav__link">
+    7.1. GameProtocol &gt; valid_status_keys &gt; valid_status_keys items
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-required-property-gameprotocol-split" class="md-nav__link">
+    8. [Required] Property GameProtocol &gt; split
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-optional-property-gameprotocol-newline" class="md-nav__link">
+    9. [Optional] Property GameProtocol &gt; newline
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol_response/" class="md-nav__link">
+        Protocol Response
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/external/" class="md-nav__link">
+        External
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-required-property-gameprotocol-engine" class="md-nav__link">
+    1. [Required] Property GameProtocol &gt; engine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-required-property-gameprotocol-game" class="md-nav__link">
+    2. [Required] Property GameProtocol &gt; game
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-optional-property-gameprotocol-encoding" class="md-nav__link">
+    3. [Optional] Property GameProtocol &gt; encoding
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-optional-property-gameprotocol-active" class="md-nav__link">
+    4. [Optional] Property GameProtocol &gt; active
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-required-property-gameprotocol-versions" class="md-nav__link">
+    5. [Required] Property GameProtocol &gt; versions
+  </a>
+  
+    <nav class="md-nav" aria-label="5. [Required] Property GameProtocol &gt; versions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-gameprotocol-versions-versions-items" class="md-nav__link">
+    5.1. GameProtocol &gt; versions &gt; versions items
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-required-property-gameprotocol-headers" class="md-nav__link">
+    6. [Required] Property GameProtocol &gt; headers
+  </a>
+  
+    <nav class="md-nav" aria-label="6. [Required] Property GameProtocol &gt; headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-optional-property-gameprotocol-headers-baseprotocolheader" class="md-nav__link">
+    6.1. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#611-required-property-gameprotocol-headers-baseprotocolheader-received" class="md-nav__link">
+    6.1.1. [Required] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; received
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#612-optional-property-gameprotocol-headers-baseprotocolheader-response" class="md-nav__link">
+    6.1.2. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; response
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#613-optional-property-gameprotocol-headers-baseprotocolheader-header_type" class="md-nav__link">
+    6.1.3. [Optional] Property GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; header_type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-optional-property-gameprotocol-valid_status_keys" class="md-nav__link">
+    7. [Optional] Property GameProtocol &gt; valid_status_keys
+  </a>
+  
+    <nav class="md-nav" aria-label="7. [Optional] Property GameProtocol &gt; valid_status_keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-gameprotocol-valid_status_keys-valid_status_keys-items" class="md-nav__link">
+    7.1. GameProtocol &gt; valid_status_keys &gt; valid_status_keys items
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-required-property-gameprotocol-split" class="md-nav__link">
+    8. [Required] Property GameProtocol &gt; split
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-optional-property-gameprotocol-newline" class="md-nav__link">
+    9. [Optional] Property GameProtocol &gt; newline
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="gameprotocol-schema">GameProtocol schema</h1>
+<ul>
+<li><a href="#engine">1. [Required] Property <code>GameProtocol &gt; engine</code></a></li>
+<li><a href="#game">2. [Required] Property <code>GameProtocol &gt; game</code></a></li>
+<li><a href="#encoding">3. [Optional] Property <code>GameProtocol &gt; encoding</code></a></li>
+<li><a href="#active">4. [Optional] Property <code>GameProtocol &gt; active</code></a></li>
+<li><a href="#versions">5. [Required] Property <code>GameProtocol &gt; versions</code></a></li>
+<li><a href="#autogenerated_heading_2">5.1. GameProtocol &gt; versions &gt; versions items</a></li>
+<li><a href="#headers">6. [Required] Property <code>GameProtocol &gt; headers</code></a></li>
+<li><a href="#headers_additionalProperties">6.1. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader</code></a><ul>
+<li><a href="#headers_additionalProperties_received">6.1.1. [Required] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; received</code></a></li>
+<li><a href="#headers_additionalProperties_response">6.1.2. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; response</code></a></li>
+<li><a href="#headers_additionalProperties_header_type">6.1.3. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; header_type</code></a></li>
+</ul>
+</li>
+<li><a href="#valid_status_keys">7. [Optional] Property <code>GameProtocol &gt; valid_status_keys</code></a></li>
+<li><a href="#autogenerated_heading_3">7.1. GameProtocol &gt; valid_status_keys &gt; valid_status_keys items</a></li>
+<li><a href="#split">8. [Required] Property <code>GameProtocol &gt; split</code></a></li>
+<li><a href="#newline">9. [Optional] Property <code>GameProtocol &gt; newline</code></a></li>
+</ul>
+<p><strong>Title:</strong> GameProtocol schema</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>object</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Additional properties</strong></td>
+<td><a href="#" title="Additional Properties of any type are allowed.">[Any type: allowed]</a></td>
+</tr>
+<tr>
+<td><strong>Defined in</strong></td>
+<td>#/definitions/GameProtocol</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Pattern</th>
+<th>Type</th>
+<th>Deprecated</th>
+<th>Definition</th>
+<th>Title/Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+ <a href="#engine">engine</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Engine</td>
+</tr>
+<tr>
+<td>+ <a href="#game">game</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Game</td>
+</tr>
+<tr>
+<td>- <a href="#encoding">encoding</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Encoding</td>
+</tr>
+<tr>
+<td>- <a href="#active">active</a></td>
+<td>No</td>
+<td>boolean</td>
+<td>No</td>
+<td>-</td>
+<td>Active</td>
+</tr>
+<tr>
+<td>+ <a href="#versions">versions</a></td>
+<td>No</td>
+<td>array of string</td>
+<td>No</td>
+<td>-</td>
+<td>Versions</td>
+</tr>
+<tr>
+<td>+ <a href="#headers">headers</a></td>
+<td>No</td>
+<td>object</td>
+<td>No</td>
+<td>-</td>
+<td>Headers</td>
+</tr>
+<tr>
+<td>- <a href="#valid_status_keys">valid_status_keys</a></td>
+<td>No</td>
+<td>array of string</td>
+<td>No</td>
+<td>-</td>
+<td>Valid Status Keys</td>
+</tr>
+<tr>
+<td>+ <a href="#split">split</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Split</td>
+</tr>
+<tr>
+<td>- <a href="#newline">newline</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Newline</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-required-property-gameprotocol-engine"><a name="engine"></a>1. [Required] Property <code>GameProtocol &gt; engine</code></h2>
+<p><strong>Title:</strong> Engine</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Short name of the engine; e.g.: idtech2</p>
+<h2 id="2-required-property-gameprotocol-game"><a name="game"></a>2. [Required] Property <code>GameProtocol &gt; game</code></h2>
+<p><strong>Title:</strong> Game</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Short name of the engine; e.g.: quake2</p>
+<h2 id="3-optional-property-gameprotocol-encoding"><a name="encoding"></a>3. [Optional] Property <code>GameProtocol &gt; encoding</code></h2>
+<p><strong>Title:</strong> Encoding</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>"latin1"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Encoding to use when decoding data received</p>
+<h2 id="4-optional-property-gameprotocol-active"><a name="active"></a>4. [Optional] Property <code>GameProtocol &gt; active</code></h2>
+<p><strong>Title:</strong> Active</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>boolean</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Whether the protocol is active and will be checked against received headers</p>
+<h2 id="5-required-property-gameprotocol-versions"><a name="versions"></a>5. [Required] Property <code>GameProtocol &gt; versions</code></h2>
+<p><strong>Title:</strong> Versions</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>array of string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Versions of the game this protocol applies to</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Array restrictions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min items</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Max items</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Items unicity</strong></td>
+<td>False</td>
+</tr>
+<tr>
+<td><strong>Additional items</strong></td>
+<td>False</td>
+</tr>
+<tr>
+<td><strong>Tuple validation</strong></td>
+<td>See below</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Each item of this array must be</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#versions_items">versions items</a></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="51-gameprotocol-versions-versions-items"><a name="autogenerated_heading_2"></a>5.1. GameProtocol &gt; versions &gt; versions items</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-required-property-gameprotocol-headers"><a name="headers"></a>6. [Required] Property <code>GameProtocol &gt; headers</code></h2>
+<p><strong>Title:</strong> Headers</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>object</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Additional properties</strong></td>
+<td><a href="#headers_additionalProperties" title="Each additional property must conform to the following schema">[Should-conform]</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Header definitions</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Pattern</th>
+<th>Type</th>
+<th>Deprecated</th>
+<th>Definition</th>
+<th>Title/Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>- <a href="#headers_additionalProperties">additionalProperties</a></td>
+<td>No</td>
+<td>object</td>
+<td>No</td>
+<td>In #/definitions/BaseProtocolHeader</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="61-optional-property-gameprotocol-headers-baseprotocolheader"><a name="headers_additionalProperties"></a>6.1. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader</code></h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>object</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Additional properties</strong></td>
+<td><a href="#" title="Additional Properties of any type are allowed.">[Any type: allowed]</a></td>
+</tr>
+<tr>
+<td><strong>Defined in</strong></td>
+<td>#/definitions/BaseProtocolHeader</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Pattern</th>
+<th>Type</th>
+<th>Deprecated</th>
+<th>Definition</th>
+<th>Title/Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+ <a href="#headers_additionalProperties_received">received</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Received</td>
+</tr>
+<tr>
+<td>- <a href="#headers_additionalProperties_response">response</a></td>
+<td>No</td>
+<td>string</td>
+<td>No</td>
+<td>-</td>
+<td>Response</td>
+</tr>
+<tr>
+<td>- <a href="#headers_additionalProperties_header_type">header_type</a></td>
+<td>No</td>
+<td>enum (of string)</td>
+<td>No</td>
+<td>-</td>
+<td>Header Type</td>
+</tr>
+</tbody>
+</table>
+<h4 id="611-required-property-gameprotocol-headers-baseprotocolheader-received"><a name="headers_additionalProperties_received"></a>6.1.1. [Required] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; received</code></h4>
+<p><strong>Title:</strong> Received</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td><code>binary</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Header received from client/server</p>
+<h4 id="612-optional-property-gameprotocol-headers-baseprotocolheader-response"><a name="headers_additionalProperties_response"></a>6.1.2. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; response</code></h4>
+<p><strong>Title:</strong> Response</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td><code>binary</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> Header to prefix response to client/server</p>
+<h4 id="613-optional-property-gameprotocol-headers-baseprotocolheader-header_type"><a name="headers_additionalProperties_header_type"></a>6.1.3. [Optional] Property <code>GameProtocol &gt; headers &gt; BaseProtocolHeader &gt; header_type</code></h4>
+<p><strong>Title:</strong> Header Type</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>enum (of string)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>"any"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> The type of header this correlates to; e.g.some headers are only applicable to client requests</p>
+<p>Must be one of:</p>
+<ul>
+<li>"any"</li>
+<li>"server"</li>
+<li>"client"</li>
+</ul>
+<h2 id="7-optional-property-gameprotocol-valid_status_keys"><a name="valid_status_keys"></a>7. [Optional] Property <code>GameProtocol &gt; valid_status_keys</code></h2>
+<p><strong>Title:</strong> Valid Status Keys</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>array of string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> List of expected keys when parsing a server status</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Array restrictions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min items</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Max items</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Items unicity</strong></td>
+<td>False</td>
+</tr>
+<tr>
+<td><strong>Additional items</strong></td>
+<td>False</td>
+</tr>
+<tr>
+<td><strong>Tuple validation</strong></td>
+<td>See below</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Each item of this array must be</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#valid_status_keys_items">valid_status_keys items</a></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="71-gameprotocol-valid_status_keys-valid_status_keys-items"><a name="autogenerated_heading_3"></a>7.1. GameProtocol &gt; valid_status_keys &gt; valid_status_keys items</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-required-property-gameprotocol-split"><a name="split"></a>8. [Required] Property <code>GameProtocol &gt; split</code></h2>
+<p><strong>Title:</strong> Split</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> String to split received data</p>
+<h2 id="9-optional-property-gameprotocol-newline"><a name="newline"></a>9. [Optional] Property <code>GameProtocol &gt; newline</code></h2>
+<p><strong>Title:</strong> Newline</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th><code>string</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Default</strong></td>
+<td><code>"\n"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Description:</strong> String to lines</p>
+<hr />
+<p>Generated using <a href="https://github.com/coveooss/json-schema-for-humans">json-schema-for-humans</a> on 2022-08-20 at 09:20:44 +1000</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.19047be9.min.js"></script>
+      
+    
+  </body>
+</html>
