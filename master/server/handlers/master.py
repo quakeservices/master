@@ -92,7 +92,6 @@ class MasterHandler(DatagramRequestHandler):
         header: bytes | None = None,
         separator: bytes = b"",
     ) -> bytes:
-
         if header:
             response[0] = header + response[0]
 

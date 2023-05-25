@@ -64,7 +64,6 @@ class DynamoDbStorage(BaseStorage):
     def _create_service_resource(
         region: str = DEFAULT_REGION, session: Session = DEFAULT_SESSION
     ) -> DynamoDBServiceResource:
-
         resource: DynamoDBServiceResource
 
         if DEPLOYMENT_ENVIRONMENT == "dev":
