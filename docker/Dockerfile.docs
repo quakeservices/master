@@ -5,4 +5,4 @@ RUN --mount=type=cache,target=/root/.npm \
   npm install --global prettier
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --with docs
+  poetry install --no-interaction --with docs

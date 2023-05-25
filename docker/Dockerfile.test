@@ -2,4 +2,4 @@
 FROM ghcr.io/quakeservices/cdk:latest
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --with 'dev,cdk,docs,master'
+  poetry install --no-interaction --with 'dev,cdk,docs,master'

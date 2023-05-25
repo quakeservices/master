@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --with 'cdk'
+          poetry install --no-interaction --with 'dev,cdk,docs,master'
           npm install --global aws-cdk
 
       - name: "CDK unit tests"

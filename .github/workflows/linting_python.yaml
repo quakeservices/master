@@ -64,7 +64,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-interaction --with '*'
+          poetry install --no-interaction --with 'dev,cdk,docs,master'
 
       - name: "Linting: black"
         run: poetry run scripts/ci/lint-black
