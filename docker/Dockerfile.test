@@ -2,4 +2,4 @@
 FROM ghcr.io/quakeservices/cdk:latest
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --with '*'
+  poetry install --all-extras
