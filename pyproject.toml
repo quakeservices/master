@@ -15,6 +15,17 @@ documentation = "https://docs.quake.services"
 python = "^3.10"
 pydantic = "^1.10.2"
 
+[tool.poetry.group.cdk]
+optional = true
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.master]
+optional = true
 
 [tool.poetry.group.cdk.dependencies]
 aws-cdk-lib = "^2.50.0"
