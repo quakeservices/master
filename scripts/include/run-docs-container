@@ -9,7 +9,7 @@ scripts/build-docs > /dev/null
 docker run --interactive \
            --tty \
            --rm \
-           --mount=type=bind,source="$(pwd)",target="$(pwd)" \
+           --mount=type=bind,source="$(pwd)",target="$(pwd)",relabel=private \
            --workdir "$(pwd)" \
            "${APP_NAME}/docs:latest" \
            bash -c "${@:-bash}"

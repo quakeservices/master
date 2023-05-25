@@ -14,8 +14,8 @@ docker run --interactive \
            --env AWS_ACCOUNT \
            --env AWS_SECURITY_TOKEN \
            --env AWS_DEFAULT_REGION \
-           --mount=type=bind,source="${DOCKER_SOCKET}",target="${DOCKER_SOCKET}" \
-           --mount=type=bind,source="$(pwd)"/,target="$(pwd)" \
+           --mount=type=bind,source="${DOCKER_SOCKET}",target="${DOCKER_SOCKET}",relabel=private \
+           --mount=type=bind,source="$(pwd)"/,target="$(pwd)",relabel=private \
            --workdir "$(pwd)" \
            "${APP_NAME}/cdk:latest" \
            "$@"
