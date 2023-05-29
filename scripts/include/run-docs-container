@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)" || exit 1
 
 source scripts/include/build-env
 scripts/build-docs > /dev/null
 
-docker run --interactive \
-           --tty \
-           --rm \
-           --mount=type=bind,source="$(pwd)",target="$(pwd)",relabel=private \
-           --workdir "$(pwd)" \
-           "${APP_NAME}/docs:latest" \
-           bash -c "${@:-bash}"
+CONTAINER_RUN_OPTIONS+=($MOUNT_PWD)
+
+$CONTAINER_COMMAND run \
+                   ${CONTAINER_RUN_OPTIONS[@]} \
+                   "${APP_NAME}/docs:latest" \
+                   bash -c "${@:-bash}"

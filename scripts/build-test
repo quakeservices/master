@@ -6,16 +6,17 @@ cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 scripts/build-cdk
 
-DOCKER_ARGS=""
+CONTAINER_BUILD_OPTIONS=()
 PARENT_COMMAND=$(ps -o args= $PPID)
 if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
-  DOCKER_ARGS="--quiet"
+  CONTAINER_BUILD_OPTIONS+="--quiet"
 fi
 
 echo "+++ Building test image +++"
-docker build ${DOCKER_ARGS} \
-              --tag "${TEST_DOCKER_TAG}:latest" \
-              --file docker/Dockerfile.test \
-              .
+$CONTAINER_COMMAND build \
+                   ${CONTAINER_BUILD_OPTIONS[@]} \
+                   --tag "${TEST_DOCKER_TAG}:latest" \
+                   --file docker/Dockerfile.test \
+                   .
 
-docker tag "${TEST_DOCKER_TAG}:latest" "${TEST_GHCR_TAG}:latest"
+$CONTAINER_COMMAND tag "${TEST_DOCKER_TAG}:latest" "${TEST_GHCR_TAG}:latest"

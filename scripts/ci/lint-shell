@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 
 source scripts/include/build-env
 
+CONTAINER_RUN_OPTIONS+=($MOUNT_PWD)
+
 echo "+++ Running shellcheck +++"
 
 # shellcheck disable=SC2140
-docker run --rm \
-           --mount=type=bind,source="${PWD}",target="/mnt" \
-           --workdir "${CODE_DIR}" \
-           koalaman/shellcheck-alpine:latest sh -c "find /mnt/scripts -type f | xargs shellcheck"
+$CONTAINER_COMMAND run \
+                   ${CONTAINER_RUN_OPTIONS[@]} \
+                   koalaman/shellcheck-alpine:latest sh -c "find /mnt/scripts -type f | xargs shellcheck"
