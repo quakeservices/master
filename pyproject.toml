@@ -82,13 +82,13 @@ markers = [
   "cdk",
   "decoder",
   "encoder",
-  "integration_test",
+  "integration",
   "master",
   "master_handler",
   "master_server",
   "protocols",
   "storage_dynamodb",
-  "unit_test"
+  "unit"
 ]
 
 [tool.isort]

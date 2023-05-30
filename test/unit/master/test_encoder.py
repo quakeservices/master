@@ -49,7 +49,7 @@ encode_players_fixtures = [
 
 
 @pytest.mark.encoder
-@pytest.mark.unit_test
+@pytest.mark.unit
 class TestEncoder:
     @pytest.fixture(scope="class")
     def encoder(self) -> Encoder:

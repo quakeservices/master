@@ -8,7 +8,7 @@ COMMAND=(
   pytest
   -vv
   --cov=master/
-  -m "unit_test and not cdk"
+  -m "unit and not cdk"
   test/
 )
 

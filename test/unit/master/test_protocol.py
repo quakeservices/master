@@ -80,7 +80,7 @@ parse_request_fixtures = [
 
 
 @pytest.mark.protocols
-@pytest.mark.unit_test
+@pytest.mark.unit
 class TestProtocols:
     @pytest.fixture(scope="class")
     def protocols(self) -> Protocols:

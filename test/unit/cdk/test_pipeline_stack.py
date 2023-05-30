@@ -5,7 +5,7 @@ from deployment.stacks.pipeline import PipelineStack
 
 
 @pytest.mark.cdk
-@pytest.mark.unit_test
+@pytest.mark.unit
 @pytest.mark.skip(reason="Stack not complete")
 class TestQuakeservicesPipeline:
     @pytest.fixture(scope="class")
