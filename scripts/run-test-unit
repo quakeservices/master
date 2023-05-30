@@ -9,8 +9,7 @@ COMMAND=(
   -vv
   --cov=master/
   --cov=deployment/
-  '-m unit_test and not cdk'
-  test/unit
+  test/unit/{master,storage}
 )
 
 echo "+++ Running unit tests +++"
