@@ -12,4 +12,4 @@ echo "+++ Running shellcheck +++"
 # shellcheck disable=SC2140
 $CONTAINER_COMMAND run \
                    ${CONTAINER_RUN_OPTIONS[@]} \
-                   $SHELLCHECK_TAG sh -c "find /mnt/scripts -type f | xargs shellcheck"
+                   $SHELLCHECK_TAG sh -c "find ${PWD}/scripts -type f | xargs shellcheck"
