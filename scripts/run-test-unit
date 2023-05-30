@@ -8,8 +8,7 @@ COMMAND=(
   pytest
   -vv
   --cov=master/
-  --cov=deployment/
-  test/unit/{master,storage}
+  -m "unit_test and not cdk"
 )
 
 echo "+++ Running unit tests +++"

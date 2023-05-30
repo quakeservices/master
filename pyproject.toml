@@ -79,16 +79,16 @@ norecursedirs = [
   "node_modules"
 ]
 markers = [
-  "unit_test",
-  "integration_test",
   "cdk",
-  "encoder",
   "decoder",
-  "protocols",
-  "storage_dynamodb",
+  "encoder",
+  "integration_test",
   "master",
   "master_handler",
   "master_server",
+  "protocols",
+  "storage_dynamodb",
+  "unit_test"
 ]
 
 [tool.isort]

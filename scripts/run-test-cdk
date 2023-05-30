@@ -7,10 +7,8 @@ source scripts/include/build-env
 COMMAND=(
   pytest
   -vv
-  --cov=master/
   --cov=deployment/
-  '-m unit_test and cdk'
-  test/unit
+  -m "cdk and unit_test"
 )
 
 echo "+++ Running tests +++"
