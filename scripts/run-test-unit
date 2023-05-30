@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exo pipefail
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
@@ -9,7 +9,6 @@ COMMAND=(
   -vv
   --cov=master/
   -m "unit and not cdk"
-  test/
 )
 
 echo "+++ Running unit tests +++"
