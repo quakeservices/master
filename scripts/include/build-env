@@ -14,9 +14,9 @@ export AWS_DEFAULT_REGION="us-west-2"
 export CONTAINER_BUILD_OPTIONS=()
 export CONTAINER_RUN_OPTIONS=(
    --interactive
-   --tty
    --rm
-   --workdir "$PWD"
+   --tty
+   --workdir $PWD
 )
 if which podman > /dev/null 2>&1; then
   CONTAINER_COMMAND="podman"
@@ -43,3 +43,6 @@ export DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
 export DOCS_DOCKER_TAG="docker.io/${APP_NAME}/docs"
 export TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
 export TEST_DOCKER_TAG="docker.io/${APP_NAME}/test"
+
+export HADOLINT_TAG="ghcr.io/hadolint/hadolint:latest"
+export SHELLCHECK_TAG="docker.io/koalaman/shellcheck-alpine:latest"
