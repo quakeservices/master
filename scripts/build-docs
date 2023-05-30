@@ -6,15 +6,14 @@ cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 scripts/build-cdk
 
-CONTAINER_BUILD_OPTIONS=()
 PARENT_COMMAND=$(ps -o args= $PPID)
 if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
-  CONTAINER_BUILD_OPTIONS+="--quiet"
+  CONTAINER_BUILD_OPTIONS+=("--quiet")
 fi
 
 echo "+++ Building docs image +++"
 $CONTAINER_COMMAND build \
-                   ${CONTAINER_BUILD_OPTIONS[@]} \
+                   "${CONTAINER_BUILD_OPTIONS[@]}" \
                    --tag "${DOCS_DOCKER_TAG}:latest" \
                    --file docker/Dockerfile.docs \
                    .

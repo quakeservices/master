@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
-set -xeo pipefail
+set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 
-COMMAND='pytest -vv --cov=master/ --cov=deployment/ -m \"unit_test and not cdk\" test/'
+COMMAND=(
+  pytest
+  -vv
+  --cov=master/
+  --cov=deployment/
+  -m
+  "unit_test and not cdk"
+  test/
+)
 
 echo "+++ Running unit tests +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container "$COMMAND"
+  scripts/include/run-test-container "${COMMAND[@]}"
 else
-  $COMMAND
+  "${COMMAND[@]}"
 fi

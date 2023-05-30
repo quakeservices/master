@@ -6,9 +6,10 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 source scripts/include/build-env
 scripts/build-docs > /dev/null
 
+# shellcheck disable=SC2206
 CONTAINER_RUN_OPTIONS+=($MOUNT_PWD)
 
 $CONTAINER_COMMAND run \
-                   ${CONTAINER_RUN_OPTIONS[@]} \
+                   "${CONTAINER_RUN_OPTIONS[@]}" \
                    "${APP_NAME}/docs:latest" \
                    bash -c "${@:-bash}"

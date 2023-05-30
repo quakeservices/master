@@ -5,12 +5,13 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 
 source scripts/include/build-env
 
+# shellcheck disable=SC2206
 CONTAINER_RUN_OPTIONS+=(
-  ${MOUNT_SOCKET}
-  ${MOUNT_PWD}
+  $MOUNT_SOCKET
+  $MOUNT_PWD
 )
 
 $CONTAINER_COMMAND run \
-                   ${CONTAINER_RUN_OPTIONS[@]} \
+                   "${CONTAINER_RUN_OPTIONS[@]}" \
                    "${APP_NAME}/test:latest" \
-                   bash -c ${@:-bash}
+                   bash -c "${@:-bash}"

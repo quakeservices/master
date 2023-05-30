@@ -4,11 +4,16 @@ set -eo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 
-COMMAND="pytest -vv --cov=master/ test/integration"
+COMMAND=(
+  pytest
+  -vv
+  --cov=master/
+  test/integration
+)
 
 echo "+++ Running integration tests +++"
 if [ -z "$CI" ]; then
-  scripts/include/run-test-container "$COMMAND"
+  scripts/include/run-test-container "${COMMAND[@]}"
 else
-  $COMMAND
+  "${COMMAND[@]}"
 fi
