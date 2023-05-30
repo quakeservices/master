@@ -9,7 +9,7 @@ COMMAND=(
   -vv
   --cov=master/
   --cov=deployment/
-  '-m "unit_test and cdk"'
+  '-m unit_test and cdk'
   test/unit
 )
 
