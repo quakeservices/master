@@ -9,6 +9,7 @@ COMMAND=(
   -vv
   --cov=deployment/
   -m "cdk and unit"
+  test/unit/cdk/
 )
 
 echo "+++ Running tests +++"
