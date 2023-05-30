@@ -8,7 +8,7 @@ COMMAND=(
   pytest
   -vv
   --cov=deployment/
-  -m "cdk and unit_test"
+  -m "cdk and unit"
 )
 
 echo "+++ Running tests +++"

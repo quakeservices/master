@@ -12,6 +12,13 @@ export MASTER_HEALTHCHECK="8080/tcp"
 export AWS_DEFAULT_REGION="us-west-2"
 
 export CONTAINER_BUILD_OPTIONS=()
+export CONTAINER_AWS_OPTIONS=(
+   --env AWS_ACCESS_KEY_ID
+   --env AWS_SECRET_ACCESS_KEY
+   --env AWS_ACCOUNT
+   --env AWS_SECURITY_TOKEN
+   --env AWS_DEFAULT_REGION
+)
 export CONTAINER_RUN_OPTIONS=(
    --interactive
    --rm
