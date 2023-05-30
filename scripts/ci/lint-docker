@@ -12,5 +12,6 @@ for file in $(find docker/ -type f -name 'Dockerfile*' -print | sort); do
   echo "${file}"
   $CONTAINER_COMMAND run \
                      --rm \
+                     -e 'HOME=/' \
                      $HADOLINT_TAG < "${file}"
 done
