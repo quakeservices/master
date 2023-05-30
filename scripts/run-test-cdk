@@ -9,9 +9,8 @@ COMMAND=(
   -vv
   --cov=master/
   --cov=deployment/
-  -m
-  \"unit_test and cdk\"
-  test/
+  '-m "unit_test and cdk"'
+  test/unit
 )
 
 echo "+++ Running tests +++"
