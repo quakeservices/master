@@ -9,6 +9,7 @@ COMMAND=(
   -vv
   --cov=master/
   -m "unit_test and not cdk"
+  test/
 )
 
 echo "+++ Running unit tests +++"
