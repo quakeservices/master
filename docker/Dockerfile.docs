@@ -1,8 +1,14 @@
-# syntax=docker/dockerfile:1
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
 FROM ghcr.io/quakeservices/cdk:latest
 
 RUN --mount=type=cache,target=/root/.npm \
-  npm install --global prettier
+    npm install --global prettier@latest
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --no-interaction --with docs
+    --mount type=bind,source=pyproject.toml,target=pyproject.toml,readonly,z \
+    poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,docs | \
+    pip install -r /dev/stdin

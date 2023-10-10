@@ -1,5 +1,9 @@
-# syntax=docker/dockerfile:1
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
 FROM ghcr.io/quakeservices/cdk:latest
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --no-interaction --with 'dev,cdk,docs,master'
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,dev,cdk,docs,master \
+  | pip install -r /dev/stdin

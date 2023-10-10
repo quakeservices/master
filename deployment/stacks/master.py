@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional
+from typing import Any, Final, Literal, Optional
 
 from aws_cdk import Duration, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
@@ -13,19 +13,10 @@ from aws_cdk import aws_route53_targets as route53_targets
 from aws_cdk import aws_secretsmanager as secretsmanager
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DEPLOYMENT_ENVIRONMENT, DOMAIN_NAME
-
-AVAILABLE_CPU = Literal[512, 1024, 2048, 4096, 5120, 6144, 7168, 8192]
-AVAILABLE_RAM = Literal[256, 1024, 2048, 3072, 4096]
+from deployment.constants import *
 
 
 class MasterStack(Stack):
-    MASTER_PORT: int = 27900
-    MASTER_HEALTHCHECK_PORT: int = 8080
-    MASTER_CPU: AVAILABLE_CPU = 512
-    MASTER_MEMORY: AVAILABLE_RAM = 1024
-    DEFAULT_TIMEOUT: int = 15
-
     def __init__(
         self,
         scope: Construct,
@@ -93,8 +84,8 @@ class MasterStack(Stack):
         return ecs.FargateTaskDefinition(
             self,
             "task",
-            memory_limit_mib=self.MASTER_MEMORY,
-            cpu=self.MASTER_CPU,
+            memory_limit_mib=MASTER_MEMORY,
+            cpu=MASTER_CPU,
             runtime_platform=ecs.RuntimePlatform(
                 cpu_architecture=ecs.CpuArchitecture.X86_64,
                 operating_system_family=ecs.OperatingSystemFamily.LINUX,
@@ -126,7 +117,7 @@ class MasterStack(Stack):
                 "CMD",
                 "curl",
                 "-f",
-                f"http://localhost:{self.MASTER_HEALTHCHECK_PORT}",
+                f"http://localhost:{MASTER_HEALTHCHECK_PORT}",
             ]
         )
 
@@ -140,19 +131,19 @@ class MasterStack(Stack):
             container_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             image=self._define_container_image(),
             health_check=ecs_healthcheck,
-            start_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
-            stop_timeout=Duration.seconds(self.DEFAULT_TIMEOUT),
+            start_timeout=Duration.seconds(DEFAULT_TIMEOUT),
+            stop_timeout=Duration.seconds(DEFAULT_TIMEOUT),
             logging=log_settings,
-            memory_reservation_mib=self.MASTER_MEMORY,
+            memory_reservation_mib=MASTER_MEMORY,
             environment={"DEPLOYMENT_ENVIRONMENT": DEPLOYMENT_ENVIRONMENT},
         )
 
         container.add_port_mappings(
-            ecs.PortMapping(container_port=self.MASTER_PORT, protocol=ecs.Protocol.UDP)
+            ecs.PortMapping(container_port=MASTER_PORT, protocol=ecs.Protocol.UDP)
         )
         container.add_port_mappings(
             ecs.PortMapping(
-                container_port=self.MASTER_HEALTHCHECK_PORT, protocol=ecs.Protocol.TCP
+                container_port=MASTER_HEALTHCHECK_PORT, protocol=ecs.Protocol.TCP
             )
         )
 
@@ -167,12 +158,12 @@ class MasterStack(Stack):
 
         security_group.add_ingress_rule(
             ec2.Peer.any_ipv4(),
-            ec2.Port.udp(self.MASTER_PORT),
+            ec2.Port.udp(MASTER_PORT),
             "Allow master access from anywhere",
         )
         security_group.add_ingress_rule(
             ec2.Peer.ipv4(self.vpc.vpc_cidr_block),
-            ec2.Port.tcp(self.MASTER_HEALTHCHECK_PORT),
+            ec2.Port.tcp(MASTER_HEALTHCHECK_PORT),
             "Allow healthcheck from the vpc",
         )
         return security_group
@@ -210,7 +201,7 @@ class MasterStack(Stack):
 
     def _create_listener(self) -> elb.NetworkListener:
         return self.nlb.add_listener(
-            "udplistener", port=self.MASTER_PORT, protocol=elb.Protocol.UDP
+            "udplistener", port=MASTER_PORT, protocol=elb.Protocol.UDP
         )
 
     def _create_service_and_nlb(self) -> None:
@@ -218,17 +209,17 @@ class MasterStack(Stack):
         listener = self._create_listener()
 
         nlb_healthcheck = elb.HealthCheck(
-            port=str(self.MASTER_HEALTHCHECK_PORT), protocol=elb.Protocol.HTTP
+            port=str(MASTER_HEALTHCHECK_PORT), protocol=elb.Protocol.HTTP
         )
 
         target = ecs.EcsTarget(
             container_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
-            container_port=self.MASTER_PORT,
+            container_port=MASTER_PORT,
             protocol=ecs.Protocol.UDP,
             new_target_group_id=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             listener=ecs.ListenerConfig.network_listener(
                 listener,
-                port=self.MASTER_PORT,
+                port=MASTER_PORT,
                 preserve_client_ip=True,
                 health_check=nlb_healthcheck,
             ),

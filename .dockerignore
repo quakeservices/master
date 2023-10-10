@@ -1,7 +1,6 @@
 **/__pycache__
 *.pyc
 **/cdk.out
-deploymnet/
 .venv/
 .git/
 .github/
@@ -10,12 +9,8 @@ deploymnet/
 docker/
 scripts/
 test/
-cdk.py
 .coverage
 .hadolint.yaml
 .pylintrc
 README.md
-cdk.context.json
-cdk.json
 docker-compose.yaml
-mkdocs.yaml

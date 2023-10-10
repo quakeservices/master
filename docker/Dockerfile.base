@@ -1,18 +1,13 @@
-# syntax=docker/dockerfile:1
-FROM python:3.11
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
+FROM python:3.12-slim
+
+ENV PIP_ROOT_USER_ACTION=ignore
 
 WORKDIR /tmp
 
-COPY  pyproject.toml \
-      poetry.lock \
-      package.json \
-      package-lock.json \
-      ./
+COPY pyproject.toml poetry.lock .
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  python3 -m pip install poetry && \
-  poetry config virtualenvs.create false
-
-RUN --mount=type=cache,target=/var/cache/apt \
-  apt-get update && \
-  apt-get upgrade -y
+RUN python -m pip install -U pip setuptools \
+ && python -m pip install poetry==1.6.1

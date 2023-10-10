@@ -1,19 +1,48 @@
-# syntax=docker/dockerfile:1
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
 FROM ghcr.io/quakeservices/base:latest
 
-RUN --mount=type=cache,target=/var/cache/apt \
-  wget \
-    --quiet https://deb.nodesource.com/setup_current.x \
-    --output-document /tmp/setup_current.x && \
-  bash /tmp/setup_current.x && \
-  rm /tmp/setup_current.x && \
-  apt-get update && \
-  apt-get install -y --no-install-recommends \
-    docker \
-    nodejs
+ARG CDK_CLI_VERSION
 
-RUN --mount=type=cache,target=/root/.npm \
-  npm install --global aws-cdk
+ARG DOCKER_STATIC_VERSION="24.0.6"
+ARG DOCKER_STATIC_ARCH="x86_64"
+ARG DOCKER_STATIC_URL="https://download.docker.com/linux/static/stable/$DOCKER_STATIC_ARCH/docker-$DOCKER_STATIC_VERSION.tgz"
+ARG DOCKER_STATIC_PATH="/tmp/docker-$DOCKER_STATIC_VERSION.tgz"
+ARG DOCKER_STATIC_BIN_DIR="/usr/bin/"
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --no-interaction --with "cdk"
+ARG NODE_MAJOR="20"
+ARG NODE_GPG_PATH="/etc/apt/keyrings/nodesource.gpg"
+ARG NODE_GPG_URL="https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key"
+ARG NODE_REPO_URL="https://deb.nodesource.com/node_$NODE_MAJOR.x"
+ARG NODE_REPO_PATH="/etc/apt/sources.list.d/nodesource.list"
+ARG NODE_REPO_CONTENT="deb [signed-by=$NODE_GPG_PATH] $NODE_REPO_URL nodistro main"
+
+ADD $DOCKER_STATIC_URL $DOCKER_STATIC_PATH
+
+RUN tar --extract \
+        --file $DOCKER_STATIC_PATH \
+        --strip-components 1 \
+        --directory $DOCKER_STATIC_BIN_DIR \
+        docker/docker
+
+RUN mkdir -p /etc/apt/keyrings \
+  && apt-get update \
+  && apt-get install --no-install-recommends -y \
+       ca-certificates \
+       gnupg \
+       curl \
+ && curl -fsSL $NODE_GPG_URL \
+  | gpg --dearmor -o $NODE_GPG_PATH \
+ && echo $NODE_REPO_CONTENT > $NODE_REPO_PATH \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+      nodejs \
+ && apt-get clean
+
+RUN npm install --global aws-cdk@$CDK_CLI_VERSION
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,cdk \
+  | pip install -r /dev/stdin

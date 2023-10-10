@@ -11,6 +11,10 @@ if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
   CONTAINER_BUILD_OPTIONS+=("--quiet")
 fi
 
+CONTAINER_BUILD_OPTIONS+=(
+  --build-arg CDK_CLI_VERSION=$CDK_CLI_VERSION
+)
+
 echo "+++ Building cdk image +++"
 $CONTAINER_COMMAND build \
                    "${CONTAINER_BUILD_OPTIONS[@]}" \

@@ -1,11 +1,20 @@
-# syntax=docker/dockerfile:1
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
 FROM ghcr.io/quakeservices/base:latest
 
-WORKDIR /usr/src/app
 
-COPY . /usr/src/app/
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,master \
+  | pip install -r /dev/stdin
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --no-interaction --with 'master'
+WORKDIR /opt/quakeservices
 
-CMD [ "./qs.py", "--log-level", "debug", "--hide-boto-logs", "server", "run"]
+COPY qs.py master /opt/quakeservices
+
+CMD [ "./qs.py", \
+      "--log-level", "debug", \
+      "--hide-boto-logs", \
+      "server", \
+      "run"]

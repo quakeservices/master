@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# vim: filetype=bash
+set -euo pipefail
+
+if ! test -f pyproject.toml; then
+  echo "Missing pyproject.toml"
+  exit 1;
+fi
 
 export APP_NAME="quakeservices"
-export CODE_DIR="/code"
+export CODE_DIR="/opt/$APP_NAME"
+export CI=${CI:-}
 
 export MASTER_NAME="master"
 export MASTER_DIR="master"
@@ -11,35 +17,56 @@ export MASTER_HEALTHCHECK="8080/tcp"
 
 export AWS_DEFAULT_REGION="us-west-2"
 
-export CONTAINER_BUILD_OPTIONS=()
+CDK_CLI_VERSION=$(awk '/aws-cdk-lib/ {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+export CDK_CLI_VERSION
+
 export CONTAINER_AWS_OPTIONS=(
-   --env AWS_ACCESS_KEY_ID
-   --env AWS_SECRET_ACCESS_KEY
-   --env AWS_ACCOUNT
-   --env AWS_SECURITY_TOKEN
-   --env AWS_DEFAULT_REGION
+  --env AWS_ACCESS_KEY_ID
+  --env AWS_SECRET_ACCESS_KEY
+  --env AWS_ACCOUNT
+  --env AWS_SECURITY_TOKEN
+  --env AWS_DEFAULT_REGION
 )
 export CONTAINER_RUN_OPTIONS=(
-   --interactive
-   --rm
-   --tty
-   --workdir "${PWD}"
+  --interactive
+  --rm
+  --tty
+  --workdir "${PWD}"
 )
+
+#
+# Docker / Podman support
+#
+export DOCKER_BUILDKIT=1
+
 if which podman > /dev/null 2>&1; then
   export CONTAINER_COMMAND="podman"
   CONTAINER_SOCKET=$(podman info | awk -F': ' '/podman.sock/ {print $2}')
+  if [[ ! "$CONTAINER_SOCKET" ]]; then
+    echo "Missing podman user socket"
+    echo "See https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md for setup."
+    exit 1
+  fi
   export MOUNT_SOCKET=" --mount=type=bind,source=${CONTAINER_SOCKET},target=${CONTAINER_SOCKET},relabel=private"
   export MOUNT_PWD=" --mount=type=bind,source=${PWD},target=${PWD},relabel=private"
+  export CONTAINER_BUILD_OPTIONS+=(
+    --format docker
+  )
 elif which docker > /dev/null 2>&1; then
   export CONTAINER_COMMAND="docker"
   CONTAINER_SOCKET="/var/run/docker.sock"
   export MOUNT_SOCKET=" --mount=type=bind,source=${CONTAINER_SOCKET},target=${CONTAINER_SOCKET}"
   export MOUNT_PWD=" --mount=type=bind,source=${PWD},target=${PWD}"
+  export CONTAINER_BUILD_OPTIONS=()
 else
   CI="true"
   echo "No container engine found; currently only podman or docker supported."
   echo "Assuming we're in CI or development environment."
 fi
+
+#
+# Docker / GHCR / ECS Tags
+#
 
 export BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
 export BASE_DOCKER_TAG="docker.io/${APP_NAME}/base"
