@@ -12,7 +12,7 @@ repository = "https://github.com/quakeservices/master"
 documentation = "https://docs.quake.services"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.12"
 pydantic = "^2.4.2"
 
 [tool.poetry.group.cdk]
@@ -100,7 +100,7 @@ skip_gitignore = true
 plugins = [
   "pydantic.mypy"
 ]
-python_version = "3.10"
+python_version = "3.12"
 check_untyped_defs = true
 ignore_missing_imports = true
 warn_return_any = true
@@ -110,7 +110,7 @@ show_error_codes = true
 strict_optional = false
 exclude = [
   "cdk.out",
-  ".venv"
+  ".venv",
 ]
 disallow_untyped_defs = true
 
@@ -119,3 +119,5 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
+
+[tool.pylint]

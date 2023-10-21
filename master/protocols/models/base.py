@@ -28,4 +28,4 @@ class BaseProtocolPlayerStatus(BaseModel):
     player: str = Field(description="Player name")
 
 
-Headers = Mapping[str, BaseProtocolHeader]
+Headers = dict[str, BaseProtocolHeader]
