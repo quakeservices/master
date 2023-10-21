@@ -6,8 +6,8 @@ cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/build-env
 scripts/build-master
 
-trap "$COMPOSE_COMMAND rm --force" EXIT
-
 echo "+++ Running master server +++"
 
-$COMPOSE_COMMAND up --remove-orphans
+trap "$COMPOSE_COMMAND down" EXIT
+
+$COMPOSE_COMMAND up --remove-orphans --force-recreate

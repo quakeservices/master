@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "aws-cdk": "^2.50.0"
-  },
-  "devDependencies": {
-    "prettier": "^2.7.1"
-  }
-}

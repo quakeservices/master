@@ -50,6 +50,7 @@ if which podman > /dev/null 2>&1; then
   fi
   export MOUNT_SOCKET=" --mount=type=bind,source=${CONTAINER_SOCKET},target=${CONTAINER_SOCKET},relabel=private"
   export MOUNT_PWD=" --mount=type=bind,source=${PWD},target=${PWD},relabel=private"
+  export MOUNT_AWS=" --mount=type=bind,source=${HOME}/.aws/config,target=/root/.aws/config,relabel=private"
   export CONTAINER_BUILD_OPTIONS+=(
     --format docker
   )

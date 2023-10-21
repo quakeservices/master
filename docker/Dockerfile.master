@@ -11,9 +11,10 @@ RUN poetry export --format=requirements.txt \
 
 WORKDIR /opt/quakeservices
 
-COPY qs.py master /opt/quakeservices
+COPY master /opt/quakeservices/master
+COPY qs.py /opt/quakeservices
 
-CMD [ "./qs.py", \
+CMD [ "/opt/quakeservices/qs.py", \
       "--log-level", "debug", \
       "--hide-boto-logs", \
       "server", \

@@ -10,6 +10,7 @@ scripts/build-cdk > /dev/null
 CONTAINER_RUN_OPTIONS+=(
   $MOUNT_SOCKET
   $MOUNT_PWD
+  $MOUNT_AWS
 )
 
 $CONTAINER_COMMAND run \

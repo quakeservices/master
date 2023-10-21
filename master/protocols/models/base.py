@@ -6,8 +6,7 @@ from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 class BaseProtocol(BaseModel):
     class Config:
-        anystr_strip_whitespace = True
-        allow_mutation = False
+        str_strip_whitespace = True
 
 
 class BaseProtocolHeader(BaseModel):
