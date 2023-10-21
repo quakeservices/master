@@ -11,8 +11,9 @@ CONTAINER_RUN_OPTIONS+=(
   $MOUNT_PWD
 )
 
+# shellcheck disable=SC2068
 $CONTAINER_COMMAND run \
                    -e JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=True \
                    "${CONTAINER_RUN_OPTIONS[@]}" \
                    "${APP_NAME}/test:latest" \
-                   "${@:-bash}"
+                   ${@:-bash}
