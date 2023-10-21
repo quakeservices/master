@@ -69,4 +69,4 @@ jobs:
           npm install --global aws-cdk
 
       - name: "CDK unit tests"
-        run: poetry run scripts/ci/run-test-cdk
+        run: poetry run scripts/ci/test-cdk
