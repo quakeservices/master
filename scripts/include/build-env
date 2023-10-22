@@ -17,21 +17,41 @@ export MASTER_HEALTHCHECK="8080/tcp"
 
 export AWS_DEFAULT_REGION="us-west-2"
 
-CDK_CLI_VERSION=$(awk '/aws-cdk-lib/ {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+CDK_CLI_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 export CDK_CLI_VERSION
+POETRY_VERSION=$(awk '/^poetry = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+export POETRY_VERSION
 
-export CONTAINER_AWS_OPTIONS=(
+#
+# Docker / GHCR / ECS Tags
+#
+
+export BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
+export MASTER_GHCR_TAG="ghcr.io/${APP_NAME}/master"
+export CDK_GHCR_TAG="ghcr.io/${APP_NAME}/cdk"
+export DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
+export TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
+
+export HADOLINT_TAG="ghcr.io/hadolint/hadolint:latest"
+export SHELLCHECK_TAG="docker.io/koalaman/shellcheck-alpine:latest"
+
+CONTAINER_AWS_OPTIONS=(
   --env AWS_ACCESS_KEY_ID
   --env AWS_SECRET_ACCESS_KEY
   --env AWS_ACCOUNT
   --env AWS_SECURITY_TOKEN
   --env AWS_DEFAULT_REGION
 )
-export CONTAINER_RUN_OPTIONS=(
+CONTAINER_RUN_OPTIONS=(
   --interactive
   --rm
   --tty
   --workdir "${PWD}"
+)
+
+CONTAINER_BUILD_OPTIONS=(
+  --build-arg POETRY_VERSION=$POETRY_VERSION
+  --build-arg CDK_CLI_VERSION=$CDK_CLI_VERSION
 )
 
 #
@@ -51,7 +71,7 @@ if which podman > /dev/null 2>&1; then
   export MOUNT_SOCKET=" --mount=type=bind,source=${CONTAINER_SOCKET},target=${CONTAINER_SOCKET},relabel=private"
   export MOUNT_PWD=" --mount=type=bind,source=${PWD},target=${PWD},relabel=private"
   export MOUNT_AWS=" --mount=type=bind,source=${HOME}/.aws/config,target=/root/.aws/config,relabel=private"
-  export CONTAINER_BUILD_OPTIONS+=(
+  CONTAINER_BUILD_OPTIONS+=(
     --format docker
   )
 elif which docker > /dev/null 2>&1; then
@@ -60,27 +80,12 @@ elif which docker > /dev/null 2>&1; then
   CONTAINER_SOCKET="/var/run/docker.sock"
   export MOUNT_SOCKET=" --mount=type=bind,source=${CONTAINER_SOCKET},target=${CONTAINER_SOCKET}"
   export MOUNT_PWD=" --mount=type=bind,source=${PWD},target=${PWD}"
-  export CONTAINER_BUILD_OPTIONS=()
+  export DOCKER_BUILDKIT=1
 else
-  CI="true"
   echo "No container engine found; currently only podman or docker supported."
   echo "Assuming we're in CI or development environment."
 fi
 
-#
-# Docker / GHCR / ECS Tags
-#
-
-export BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
-export BASE_DOCKER_TAG="docker.io/${APP_NAME}/base"
-export MASTER_GHCR_TAG="ghcr.io/${APP_NAME}/master"
-export MASTER_DOCKER_TAG="docker.io/${APP_NAME}/master"
-export CDK_GHCR_TAG="ghcr.io/${APP_NAME}/cdk"
-export CDK_DOCKER_TAG="docker.io/${APP_NAME}/cdk"
-export DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
-export DOCS_DOCKER_TAG="docker.io/${APP_NAME}/docs"
-export TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
-export TEST_DOCKER_TAG="docker.io/${APP_NAME}/test"
-
-export HADOLINT_TAG="ghcr.io/hadolint/hadolint:latest"
-export SHELLCHECK_TAG="docker.io/koalaman/shellcheck-alpine:latest"
+export CONTAINER_AWS_OPTIONS
+export CONTAINER_RUN_OPTIONS
+export CONTAINER_BUILD_OPTIONS

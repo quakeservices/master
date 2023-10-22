@@ -1,9 +1,0 @@
-# syntax=docker.io/docker/dockerfile:1
-# vim:set ft=dockerfile:
-
-FROM ghcr.io/quakeservices/cdk:latest
-
-RUN poetry export --format=requirements.txt \
-                  --without-hashes \
-                  --with main,dev,cdk,docs,master \
-  | pip install -r /dev/stdin

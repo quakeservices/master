@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/build-env
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ -n "$CI" ]; then
+  if [[ "$CURRENT_BRANCH" == "main" ]]; then
+    REVISION="latest"
+  else
+    REVISION=$GITHUB_REF_NAME
+  fi
+else
+  REVISION=$CURRENT_BRANCH
+fi
+
+case $1 in
+  base)
+    CONTAINER_TARGET="base"
+    CONTAINER_TAG=$BASE_GHCR_TAG
+    ;;
+
+  master)
+    CONTAINER_TARGET="master"
+    CONTAINER_TAG=$MASTER_GHCR_TAG
+    ;;
+
+  cdk)
+    CONTAINER_TARGET="cdk"
+    CONTAINER_TAG=$CDK_GHCR_TAG
+    ;;
+
+  docs)
+    CONTAINER_TARGET="docs"
+    CONTAINER_TAG=$DOCS_GHCR_TAG
+    ;;
+
+  test)
+    CONTAINER_TARGET="test"
+    CONTAINER_TAG=$TEST_GHCR_TAG
+    ;;
+
+  *)
+    echo "Tag '$1' is unknown"
+    exit 1
+    ;;
+esac
+
+CONTAINER_TAG_LATEST="${CONTAINER_TAG}:latest"
+CONTAINER_TAG_REVISION="${CONTAINER_TAG}:${CONTAINER_TARGET}-${REVISION}"
+if docker inspect "$CONTAINER_TAG_LATEST" >/dev/null 2>&1; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --cache-from "${CONTAINER_TAG_LATEST}"
+  )
+fi
+if docker inspect "$CONTAINER_TAG_REVISION" >/dev/null 2>&1; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --cache-from "${CONTAINER_TAG_REVISION}"
+  )
+fi
+if [ -n "$CI" ]; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --cache-to "${CONTAINER_TAG_REVISION}"
+  )
+fi
+
+
+echo "+++ Building ${CONTAINER_TAG_REVISION} +++"
+$CONTAINER_COMMAND build \
+                   "${CONTAINER_BUILD_OPTIONS[@]}" \
+                   --target "${CONTAINER_TARGET}" \
+                   --tag "${CONTAINER_TAG_REVISION}" \
+                   --file Dockerfile \
+                   .
+
+if [ -n "$CI" ]; then
+  echo "+++ Pushing $CONTAINER_TAG_REVISION +++"
+  $CONTAINER_COMMAND push "${CONTAINER_TAG_REVISION}"
+fi

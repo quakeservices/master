@@ -3,23 +3,4 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 
-source scripts/include/build-env
-scripts/build-base
-
-PARENT_COMMAND=$(ps -o args= $PPID)
-if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
-  CONTAINER_BUILD_OPTIONS+=("--quiet")
-fi
-
-CONTAINER_BUILD_OPTIONS+=(
-  --build-arg CDK_CLI_VERSION=$CDK_CLI_VERSION
-)
-
-echo "+++ Building cdk image +++"
-$CONTAINER_COMMAND build \
-                   "${CONTAINER_BUILD_OPTIONS[@]}" \
-                   --tag "${CDK_DOCKER_TAG}:latest" \
-                   --file docker/Dockerfile.cdk \
-                   .
-
-$CONTAINER_COMMAND tag "${CDK_DOCKER_TAG}:latest" "${CDK_GHCR_TAG}:latest"
+scripts/include/build cdk

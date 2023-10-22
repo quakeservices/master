@@ -2,18 +2,5 @@
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
-source scripts/include/build-env
 
-PARENT_COMMAND=$(ps -o args= $PPID)
-if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
-  CONTAINER_BUILD_OPTIONS+=("--quiet")
-fi
-
-echo "+++ Building base image +++"
-$CONTAINER_COMMAND build \
-                   "${CONTAINER_BUILD_OPTIONS[@]}" \
-                   --tag "${BASE_DOCKER_TAG}:latest" \
-                   --file docker/Dockerfile.base \
-                   .
-
-$CONTAINER_COMMAND tag "${BASE_DOCKER_TAG}:latest" "${BASE_GHCR_TAG}:latest"
+scripts/include/build base

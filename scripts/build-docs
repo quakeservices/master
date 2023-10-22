@@ -3,19 +3,4 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 
-source scripts/include/build-env
-scripts/build-cdk
-
-PARENT_COMMAND=$(ps -o args= $PPID)
-if [[ "$PARENT_COMMAND" =~ "scripts" ]]; then
-  CONTAINER_BUILD_OPTIONS+=("--quiet")
-fi
-
-echo "+++ Building docs image +++"
-$CONTAINER_COMMAND build \
-                   "${CONTAINER_BUILD_OPTIONS[@]}" \
-                   --tag "${DOCS_DOCKER_TAG}:latest" \
-                   --file docker/Dockerfile.docs \
-                   .
-
-$CONTAINER_COMMAND tag "${DOCS_DOCKER_TAG}:latest" "${DOCS_GHCR_TAG}:latest"
+scripts/include/build docs
