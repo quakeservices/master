@@ -1,0 +1,43 @@
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
+ARG CDK_TAG
+
+FROM $CDK_TAG AS cdk
+
+ARG CODE_DIR="/opt/quakeservices"
+
+RUN mkdir -p $CODE_DIR
+
+WORKDIR $CODE_DIR
+
+COPY . .
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,cdk \
+  | pip install -r /dev/stdin
+
+# +++++++++++++++
+#     Test
+# +++++++++++++++
+
+FROM cdk as test
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with dev,master \
+  | pip install -r /dev/stdin
+
+# +++++++++++++++
+#     Docs
+# +++++++++++++++
+
+FROM cdk as docs
+
+RUN npm install --global prettier@latest
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with docs,master \
+  | pip install -r /dev/stdin

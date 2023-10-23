@@ -17,8 +17,15 @@ export MASTER_HEALTHCHECK="8080/tcp"
 
 export AWS_DEFAULT_REGION="us-west-2"
 
-CDK_CLI_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
-export CDK_CLI_VERSION
+#
+# Depenency versions
+#
+export PIP_VERSION="23.3.1"
+export DOCKER_VERSION="24.0.6"
+export NODE_VERSION="18.18.2"
+
+CDK_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+export CDK_VERSION
 POETRY_VERSION=$(awk '/^poetry = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 export POETRY_VERSION
 
@@ -28,6 +35,7 @@ export POETRY_VERSION
 
 export BASE_GHCR_TAG="ghcr.io/${APP_NAME}/base"
 export MASTER_GHCR_TAG="ghcr.io/${APP_NAME}/master"
+export CDK_BASE_GHCR_TAG="ghcr.io/${APP_NAME}/cdk-base"
 export CDK_GHCR_TAG="ghcr.io/${APP_NAME}/cdk"
 export DOCS_GHCR_TAG="ghcr.io/${APP_NAME}/docs"
 export TEST_GHCR_TAG="ghcr.io/${APP_NAME}/test"
@@ -50,8 +58,9 @@ CONTAINER_RUN_OPTIONS=(
 )
 
 CONTAINER_BUILD_OPTIONS=(
-  --build-arg POETRY_VERSION=$POETRY_VERSION
-  --build-arg CDK_CLI_VERSION=$CDK_CLI_VERSION
+  --build-arg "CODE_DIR=$CODE_DIR"
+  --build-arg "PIP_VERSION=$PIP_VERSION"
+  --build-arg "POETRY_VERSION=$POETRY_VERSION"
 )
 
 #
