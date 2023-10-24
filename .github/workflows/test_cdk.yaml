@@ -23,7 +23,13 @@ on:
       - 'poetry.lock'
 
 jobs:
+  build:
+    uses: quakeservices/master/.github/workflows/building/dev_containers.yaml@updates
+  lint:
+    uses: quakeservices/master/.github/workflows/linting/lint.yaml@updates
+    needs: build
   test:
+    needs: [build, lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,11 +42,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build
-        uses: quakeservices/master/.github/workflows/building/dev_containers.yaml@updates
-
-      - name: Lint
-        uses: quakeservices/master/.github/workflows/linting/lint.yaml@updates
 
       - name: "CDK unit tests"
         run: scripts/ci/test-cdk
