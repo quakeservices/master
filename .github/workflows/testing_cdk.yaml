@@ -13,7 +13,6 @@ on:
       - 'test/unit/cdk/**'
       - 'pyproject.toml'
       - 'poetry.lock'
-      - 'package-lock.json'
   pull_request:
     branches:
       - "main"
@@ -23,50 +22,26 @@ on:
       - 'test/unit/cdk/**'
       - 'pyproject.toml'
       - 'poetry.lock'
-      - 'package-lock.json'
 
 concurrency:
   # yamllint disable-line rule:line-length
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
 
 jobs:
-  testing:
+  build:
+    uses: quakeservices/master/.github/workflows/build_containers.yml@updates
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12"]
     steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        id: setup-python
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.2.2
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: "
-            venv\
-            -${{ runner.os }}\
-            -${{ steps.setup-python.outputs.python-version }}\
-            -${{ hashFiles('**/poetry.lock') }}"
-
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          poetry install --no-interaction --with 'dev,cdk,docs,master'
-          npm install --global aws-cdk
-
       - name: "CDK unit tests"
-        run: poetry run scripts/ci/test-cdk
+        run: ./scripts/ci/test-cdk
