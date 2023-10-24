@@ -78,11 +78,11 @@ if docker inspect "$CONTAINER_TAG_REVISION" >/dev/null 2>&1; then
     --cache-from "${CONTAINER_TAG_REVISION}"
   )
 fi
-if [ -n "$CI" ]; then
-  CONTAINER_BUILD_OPTIONS+=(
-    --cache-to "${CONTAINER_TAG_REVISION}"
-  )
-fi
+# if [ -n "$CI" ]; then
+#   CONTAINER_BUILD_OPTIONS+=(
+#     --cache-to "${CONTAINER_TAG_REVISION}"
+#   )
+# fi
 
 if [[ "$CONTAINER_FILE" == "URL" ]]; then
   CONTAINER_BUILD_OPTIONS+=(
