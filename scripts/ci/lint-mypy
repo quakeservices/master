@@ -7,8 +7,4 @@ source scripts/include/build-env
 COMMAND="mypy deployment/ master/"
 
 echo "+++ Running mypy +++"
-if [ -z "$CI" ]; then
-  scripts/include/run-test-container "$COMMAND"
-else
-  $COMMAND
-fi
+scripts/include/run-test-container "$COMMAND"

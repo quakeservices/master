@@ -1,7 +1,6 @@
 ---
 name: Testing CDK
 
-# yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
   push:
@@ -23,17 +22,13 @@ on:
       - 'pyproject.toml'
       - 'poetry.lock'
 
-concurrency:
-  # yamllint disable-line rule:line-length
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-
 jobs:
-  build:
-    uses: quakeservices/master/.github/workflows/build_containers.yml@updates
   test:
-    needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -41,8 +36,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Build
+        uses: quakeservices/master/.github/workflows/building/dev_containers.yaml@updates
+
+      - name: Lint
+        uses: quakeservices/master/.github/workflows/linting/lint.yaml@updates
 
       - name: "CDK unit tests"
-        run: ./scripts/ci/test-cdk
+        run: scripts/ci/test-cdk
