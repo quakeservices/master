@@ -24,9 +24,9 @@ on:
 
 jobs:
   build:
-    uses: quakeservices/master/.github/workflows/building/dev_containers.yaml@updates
+    uses: quakeservices/master/.github/workflows/dev_containers.yaml@updates
   lint:
-    uses: quakeservices/master/.github/workflows/linting/lint.yaml@updates
+    uses: quakeservices/master/.github/workflows/lint.yaml@updates
     needs: build
   test:
     needs: [build, lint]

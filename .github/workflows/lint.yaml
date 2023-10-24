@@ -1,0 +1,21 @@
+---
+name: Testing CDK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: quakeservices/master/.github/workflows/dev_containers.yaml@updates
+  lint_dockerfiles:
+    needs: build
+    uses: quakeservices/master/.github/workflows/lint_dockerfiles.yaml@updates
+  lint_docs:
+    needs: build
+    uses: quakeservices/master/.github/workflows/lint_docs.yaml@updates
+  lint_python:
+    needs: build
+    uses: quakeservices/master/.github/workflows/lint_python.yaml@updates
+  lint_yaml:
+    needs: build
+    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@updates
