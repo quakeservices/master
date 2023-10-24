@@ -1,7 +1,14 @@
 ---
-# https://github.com/docker/build-push-action/blob/master/docs/advanced/push-multi-registries.md
-
 name: Build Dev Containers
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
 jobs:
   reusable_workflow_job:
     runs-on: ubuntu-latest
