@@ -2,12 +2,7 @@
 name: Build Dev Containers
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - reopened
+  workflow_call:
 
 jobs:
   reusable_workflow_job:
