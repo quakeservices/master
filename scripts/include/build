@@ -9,7 +9,7 @@ if [ -n "$CI" ]; then
   if [[ "$CURRENT_BRANCH" == "main" ]]; then
     REVISION="latest"
   else
-    REVISION=$GITHUB_REF_NAME
+    REVISION=$GITHUB_RUN_NUMBER
   fi
 else
   REVISION=$CURRENT_BRANCH
