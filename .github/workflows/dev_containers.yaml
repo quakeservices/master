@@ -21,7 +21,7 @@ jobs:
           CONTAINER_REGISTRY: ghcr.io
           CONTAINER_USERNAME: ${{ github.actor }}
           CONTAINER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: scripts/build/registry_login
+        run: scripts/include/registry_login
 
       - name: "Building base"
         run: scripts/build-base
