@@ -2,7 +2,7 @@
 name: Linting YAML
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   lint_yaml:

@@ -2,7 +2,7 @@
 name: Linting Python
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   lint_python:

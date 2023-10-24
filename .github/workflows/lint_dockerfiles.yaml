@@ -2,7 +2,7 @@
 name: Linting Docker
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   lint_dockerfiles:
