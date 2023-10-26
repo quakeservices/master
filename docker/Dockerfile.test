@@ -1,0 +1,12 @@
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
+ARG CDK_TAG
+ARG CDK_VERSION
+
+FROM $CDK_TAG:$CDK_VERSION
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with dev,master \
+  | pip install -r /dev/stdin

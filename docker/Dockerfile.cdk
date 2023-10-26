@@ -1,0 +1,20 @@
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
+ARG CDK_TAG
+ARG CDK_VERSION
+
+FROM $CDK_TAG:$CDK_VERSION
+
+ARG CODE_DIR
+
+RUN mkdir -p $CODE_DIR
+
+WORKDIR $CODE_DIR
+
+COPY pyproject.toml poetry.lock $CODE_DIR/
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,cdk \
+  | pip install -r /dev/stdin

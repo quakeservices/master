@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/env-app
+source scripts/include/env-container-any
+
+
+function images() {
+  docker images | awk -v container="$1" '$0 ~ container && !/IMAGE/ {print $3}'
+}
+
+for tag in "${ALL_TAGS[@]}"; do
+  image_shas=$(images "${tag}")
+  if [ -n "$image_shas" ]; then
+    echo "+++ Pruning ${tag} +++"
+    docker image rm --force "$(images "${tag}")"
+  fi
+done

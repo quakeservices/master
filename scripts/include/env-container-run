@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/env-app
+source scripts/include/env-container-any
+
+export AWS_DEFAULT_REGION="us-west-2"
+
+
+CONTAINER_AWS_OPTIONS=(
+  --env AWS_ACCESS_KEY_ID
+  --env AWS_SECRET_ACCESS_KEY
+  --env AWS_ACCOUNT
+  --env AWS_SECURITY_TOKEN
+  --env AWS_DEFAULT_REGION
+)
+CONTAINER_RUN_OPTIONS=(
+  --interactive
+  --rm
+  --tty
+  --workdir "${PWD}"
+)
+
+
+export CONTAINER_AWS_OPTIONS
+export CONTAINER_RUN_OPTIONS

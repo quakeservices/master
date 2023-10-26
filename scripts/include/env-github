@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/env-build "$1"
+
+#
+# GitHub Environment
+#
+{
+  echo "CONTAINER_IMAGE_LATEST=$CONTAINER_IMAGE_LATEST";
+  echo "CONTAINER_IMAGE_REVISION=$CONTAINER_IMAGE_REVISION";
+  echo "CONTAINER_TARGET=$CONTAINER_TARGET";
+  echo "CDK_VERSION=$CDK_VERSION";
+  echo "DOCKER_VERSION=$DOCKER_VERSION";
+  echo "NODE_VERSION=$NODE_VERSION";
+  echo "PIP_VERSION=$PIP_VERSION";
+  echo "POETRY_VERSION=$POETRY_VERSION";
+} >> "$GITHUB_ENV"

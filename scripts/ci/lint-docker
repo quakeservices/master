@@ -2,7 +2,7 @@
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
-source scripts/include/build-env
+source scripts/include/env-container-run
 
 # shellcheck disable=SC2206
 CONTAINER_RUN_OPTIONS+=($MOUNT_PWD)
@@ -12,6 +12,6 @@ for file in $(find docker/ -type f -name 'Dockerfile*' -print | sort); do
   echo "${file}"
   $CONTAINER_COMMAND run \
                      --rm \
-                     -e 'HOME=/' \
-                     $HADOLINT_TAG < "${file}"
+                     --env "HOME=/" \
+                     "$HADOLINT_TAG" < "${file}"
 done

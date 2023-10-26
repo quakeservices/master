@@ -2,7 +2,6 @@
 set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-source scripts/include/build-env
 
 COMMAND="pylint --errors-only master deployment test"
 

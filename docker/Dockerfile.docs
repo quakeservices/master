@@ -1,0 +1,14 @@
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
+
+ARG CDK_TAG
+ARG CDK_VERSION
+
+FROM $CDK_TAG:$CDK_VERSION
+
+RUN npm install --global prettier@latest
+
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with docs,master \
+  | pip install -r /dev/stdin
