@@ -14,7 +14,9 @@ WORKDIR $CODE_DIR
 
 COPY pyproject.toml poetry.lock $CODE_DIR/
 
+# hadolint ignore=DL4006
 RUN poetry export --format=requirements.txt \
                   --without-hashes \
                   --with main,cdk \
-  | pip install -r /dev/stdin
+  | pip install --requirement /dev/stdin \
+                --no-cache-dir \

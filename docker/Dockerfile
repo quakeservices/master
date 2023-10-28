@@ -6,9 +6,11 @@
 # +++++++++++++++
 FROM python:3.12-slim AS base
 
-ARG CODE_DIR="/opt/quakeservices"
+ARG CODE_DIR
 ARG PIP_VERSION
 ARG POETRY_VERSION
+
+
 ENV PIP_ROOT_USER_ACTION=ignore
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
@@ -45,3 +47,16 @@ CMD [ "/opt/quakeservices/qs.py", \
       "--hide-boto-logs", \
       "server", \
       "run"]
+
+FROM master as test
+
+# +++++++++++++++
+#     Test
+# +++++++++++++++
+
+# hadolint ignore=DL4006
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with dev,cdk \
+  | pip install --requirement /dev/stdin \
+                --no-cache-dir \

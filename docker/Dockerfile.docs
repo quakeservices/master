@@ -1,14 +1,16 @@
 # syntax=docker.io/docker/dockerfile:1
 # vim:set ft=dockerfile:
 
-ARG CDK_TAG
-ARG CDK_VERSION
+FROM squidfunk/mkdocs-material:9.4.7
 
-FROM $CDK_TAG:$CDK_VERSION
+# renovate: datasource=npm depName=prettier
+ARG PRETTIER_VERSION="3.0.3"
 
-RUN npm install --global prettier@latest
+RUN npm install --global prettier@$PRETTIER_VERSION
 
+# hadolint ignore=DL4006
 RUN poetry export --format=requirements.txt \
                   --without-hashes \
-                  --with docs,master \
-  | pip install -r /dev/stdin
+                  --with main,master,docs \
+  | pip install --requirement /dev/stdin \
+                --no-cache-dir \

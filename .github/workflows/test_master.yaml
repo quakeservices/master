@@ -7,7 +7,9 @@ on:
     branches:
       - "main"
     paths:
-      - '.github/workflows/testing_master.yaml'
+      - '.github/workflows/test_master.yaml'
+      - 'docker/Dockerfile'
+      - 'docker/Dockerfile.test'
       - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
@@ -17,7 +19,9 @@ on:
     branches:
       - "main"
     paths:
-      - '.github/workflows/testing_master.yaml'
+      - '.github/workflows/test_master.yaml'
+      - 'docker/Dockerfile'
+      - 'docker/Dockerfile.test'
       - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
@@ -26,15 +30,22 @@ on:
 
 jobs:
   build:
-    uses: quakeservices/master/.github/workflows/dev_containers.yaml@updates
-  lint:
+    uses: quakeservices/master/.github/workflows/build_container.yaml@updates
+    with:
+      target: test
+      dockerfile: Dockerfile.test
+  lint_python:
+    uses: quakeservices/master/.github/workflows/lint_python.yaml@updates
     needs: build
-    uses: quakeservices/master/.github/workflows/lint.yaml@updates
+  lint_yaml:
+    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@updates
+    needs: build
   test:
+    needs: [lint_python, lint_yaml]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: "Unit tests"
+      - name: "Unit Tests - Master"
         run: scripts/ci/test-unit

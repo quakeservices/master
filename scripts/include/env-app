@@ -21,10 +21,6 @@ export MASTER_HEALTHCHECK="8080/tcp"
 #
 # Depenency versions
 #
-export PIP_VERSION="23.3.1"
-export DOCKER_VERSION="24.0.6"
-export NODE_VERSION="18.18.2"
-
 CDK_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 POETRY_VERSION=$(awk '/^poetry = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 
