@@ -4,7 +4,7 @@
 ARG CDK_TAG
 ARG CDK_VERSION
 
-FROM $CDK_TAG:$CDK_VERSION
+FROM $CDK_TAG:$CDK_VERSION AS cdk
 
 ARG CODE_DIR
 
@@ -18,5 +18,14 @@ COPY pyproject.toml poetry.lock $CODE_DIR/
 RUN poetry export --format=requirements.txt \
                   --without-hashes \
                   --with main,cdk \
+  | pip install --requirement /dev/stdin \
+                --no-cache-dir \
+
+FROM cdk AS cdk-test
+
+# hadolint ignore=DL4006
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with dev \
   | pip install --requirement /dev/stdin \
                 --no-cache-dir \

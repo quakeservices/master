@@ -6,10 +6,11 @@ on:
   push:
     branches:
       - "main"
-    paths:
+    paths: &paths
       - '.github/workflows/test_master.yaml'
+      - '.github/workflows/lint_python.yaml'
+      - '.github/workflows/lint_yaml.yaml'
       - 'docker/Dockerfile'
-      - 'docker/Dockerfile.test'
       - 'master/**'
       - 'test/unit/master/**'
       - 'test/unit/storage/**'
@@ -18,22 +19,14 @@ on:
   pull_request:
     branches:
       - "main"
-    paths:
-      - '.github/workflows/test_master.yaml'
-      - 'docker/Dockerfile'
-      - 'docker/Dockerfile.test'
-      - 'master/**'
-      - 'test/unit/master/**'
-      - 'test/unit/storage/**'
-      - 'pyproject.toml'
-      - 'poetry.lock'
+    paths: *paths
 
 jobs:
   build:
     uses: quakeservices/master/.github/workflows/build_container.yaml@updates
     with:
       target: test
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile
   lint_python:
     uses: quakeservices/master/.github/workflows/lint_python.yaml@updates
     needs: build
