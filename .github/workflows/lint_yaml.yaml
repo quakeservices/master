@@ -1,5 +1,5 @@
 ---
-name: Linting YAML
+name: Lint YAML
 
 on:
   workflow_call:

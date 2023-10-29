@@ -23,6 +23,8 @@ export MASTER_HEALTHCHECK="8080/tcp"
 #
 CDK_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 POETRY_VERSION=$(awk '/^poetry = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+PIP_VERSION=$(awk '/^pip = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
 
 export CDK_VERSION
 export POETRY_VERSION
+export PIP_VERSION

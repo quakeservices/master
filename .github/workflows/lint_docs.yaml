@@ -1,5 +1,5 @@
 ---
-name: Linting Docs
+name: Lint Documentation
 
 on:
   workflow_call:
