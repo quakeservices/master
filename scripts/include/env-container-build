@@ -65,6 +65,16 @@ if [ -n "$CONTAINER" ]; then
       )
       ;;
 
+    cdk-test)
+      CONTAINER_TARGET="cdk-test"
+      CONTAINER_IMAGE=$TEST_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile.cdk"
+      CONTAINER_BUILD_OPTIONS+=(
+        --build-arg "CDK_TAG=$CDK_GHCR_TAG"
+        --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
+      )
+      ;;
+
     docs)
       CONTAINER_TARGET="docs"
       CONTAINER_IMAGE=$DOCS_GHCR_TAG
@@ -111,11 +121,6 @@ if [ -n "$CONTAINER" ]; then
       --cache-from "${CONTAINER_IMAGE_REVISION}"
     )
   fi
-  # if [ -n "$CI" ]; then
-  #   CONTAINER_BUILD_OPTIONS+=(
-  #     --cache-to "${CONTAINER_IMAGE_REVISION}"
-  #   )
-  # fi
 
   #
   # Support for using a URL instead of a PATH
