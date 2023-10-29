@@ -59,4 +59,4 @@ RUN poetry export --format=requirements.txt \
                   --without-hashes \
                   --with dev,cdk \
   | pip install --requirement /dev/stdin \
-                --no-cache-dir \
+                --no-cache-dir

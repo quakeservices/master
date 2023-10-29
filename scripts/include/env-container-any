@@ -10,6 +10,7 @@ export REPOSITORY_DOCKER="docker.io"
 export MASTER_GHCR_TAG="${REPOSITORY_GITHUB}/${APP_NAME}/master"
 export CDK_BASE_GHCR_TAG="${REPOSITORY_GITHUB}/gazwald/cdk-docker"
 export CDK_GHCR_TAG="${REPOSITORY_GITHUB}/${APP_NAME}/cdk"
+export CDK_TEST_GHCR_TAG="${REPOSITORY_GITHUB}/${APP_NAME}/cdk-test"
 export DOCS_GHCR_TAG="${REPOSITORY_GITHUB}/${APP_NAME}/docs"
 export TEST_GHCR_TAG="${REPOSITORY_GITHUB}/${APP_NAME}/test"
 
@@ -17,6 +18,7 @@ export ALL_TAGS=(
   "${MASTER_GHCR_TAG}"
   "${CDK_BASE_GHCR_TAG}"
   "${CDK_GHCR_TAG}"
+  "${CDK_TEST_GHCR_TAG}"
   "${DOCS_GHCR_TAG}"
   "${TEST_GHCR_TAG}"
 )
