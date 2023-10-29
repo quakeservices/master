@@ -53,8 +53,6 @@ if [ -n "$CONTAINER" ]; then
       CONTAINER_URL="github.com/gazwald/cdk-docker.git"
       CONTAINER_BUILD_OPTIONS+=(
         --build-arg "CDK_VERSION=$CDK_VERSION"
-        --build-arg "DOCKER_VERSION=$DOCKER_VERSION"
-        --build-arg "NODE_VERSION=$NODE_VERSION"
       )
       ;;
     cdk)
