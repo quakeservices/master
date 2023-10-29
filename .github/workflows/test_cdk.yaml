@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - "main"
-    paths: &paths
+    paths:
       - '.github/workflows/test_cdk.yaml'
       - '.github/workflows/lint_python.yaml'
       - '.github/workflows/lint_yaml.yaml'
@@ -18,7 +18,15 @@ on:
   pull_request:
     branches:
       - "main"
-    paths: *paths
+    paths:
+      - '.github/workflows/test_cdk.yaml'
+      - '.github/workflows/lint_python.yaml'
+      - '.github/workflows/lint_yaml.yaml'
+      - 'docker/Dockerfile.cdk'
+      - 'deployment/**'
+      - 'test/unit/cdk/**'
+      - 'pyproject.toml'
+      - 'poetry.lock'
 
 jobs:
   build:
