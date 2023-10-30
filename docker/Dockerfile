@@ -10,7 +10,6 @@ ARG CODE_DIR
 ARG PIP_VERSION
 ARG POETRY_VERSION
 
-
 ENV PIP_ROOT_USER_ACTION=ignore
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
@@ -53,6 +52,11 @@ FROM master as test
 # +++++++++++++++
 #     Test
 # +++++++++++++++
+
+RUN apt-get update -y \
+ && apt-get install -y --no-install-recommends \
+      git=1:2.39.2-1.1 \
+ && git config --global --add safe.directory "*"
 
 # hadolint ignore=DL4006
 RUN poetry export --format=requirements.txt \
