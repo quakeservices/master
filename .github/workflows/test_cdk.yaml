@@ -1,5 +1,5 @@
 ---
-name: Test CDK
+name: CDK
 
 on:
   workflow_dispatch:

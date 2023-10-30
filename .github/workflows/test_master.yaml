@@ -1,5 +1,5 @@
 ---
-name: Test Master
+name: Master
 
 on:
   workflow_dispatch:
