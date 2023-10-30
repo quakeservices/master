@@ -120,6 +120,7 @@ if [ -n "$CONTAINER" ]; then
   #
   # Try to pull the container to speed up CI
   #
+  set +e
   echo "+++ Attempting to pull $CONTAINER_IMAGE_LATEST +++"
   if $CONTAINER_COMMAND pull "$CONTAINER_IMAGE_LATEST" > /dev/null; then
     echo "+++ Pull successful +++"
@@ -137,6 +138,7 @@ if [ -n "$CONTAINER" ]; then
   else
     echo "+++ Pull failed, continuing building locally +++"
   fi
+  set -e
   if [[ "$CONTAINER_FILE" == "URL" ]]; then
     CONTAINER_BUILD_OPTIONS+=(
       "$CONTAINER_URL"
