@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -xeuo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/env-container-build "$1"
@@ -7,11 +7,23 @@ source scripts/include/env-container-build "$1"
 #
 # GitHub Environment
 #
-{
+generate() {
+  set -u
   echo "CONTAINER_IMAGE_LATEST=$CONTAINER_IMAGE_LATEST";
   echo "CONTAINER_IMAGE_REVISION=$CONTAINER_IMAGE_REVISION";
   echo "CONTAINER_TARGET=$CONTAINER_TARGET";
+  echo "CODE_DIR=$CODE_DIR";
+  echo "CDK_TAG=$CDK_TAG";
   echo "CDK_VERSION=$CDK_VERSION";
   echo "PIP_VERSION=$PIP_VERSION";
   echo "POETRY_VERSION=$POETRY_VERSION";
-} >> "$GITHUB_ENV"
+};
+
+# Don't treat unset variables as errors while we check for unset variables ;-)
+set +u
+if [ -z "$GITHUB_ENV" ]; then
+  echo "GITHUB_ENV is unset; not running in a GitHub Action? Dumping variables to stdout."
+  generate
+else
+  generate >> "$GITHUB_ENV"
+fi

@@ -37,6 +37,7 @@ fi
 # Container specific build variables
 #
 CONTAINER=${1:-}
+CDK_TAG=""
 if [ -n "$CONTAINER" ]; then
   case $CONTAINER in
     master)
@@ -59,8 +60,9 @@ if [ -n "$CONTAINER" ]; then
       CONTAINER_TARGET="cdk"
       CONTAINER_IMAGE=$CDK_GHCR_TAG
       CONTAINER_FILE="docker/Dockerfile.cdk"
+      CDK_TAG=$CDK_BASE_GHCR_TAG
       CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_BASE_GHCR_TAG"
+        --build-arg "CDK_TAG=$CDK_TAG"
         --build-arg "CDK_VERSION=$CDK_VERSION"
       )
       ;;
@@ -69,8 +71,9 @@ if [ -n "$CONTAINER" ]; then
       CONTAINER_TARGET="cdk-test"
       CONTAINER_IMAGE=$CDK_TEST_GHCR_TAG
       CONTAINER_FILE="docker/Dockerfile.cdk"
+      CDK_TAG=$CDK_GHCR_TAG
       CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_GHCR_TAG"
+        --build-arg "CDK_TAG=$CDK_TAG"
         --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
       )
       ;;
@@ -79,20 +82,12 @@ if [ -n "$CONTAINER" ]; then
       CONTAINER_TARGET="docs"
       CONTAINER_IMAGE=$DOCS_GHCR_TAG
       CONTAINER_FILE="docker/Dockerfile.docs"
-      CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_GHCR_TAG"
-        --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
-      )
       ;;
 
     test)
       CONTAINER_TARGET="test"
       CONTAINER_IMAGE=$TEST_GHCR_TAG
       CONTAINER_FILE="docker/Dockerfile"
-      CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_GHCR_TAG"
-        --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
-      )
       ;;
 
     *)
