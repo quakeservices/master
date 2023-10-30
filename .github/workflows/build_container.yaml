@@ -42,6 +42,6 @@ jobs:
             "CDK_TAG=${{ env.CDK_TAG }}"
             "CDK_VERSION=${{ env.CDK_VERSION }}"
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ env.CONTAINER_REVISION}}
+          tags: ${{ env.CONTAINER_IMAGE_REVISION}}
           cache-from: type=gha
           cache-to: type=gha,mode=max

@@ -14,8 +14,3 @@ echo "+++ Building ${CONTAINER_IMAGE_REVISION} +++"
 $CONTAINER_COMMAND build \
                    "${CONTAINER_BUILD_OPTIONS[@]}" \
                    --tag "${CONTAINER_IMAGE_REVISION}"
-
-if [ -n "$CI" ]; then
-  echo "+++ Pushing $CONTAINER_IMAGE_REVISION +++"
-  $CONTAINER_COMMAND push "${CONTAINER_IMAGE_REVISION}"
-fi
