@@ -43,6 +43,7 @@ jobs:
         with:
           context: .
           file: docker/${{ inputs.dockerfile }}
+          target: ${{ inputs.target }}
           platforms: linux/amd64
           build-args: |
             "CDK_TAG=${{ env.CDK_TAG }}"

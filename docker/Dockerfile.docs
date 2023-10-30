@@ -1,7 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1
 # vim:set ft=dockerfile:
 
-FROM squidfunk/mkdocs-material:9.4.7
+FROM squidfunk/mkdocs-material:9.4.7 AS docs
 
 # renovate: datasource=npm depName=prettier
 ARG PRETTIER_VERSION="3.0.3"
