@@ -71,7 +71,7 @@ if [ -n "$CONTAINER" ]; then
       CONTAINER_TARGET="cdk-test"
       CONTAINER_IMAGE=$CDK_TEST_GHCR_TAG
       CONTAINER_FILE="docker/Dockerfile.cdk"
-      CDK_TAG=$CDK_GHCR_TAG
+      CDK_TAG=$CDK_BASE_GHCR_TAG
       CONTAINER_BUILD_OPTIONS+=(
         --build-arg "CDK_TAG=$CDK_TAG"
         --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
