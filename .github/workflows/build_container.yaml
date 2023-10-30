@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: "Hadolint"
+      - name: "Hadolint: docker/${{ inputs.dockerfile }}"
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: docker/${{ inputs.dockerfile }}
@@ -28,20 +28,22 @@ jobs:
       - name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v3
 
-      - name: "Set environment"
+      - name: "Set environment: ${{ inputs.target }}"
         run: scripts/include/env-github ${{ inputs.target }}
 
-      - name: "Buildand push"
+      - name: "Build and push"
         uses: docker/build-push-action@v5
         with:
           context: .
           file: docker/${{ inputs.dockerfile }}
           platforms: linux/amd64
           build-args: |
-            "CODE_DIR=${{ env.CODE_DIR }}"
             "CDK_TAG=${{ env.CDK_TAG }}"
             "CDK_VERSION=${{ env.CDK_VERSION }}"
+            "CODE_DIR=${{ env.CODE_DIR }}"
+            "PIP_VERSION=${{ env.PIP_VERSION }}"
+            "POETRY_VERSION=${{ env.POETRY_VERSION }}"
           push: true
-          tags: ${{ env.CONTAINER_IMAGE_REVISION}}
+          tags: ${{ env.CONTAINER_IMAGE_REVISION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
