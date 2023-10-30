@@ -6,11 +6,11 @@ cd "$(git rev-parse --show-toplevel)" || exit
 CONTAINER=${1:-}
 source scripts/include/env-container-build "$CONTAINER"
 
-if [ "$CONTAINER_SKIP_BUILD" == "TRUE" ]; then
-  exit 0
+if [ "$CONTAINER_SKIP_BUILD" != "TRUE" ]; then
+  echo "+++ Building ${CONTAINER_IMAGE_REVISION} +++"
+  $CONTAINER_COMMAND build \
+                     "${CONTAINER_BUILD_OPTIONS[@]}" \
+                     --tag "${CONTAINER_IMAGE_REVISION}"
+else
+  echo "+++ Skipped build for ${CONTAINER_IMAGE_REVISION} +++"
 fi
-
-echo "+++ Building ${CONTAINER_IMAGE_REVISION} +++"
-$CONTAINER_COMMAND build \
-                   "${CONTAINER_BUILD_OPTIONS[@]}" \
-                   --tag "${CONTAINER_IMAGE_REVISION}"
