@@ -65,7 +65,6 @@ class Decoder:
             request_type = self.protocol.headers[self.response_class].header_type
             response = self.protocol.headers[self.response_class].response
 
-
         return {
             "request_type": request_type,
             "game": self.protocol.game,
@@ -74,7 +73,7 @@ class Decoder:
             "active": active,
         }
 
-    def _find_response_class(self, received_header: bytes) -> str | None :
+    def _find_response_class(self, received_header: bytes) -> str | None:
         for response_class, header in self.protocol.headers.items():
             if received_header.startswith(header.received):
                 return response_class
