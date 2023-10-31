@@ -1,5 +1,3 @@
-from pydantic import Field
-
 from master.protocols.models import GameProtocol
 from master.protocols.models.response import ProtocolResponse
 
