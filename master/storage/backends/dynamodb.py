@@ -1,6 +1,6 @@
 import logging
 from decimal import Decimal
-from typing import Any, Mapping, Optional, Sequence, Union
+from typing import Any, Mapping, Sequence, Union
 
 from boto3.dynamodb.conditions import Attr, Key
 from boto3.session import Session
@@ -49,7 +49,7 @@ class DynamoDbStorage(BaseStorage):
         self,
         table_name: str = DEFAULT_TABLE_NAME,
         region: str = DEFAULT_REGION,
-        session: Optional[Session] = DEFAULT_SESSION,
+        session: Session = DEFAULT_SESSION,
     ):
         self.dynamodb = self._create_service_resource(region, session)
         self.table = self._get_table(self.dynamodb, table_name)
@@ -110,16 +110,16 @@ class DynamoDbStorage(BaseStorage):
     def create_server(self, server: Server) -> bool:
         return self.update_server(server)
 
-    def get_server(self, address: str, game: Optional[str] = None) -> Optional[Server]:
-        server: Optional[Server] = None
-        result: Optional[Item] = self._query_item(address, game)
+    def get_server(self, address: str, game: str | None = None) -> Server | None:
+        server: Server | None = None
+        result: Item | None = self._query_item(address, game)
 
         if result:
             server = Server.parse_obj(result)
 
         return server
 
-    def get_servers(self, game: Optional[str] = None) -> list[Server]:
+    def get_servers(self, game: str | None = None) -> list[Server]:
         servers: list = []
 
         result = self._scan(game)
@@ -128,7 +128,7 @@ class DynamoDbStorage(BaseStorage):
 
         return servers
 
-    def _scan(self, game: Optional[str] = None) -> list[Item]:
+    def _scan(self, game: str | None = None) -> list[Item]:
         response: ScanOutputTableTypeDef
         if game:
             response = self.table.scan(
@@ -137,7 +137,7 @@ class DynamoDbStorage(BaseStorage):
         else:
             response = self.table.scan(FilterExpression=Attr("active").eq(True))
 
-        items = response["Items"]
+        items: list[Item] = response["Items"]
         return items
 
     def update_server(self, server: Server) -> bool:
@@ -165,8 +165,10 @@ class DynamoDbStorage(BaseStorage):
 
         return False
 
-    def _query_item(self, address: str, game: str, limit: int = 1) -> Optional[Item]:
-        items: Optional[list[Item]] = None
+    def _query_item(
+        self, address: str, game: str | None, limit: int = 1
+    ) -> Item | None:
+        items: list[Item] | None = None
         try:
             result: QueryOutputTableTypeDef = self.table.query(
                 Limit=limit,
@@ -193,10 +195,11 @@ class DynamoDbStorage(BaseStorage):
         logging.error("Method %s caught exception: ", method)
         logging.error(exception.message)
 
-    def _get_item(self, address: str) -> Optional[Item]:
+    def _get_item(self, address: str) -> Item | None:
         """
         Unused
         """
+        item: Item | None = None
         try:
             response: GetItemOutputTableTypeDef = self.table.get_item(
                 Key={"address": address}
@@ -209,6 +212,6 @@ class DynamoDbStorage(BaseStorage):
         ) as exception:
             self._log_exception("_get_item", exception)
         else:
-            return response["Item"]
+            item = response["Item"]
 
-        return None
+        return item

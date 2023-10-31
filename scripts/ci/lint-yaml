@@ -3,7 +3,12 @@ set -eo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
-COMMAND='yamllint mkdocs.yaml .github/'
+COMMAND=(
+  yamllint
+  --strict
+  mkdocs.yaml
+  .github/
+)
 
 echo "+++ Running yamllint +++"
-scripts/include/run-test-container "$COMMAND"
+scripts/include/run-test-container "${COMMAND[@]}"

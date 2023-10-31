@@ -5,7 +5,7 @@ on:
   workflow_call:
 
 jobs:
-  lint_yaml:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

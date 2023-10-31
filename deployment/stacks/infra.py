@@ -15,9 +15,7 @@ from deployment.types import Record
 class InfraStack(Stack):
     zones: dict[str, route53.IHostedZone] = {}
 
-    def __init__(
-        self, scope: Construct, construct_id: str, **kwargs: dict[str, Any]
-    ) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs: Any) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         self.vpc = self._create_vpc()
@@ -77,7 +75,7 @@ class InfraStack(Stack):
 
     def _create_txt_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            key: str = record["key"]
+            key: str = self._list_to_str(record["key"])
             entry = route53.TxtRecord(
                 self,
                 f"{domain}-{key}-txt",
@@ -89,7 +87,7 @@ class InfraStack(Stack):
 
     def _create_cname_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            key: str = record["key"]
+            key: str = self._list_to_str(record["key"])
             for value in record["values"]:
                 entry = route53.CnameRecord(
                     self,
@@ -102,8 +100,8 @@ class InfraStack(Stack):
 
     def _create_a_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            key: str = record["key"]
-            value: str = record["values"]
+            key: str = self._list_to_str(record["key"])
+            value: str = self._list_to_str(record["values"])
 
             target: route53.RecordTarget = route53.RecordTarget.from_ip_addresses(value)
             entry = route53.ARecord(
@@ -114,3 +112,10 @@ class InfraStack(Stack):
                 target=target,
             )
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
+
+    @staticmethod
+    def _list_to_str(value: str | list[str]) -> str:
+        if isinstance(value, list):
+            return value.pop()
+
+        return value

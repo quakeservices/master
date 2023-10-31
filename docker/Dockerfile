@@ -47,11 +47,11 @@ CMD [ "/opt/quakeservices/qs.py", \
       "server", \
       "run"]
 
-FROM master as test
-
 # +++++++++++++++
 #     Test
 # +++++++++++++++
+
+FROM base as test
 
 RUN apt-get update -y \
  && apt-get install -y --no-install-recommends \
@@ -61,6 +61,6 @@ RUN apt-get update -y \
 # hadolint ignore=DL4006
 RUN poetry export --format=requirements.txt \
                   --without-hashes \
-                  --with dev,cdk \
+                  --with main,master,dev,cdk \
   | pip install --requirement /dev/stdin \
                 --no-cache-dir

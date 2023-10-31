@@ -1,12 +1,11 @@
 import re
-from typing import Optional, Union
 
 from master.protocols.models.game import GameProtocol
 from master.protocols.models.response import ProtocolResponse
 
 ResultTypeDict = dict[
     str,
-    Union[str, bytes, bool, dict[str, str], list[Optional[dict[str, str]]]],
+    str | bytes | bool | dict[str, str] | list[dict[str, str]] | None,
 ]
 
 # TODO: Move player_regex into GameProtocol?
@@ -14,14 +13,14 @@ ResultTypeDict = dict[
 
 class Decoder:
     protocol: GameProtocol
-    response_class: Optional[str]
+    response_class: str | None
     newline: str
     player_regex: re.Pattern = re.compile(
         r'(?P<score>-?\d+) (?P<ping>-?\d+) "(?P<name>.+)"', flags=re.ASCII
     )
 
     def __init__(
-        self, protocol: GameProtocol, response_class: Optional[str] = None
+        self, protocol: GameProtocol, response_class: str | None = None
     ) -> None:
         self.protocol = protocol
         self.response_class = response_class
@@ -60,15 +59,22 @@ class Decoder:
         if self.response_class == "shutdown":
             active = False
 
+        request_type = None
+        response = None
+        if self.response_class:
+            request_type = self.protocol.headers[self.response_class].header_type
+            response = self.protocol.headers[self.response_class].response
+
+
         return {
-            "request_type": self.protocol.headers[self.response_class].header_type,
+            "request_type": request_type,
             "game": self.protocol.game,
-            "response": self.protocol.headers[self.response_class].response,
+            "response": response,
             "response_class": self.response_class,
             "active": active,
         }
 
-    def _find_response_class(self, received_header: bytes) -> Optional[str]:
+    def _find_response_class(self, received_header: bytes) -> str | None :
         for response_class, header in self.protocol.headers.items():
             if received_header.startswith(header.received):
                 return response_class
@@ -110,7 +116,7 @@ class Decoder:
         # to:   {"a": 1, "b": 2}
         return dict(zip(list_details[0::2], list_details[1::2]))
 
-    def _decode_players(self, players: list[bytes]) -> list[Optional[dict[str, str]]]:
+    def _decode_players(self, players: list[bytes]) -> list[dict[str, str]]:
         """
         Convert a list of bytes containing player information into a list of dicts if they match player_regex
 
@@ -123,9 +129,9 @@ class Decoder:
                     {"score": "5", "ping": "5", "name": "player 2"},
                 ]
         """
-        result: list[Optional[dict[str, str]]] = []
+        result: list[dict[str, str]] = []
         for player in players:
-            player_match: re.Match[str] = re.match(
+            player_match: re.Match[str] | None = re.match(
                 self.player_regex, self._decode_bytes(player)
             )
             if player_match:

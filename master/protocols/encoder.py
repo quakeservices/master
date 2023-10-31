@@ -16,7 +16,7 @@ class Encoder:
         details: Optional[dict] = None,
         players: Optional[list[dict]] = None,
     ) -> bytes:
-        header: BaseProtocolHeader = self.protocol.headers.get(request)
+        header: BaseProtocolHeader = self.protocol.headers[request]
         newline: bytes = self.protocol.newline.encode(self.protocol.encoding)
         response: list[bytes] = [
             header.received,

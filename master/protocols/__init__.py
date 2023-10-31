@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from master.protocols.decoder import Decoder
 from master.protocols.models import ALL_ACTIVE_PROTOCOLS, GameProtocol
@@ -21,7 +20,7 @@ class Protocols:
     def _find_protocol(
         cls,
         request_header: bytes,
-    ) -> tuple[Optional[GameProtocol], Optional[str]]:
+    ) -> tuple[GameProtocol | None, str | None]:
         """
         Find the protocol that matches a given header
         """
@@ -34,7 +33,7 @@ class Protocols:
 
     @staticmethod
     def _generate_response(
-        protocol: GameProtocol, request: bytes, response_class: str
+        protocol: GameProtocol, request: bytes, response_class: str | None
     ) -> ProtocolResponse:
         """
         Decode the request into a ProtocolResponse
@@ -43,7 +42,7 @@ class Protocols:
         return decoder.generate_protocol_response(request)
 
     @classmethod
-    def parse_request(cls, request: bytes) -> Optional[ProtocolResponse]:
+    def parse_request(cls, request: bytes) -> ProtocolResponse | None:
         parsed_request: bytes = cls._check_proxy_protocol(request)
         first_line, *_ = parsed_request.splitlines()
         # Shouldn't need more than the first 16 bytes of the header

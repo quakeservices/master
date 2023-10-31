@@ -1,4 +1,3 @@
-import logging
 import os
 
 import click
@@ -10,10 +9,12 @@ from master.protocols.models.response import ProtocolResponse
 # json_schema_for_humans isn't part of the `master` build and doesn't need to be
 # if we can't load it we're probably not meant to
 try:
-    from json_schema_for_humans.generate import generate_from_file_object
-    from json_schema_for_humans.generation_configuration import GenerationConfiguration
-except ModuleNotFoundError:
+    import json_schema_for_humans as jsfh  # mypy: ignore
+
+    JSFH_AVAILABLE = True
+except (ModuleNotFoundError, ImportError):
     click.echo("Unable to load json_schema_for_humans, skipping...")
+    JSFH_AVAILABLE = False
 
 schema_path: str = "docs/schemas"
 schemas: list[dict] = [
@@ -59,7 +60,10 @@ def dump() -> None:
 
 @schema.command()
 def generate() -> None:
-    config = GenerationConfiguration(
+    if not JSFH_AVAILABLE:
+        return None
+
+    config = jsfh.GenerationConfiguration(
         copy_css=False, copy_js=False, expand_buttons=True, template_name="md"
     )
 
@@ -71,8 +75,9 @@ def generate() -> None:
         with open(path_json, "r", encoding="utf-8") as handle_json, open(
             path_md, "w", encoding="utf-8"
         ) as handle_md:
-            generate_from_file_object(
+            jsfh.generate_from_file_object(
                 schema_file=handle_json, result_file=handle_md, config=config
             )
 
     click.echo("Done")
+    return None
