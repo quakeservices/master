@@ -37,7 +37,7 @@ fi
 # Container specific build variables
 #
 CONTAINER=${1:-}
-CDK_TAG=""
+CDK_TAG="None"
 if [ -n "$CONTAINER" ]; then
   case $CONTAINER in
     master)
@@ -74,7 +74,7 @@ if [ -n "$CONTAINER" ]; then
       CDK_TAG=$CDK_BASE_GHCR_TAG
       CONTAINER_BUILD_OPTIONS+=(
         --build-arg "CDK_TAG=$CDK_TAG"
-        --build-arg "CDK_VERSION=cdk-${CONTAINER_REVISION}"
+        --build-arg "CDK_VERSION=$CDK_VERSION"
       )
       ;;
 

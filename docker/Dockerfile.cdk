@@ -26,6 +26,6 @@ FROM cdk AS cdk-test
 # hadolint ignore=DL4006
 RUN poetry export --format=requirements.txt \
                   --without-hashes \
-                  --with main,dev \
+                  --with dev \
   | pip install --requirement /dev/stdin \
                 --no-cache-dir
