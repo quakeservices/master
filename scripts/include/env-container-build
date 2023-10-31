@@ -23,14 +23,15 @@ fi
 # Container tagging
 #
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+CONTAINER_REVISION="latest"
 if [ -n "$CI" ]; then
-  if [[ "$CURRENT_BRANCH" == "main" ]]; then
-    CONTAINER_REVISION="latest"
-  else
+  if [[ "$CURRENT_BRANCH" != "main" ]]; then
     CONTAINER_REVISION=$GITHUB_RUN_NUMBER
   fi
 else
-  CONTAINER_REVISION=$CURRENT_BRANCH
+  if [[ "$CURRENT_BRANCH" != "main" ]]; then
+    CONTAINER_REVISION=$CURRENT_BRANCH
+  fi
 fi
 
 #
