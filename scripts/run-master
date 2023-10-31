@@ -7,5 +7,7 @@ source scripts/include/build-env
 scripts/build-master
 
 echo "+++ Running master server +++"
-docker-compose rm --force
-docker-compose up --remove-orphans
+
+trap "$COMPOSE_COMMAND down" EXIT
+
+$COMPOSE_COMMAND up --remove-orphans --force-recreate

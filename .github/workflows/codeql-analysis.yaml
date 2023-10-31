@@ -1,34 +1,30 @@
 ---
-name: Deploy Docs
+name: "CodeQL"
 
 # yamllint disable-line rule:truthy
 on:
-  workflow_run:
-    workflows: [Linting Docs, Linting YAML]
-    types:
-      - completed
+  push:
     branches:
       - "main"
-    paths:
-      - '.github/workflows/deploy_docs.yaml'
-      - 'mkdocs.yaml'
-      - 'docs/**'
-      - 'pyproject.toml'
-      - 'package-lock.json'
-
-concurrency:
-  # yamllint disable-line rule:line-length
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  schedule:
+    - cron: '20 9 * * 2'
 
 jobs:
-  deploy:
+  analyze:
+    name: Analyze
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.12"]
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Python ${{ matrix.python-version }}
@@ -48,15 +44,22 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: "
-            venv\
+          key: "venv\
             -${{ runner.os }}\
             -${{ steps.setup-python.outputs.python-version }}\
             -${{ hashFiles('**/poetry.lock') }}"
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --with 'docs'
+        run: |
+          poetry install --no-interaction --with '*'
+          poetry run echo "CODEQL_PYTHON=$(which python)" >> $GITHUB_ENV
 
-      - name: Deploy documenation
-        run: poetry run mkdocs gh-deploy --force
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+
+COMMAND=(
+  pytest
+  -vv
+  --cov=deployment/
+  test/unit/cdk/
+)
+
+echo "+++ Running tests +++"
+scripts/include/run-cdk-test-container "${COMMAND[@]}"

@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)" || exit 1
 
 source scripts/include/build-env
 scripts/build-cdk > /dev/null
 
-docker run --interactive \
-           --tty \
-           --rm \
-           --env AWS_ACCESS_KEY_ID \
-           --env AWS_SECRET_ACCESS_KEY \
-           --env AWS_ACCOUNT \
-           --env AWS_SECURITY_TOKEN \
-           --env AWS_DEFAULT_REGION \
-           --mount=type=bind,source="${DOCKER_SOCKET}",target="${DOCKER_SOCKET}" \
-           --mount=type=bind,source="$(pwd)"/,target="$(pwd)" \
-           --workdir "$(pwd)" \
-           "${APP_NAME}/cdk:latest" \
-           "$@"
+# shellcheck disable=SC2206
+CONTAINER_RUN_OPTIONS+=(
+  $MOUNT_SOCKET
+  $MOUNT_PWD
+  $MOUNT_AWS
+)
+
+$CONTAINER_COMMAND run \
+                   "${CONTAINER_RUN_OPTIONS[@]}" \
+                   "${CONTAINER_AWS_OPTIONS[@]}" \
+                   "${APP_NAME}/cdk:latest" \
+                   "$@"

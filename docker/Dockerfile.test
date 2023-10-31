@@ -1,5 +1,0 @@
-# syntax=docker/dockerfile:1
-FROM ghcr.io/quakeservices/cdk:latest
-
-RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --with '*'

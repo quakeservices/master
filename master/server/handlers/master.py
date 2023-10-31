@@ -38,16 +38,17 @@ class MasterHandler(DatagramRequestHandler):
     def __handle_request(self, request: bytes) -> None:
         protocols = Protocols()
         protocol_response: ProtocolResponse | None = protocols.parse_request(request)
-        response: bytes | None
-        match protocol_response.request_type:
-            case "client":
-                response = self._handle_client_request(protocol_response)
-            case "server":
-                response = self._handle_server_request(protocol_response)
-            case "any":
-                response = self._handle_generic_request(protocol_response)
-            case _:
-                response = None
+        response: bytes | None = None
+        if protocol_response:
+            match protocol_response.request_type:
+                case "client":
+                    response = self._handle_client_request(protocol_response)
+                case "server":
+                    response = self._handle_server_request(protocol_response)
+                case "any":
+                    response = self._handle_generic_request(protocol_response)
+                case _:
+                    response = None
 
         if response:
             self._send_response(response)
@@ -92,7 +93,6 @@ class MasterHandler(DatagramRequestHandler):
         header: bytes | None = None,
         separator: bytes = b"",
     ) -> bytes:
-
         if header:
             response[0] = header + response[0]
 

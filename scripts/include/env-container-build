@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/env-app
+source scripts/include/env-container-any
+
+CONTAINER_SKIP_BUILD="FALSE"
+
+CONTAINER_BUILD_OPTIONS=(
+  --build-arg "CODE_DIR=$CODE_DIR"
+  --build-arg "PIP_VERSION=$PIP_VERSION"
+  --build-arg "POETRY_VERSION=$POETRY_VERSION"
+)
+
+if [ "$CONTAINER_COMMAND" == "podman" ]; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --format docker
+  )
+fi
+
+#
+# Container tagging
+#
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ -n "$CI" ]; then
+  if [[ "$CURRENT_BRANCH" == "main" ]]; then
+    CONTAINER_REVISION="latest"
+  else
+    CONTAINER_REVISION=$GITHUB_RUN_NUMBER
+  fi
+else
+  CONTAINER_REVISION=$CURRENT_BRANCH
+fi
+
+#
+# Container specific build variables
+#
+CONTAINER=${1:-}
+CDK_TAG="None"
+if [ -n "$CONTAINER" ]; then
+  case $CONTAINER in
+    master)
+      CONTAINER_TARGET="master"
+      CONTAINER_IMAGE=$MASTER_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile"
+      ;;
+
+    cdk-base)
+      CONTAINER_TARGET="cdk-base"
+      CONTAINER_IMAGE=$CDK_BASE_GHCR_TAG
+      CONTAINER_REVISION=$CDK_VERSION
+      CONTAINER_FILE="URL"
+      CONTAINER_URL="github.com/gazwald/cdk-docker.git"
+      CONTAINER_BUILD_OPTIONS+=(
+        --build-arg "CDK_VERSION=$CDK_VERSION"
+      )
+      ;;
+    cdk)
+      CONTAINER_TARGET="cdk"
+      CONTAINER_IMAGE=$CDK_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile.cdk"
+      CDK_TAG=$CDK_BASE_GHCR_TAG
+      CONTAINER_BUILD_OPTIONS+=(
+        --build-arg "CDK_TAG=$CDK_TAG"
+        --build-arg "CDK_VERSION=$CDK_VERSION"
+      )
+      ;;
+
+    cdk-test)
+      CONTAINER_TARGET="cdk-test"
+      CONTAINER_IMAGE=$CDK_TEST_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile.cdk"
+      CDK_TAG=$CDK_BASE_GHCR_TAG
+      CONTAINER_BUILD_OPTIONS+=(
+        --build-arg "CDK_TAG=$CDK_TAG"
+        --build-arg "CDK_VERSION=$CDK_VERSION"
+      )
+      ;;
+
+    docs)
+      CONTAINER_TARGET="docs"
+      CONTAINER_IMAGE=$DOCS_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile.docs"
+      ;;
+
+    test)
+      CONTAINER_TARGET="test"
+      CONTAINER_IMAGE=$TEST_GHCR_TAG
+      CONTAINER_FILE="docker/Dockerfile"
+      ;;
+
+    *)
+      echo "$CONTAINER is unknown"
+      exit 1
+      ;;
+
+  esac
+
+  #
+  # Final tags
+  #
+  CONTAINER_IMAGE_LATEST="${CONTAINER_IMAGE}:latest"
+  CONTAINER_IMAGE_REVISION="${CONTAINER_IMAGE}:${CONTAINER_TARGET}-${CONTAINER_REVISION}"
+
+  #
+  # Caching
+  #
+  if docker inspect "$CONTAINER_IMAGE_LATEST" >/dev/null 2>&1; then
+    CONTAINER_BUILD_OPTIONS+=(
+      --cache-from "${CONTAINER_IMAGE_LATEST}"
+    )
+  fi
+  if docker inspect "$CONTAINER_IMAGE_REVISION" >/dev/null 2>&1; then
+    CONTAINER_BUILD_OPTIONS+=(
+      --cache-from "${CONTAINER_IMAGE_REVISION}"
+    )
+  fi
+
+  #
+  # Try to pull the container to speed up CI
+  #
+  echo "+++ Attempting to pull $CONTAINER_IMAGE_LATEST +++"
+  if $CONTAINER_COMMAND pull "$CONTAINER_IMAGE_LATEST" > /dev/null; then
+    echo "+++ Pull successful +++"
+  else
+    echo "+++ Pull failed +++"
+  fi
+
+  #
+  # Support for using a URL instead of a PATH
+  # Try to pull the container and if that fails build it
+  #
+  echo "+++ Attempting to pull $CONTAINER_IMAGE_REVISION +++"
+  if $CONTAINER_COMMAND pull "$CONTAINER_IMAGE_REVISION" > /dev/null; then
+    echo "+++ Pull successful, skipping build... +++"
+    CONTAINER_SKIP_BUILD="TRUE"
+  else
+    echo "+++ Pull failed, continuing building locally +++"
+  fi
+
+  if [[ "$CONTAINER_FILE" == "URL" ]]; then
+    CONTAINER_BUILD_OPTIONS+=(
+      "$CONTAINER_URL"
+    )
+  else
+    CONTAINER_BUILD_OPTIONS+=(
+       --file "${CONTAINER_FILE}"
+       .
+    )
+  fi
+fi
+
+export CONTAINER_SKIP_BUILD
+export CONTAINER_BUILD_OPTIONS

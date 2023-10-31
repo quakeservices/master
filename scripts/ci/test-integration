@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+source scripts/include/env-container-test
+
+COMMAND=(
+  pytest
+  -vv
+  --cov=master/
+  test/integration
+)
+
+echo "+++ Running integration tests +++"
+scripts/include/run-test-container "${COMMAND[@]}"

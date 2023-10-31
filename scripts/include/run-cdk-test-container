@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+source scripts/include/build cdk-test
+source scripts/include/env-container-run
+
+# shellcheck disable=SC2206
+CONTAINER_RUN_OPTIONS+=(
+  $MOUNT_SOCKET
+  $MOUNT_PWD
+  --entrypoint ""
+)
+
+# shellcheck disable=SC2068
+$CONTAINER_COMMAND run \
+                   -e JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=True \
+                   "${CONTAINER_RUN_OPTIONS[@]}" \
+                   "${CONTAINER_IMAGE_REVISION}" \
+                   ${@:-bash}

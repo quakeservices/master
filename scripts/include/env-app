@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+
+if ! test -f pyproject.toml; then
+  echo "Missing pyproject.toml"
+  exit 1;
+fi
+
+#
+# General app variables
+#
+export APP_NAME="quakeservices"
+export CODE_DIR="/opt/$APP_NAME"
+export CI=${CI:-}
+
+export MASTER_PORT="27900/udp"
+export MASTER_HEALTHCHECK="8080/tcp"
+
+#
+# Depenency versions
+#
+CDK_VERSION=$(awk '/^aws-cdk-lib = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+POETRY_VERSION=$(awk '/^poetry = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+PIP_VERSION=$(awk '/^pip = / {gsub(/"/, "", $3); gsub(/\^/, "", $3); print $3}' pyproject.toml)
+
+export CDK_VERSION
+export POETRY_VERSION
+export PIP_VERSION

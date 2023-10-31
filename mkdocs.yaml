@@ -17,6 +17,7 @@ nav:
       - Protocol Response: schemas/protocol_response.md
   - Reference:
       - External: references/external.md
+
 markdown_extensions:
   - admonition
   - pymdownx.details

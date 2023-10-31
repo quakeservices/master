@@ -1,14 +1,36 @@
 import os
+from typing import Final
 
 from deployment.types import Records
 
-APP_NAME: str = "quakeservices"
-DOMAIN_NAME: str = "quake.services"
-REPO: str = f"{APP_NAME}/master"
-DEPLOYMENT_ENVIRONMENT: str = os.getenv("DEPLOYMENT_ENVIRONMENT", "prod")
+__all__ = [
+    "APP_NAME",
+    "DOMAIN_NAME",
+    "REPO",
+    "DEPLOYMENT_ENVIRONMENT",
+    "MASTER_PORT",
+    "MASTER_HEALTHCHECK_PORT",
+    "MASTER_CPU",
+    "MASTER_MEMORY",
+    "DEFAULT_TIMEOUT",
+    "DOMAINS",
+    "RECORDS",
+]
 
-DOMAINS: list[str] = [DOMAIN_NAME, "quake2.services", "quake3.services"]
-RECORDS: Records = {
+
+APP_NAME: Final[str] = "quakeservices"
+DOMAIN_NAME: Final[str] = "quake.services"
+REPO: Final[str] = f"{APP_NAME}/master"
+DEPLOYMENT_ENVIRONMENT: Final[str] = os.getenv("DEPLOYMENT_ENVIRONMENT", "prod")
+
+MASTER_PORT: Final[int] = 27900
+MASTER_HEALTHCHECK_PORT: Final[int] = 8080
+MASTER_CPU: Final[int] = 512
+MASTER_MEMORY: Final[int] = 1024
+DEFAULT_TIMEOUT: Final[int] = 15
+
+DOMAINS: Final[list[str]] = [DOMAIN_NAME, "quake2.services", "quake3.services"]
+RECORDS: Final[Records] = {
     "quake.services": {
         "TXT": [
             {

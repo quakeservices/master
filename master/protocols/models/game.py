@@ -33,7 +33,7 @@ class GameProtocol(BaseProtocol):
         if not self.active:
             return False, None
 
-        for response_class, header in self.headers.items():
+        for response_class, header in self.headers.items():  # pylint: disable=no-member
             if received_header.startswith(header.received):
                 return True, response_class
 

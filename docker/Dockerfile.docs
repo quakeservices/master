@@ -1,8 +1,16 @@
-# syntax=docker/dockerfile:1
-FROM ghcr.io/quakeservices/cdk:latest
+# syntax=docker.io/docker/dockerfile:1
+# vim:set ft=dockerfile:
 
-RUN --mount=type=cache,target=/root/.npm \
-  npm install --global prettier
+FROM squidfunk/mkdocs-material:9.4.7 AS docs
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-  poetry install --with docs
+# renovate: datasource=npm depName=prettier
+ARG PRETTIER_VERSION="3.0.3"
+
+RUN npm install --global prettier@$PRETTIER_VERSION
+
+# hadolint ignore=DL4006
+RUN poetry export --format=requirements.txt \
+                  --without-hashes \
+                  --with main,master,docs \
+  | pip install --requirement /dev/stdin \
+                --no-cache-dir

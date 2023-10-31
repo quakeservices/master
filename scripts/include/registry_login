@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)" || exit
+
+echo "+++ Logging into ${CONTAINER_REGISTRY} +++"
+echo "${CONTAINER_PASSWORD}" | docker login "${CONTAINER_REGISTRY}" \
+                                 --username "${CONTAINER_USERNAME}" \
+                                 --password-stdin

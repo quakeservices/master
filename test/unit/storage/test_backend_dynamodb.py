@@ -9,7 +9,7 @@ from master.storage.models.server import Server
 
 # mypy: allow-untyped-defs
 @pytest.mark.storage_dynamodb
-@pytest.mark.unit_test
+@pytest.mark.unit
 class TestDynamodbBackend:
     table_name: str = "testing"
     region_name: str = "us-west-2"

@@ -1,40 +1,32 @@
 ---
-name: Linting Python
+name: Deploy Docs
 
 # yamllint disable-line rule:truthy
 on:
-  workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: [Linting Docs, Linting YAML]
+    types:
+      - completed
     branches:
       - "main"
     paths:
-      - '.github/workflows/linting_python.yaml'
-      - 'deployment/**'
-      - 'master/**'
-      - 'test/**'
+      - '.github/workflows/deploy_docs.yaml'
+      - 'mkdocs.yaml'
+      - 'docs/**'
       - 'pyproject.toml'
-      - 'poetry.lock'
-  pull_request:
-    branches:
-      - "main"
-    paths:
-      - '.github/workflows/linting_python.yaml'
-      - 'deployment/**'
-      - 'master/**'
-      - 'test/**'
-      - 'pyproject.toml'
-      - 'poetry.lock'
+      - 'package-lock.json'
 
 concurrency:
   # yamllint disable-line rule:line-length
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
 
 jobs:
-  python-linting:
+  deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.12"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -56,27 +48,15 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: "venv\
+          key: "
+            venv\
             -${{ runner.os }}\
             -${{ steps.setup-python.outputs.python-version }}\
             -${{ hashFiles('**/poetry.lock') }}"
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          poetry install --no-interaction --with '*'
+        run: poetry install --no-interaction --with 'docs'
 
-      - name: "Linting: black"
-        run: poetry run scripts/ci/lint-black
-
-      - name: "Linting: isort"
-        run: poetry run scripts/ci/lint-isort
-        if: always()
-
-      - name: "Linting: pylint"
-        run: poetry run scripts/ci/lint-pylint
-        if: always()
-
-      - name: "Linting: mypy"
-        run: poetry run scripts/ci/lint-mypy
-        if: always()
+      - name: Deploy documenation
+        run: poetry run mkdocs gh-deploy --force

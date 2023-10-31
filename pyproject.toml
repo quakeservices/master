@@ -3,7 +3,7 @@ name = "quakeservices"
 version = "0.2.1"
 description = "idTech master server implemented in Python"
 authors = [
-    "Gary Brandon <gary.brandon@gmail.com>"
+    "Gary Brandon <gary.brandon@gmail.com^"
 ]
 readme = "README.md"
 license = "BSD"
@@ -12,40 +12,52 @@ repository = "https://github.com/quakeservices/master"
 documentation = "https://docs.quake.services"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-pydantic = "^1.10.2"
+python = "^3.12"
+pydantic = "^2.4.2"
+pip = "^23.3.1"
 
+[tool.poetry.group.cdk]
+optional = true
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.master]
+optional = true
 
 [tool.poetry.group.cdk.dependencies]
-aws-cdk-lib = "^2.50.0"
-aws-cdk-aws-lambda-python-alpha = "^2.50.0a0"
-constructs = "^10.1.160"
+aws-cdk-lib = "^2.100.0"
+aws-cdk-aws-lambda-python-alpha = "^2.100.0a0"
+constructs = "^10.3.0"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.0.0"
-isort = "^5.10.1"
-mypy = "^1.0"
-pylint = "^2.15.5"
-pytest = "^7.2.0"
-pytest-cov = "^4.0.0"
-pytest-mock = "^3.10.0"
-yamllint = "^1.28.0"
-pyyaml = "^6.0"
-types-pyyaml = "^6.0.12.2"
-moto = {extras = ["dynamodb"], version = "^4.0.9"}
-poetry = "^1.2.2"
+black = "^23.9.1"
+isort = "^5.12.0"
+moto = {extras = ["dynamodb"], version = "^4.2.5"}
+mypy = "^1.5.1"
+poetry = "^1.6.1"
+pylint = "^3.0.1"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+pyyaml = "^6.0.1"
+types-pyyaml = "^6.0.12.12"
+yamllint = "^1.32.0"
 
 
 [tool.poetry.group.docs.dependencies]
-json-schema-for-humans = "^0.44.0"
-mkdocs-material = "^9.0.0"
+json-schema-for-humans = "^0.46.0"
+mkdocs-material = "^9.4.4"
 
 
 [tool.poetry.group.master.dependencies]
-boto3 = "^1.26.9"
-boto3-stubs = {extras = ["dynamodb"], version = "^1.26.9"}
-click = "^8.1.3"
+boto3 = "^1.28.62"
+boto3-stubs = {extras = ["dynamodb"], version = "^1.28.62"}
+click = "^8.1.7"
 
 [build-system]
 requires = ["poetry-core"]
@@ -68,16 +80,16 @@ norecursedirs = [
   "node_modules"
 ]
 markers = [
-  "unit_test",
-  "integration_test",
   "cdk",
-  "encoder",
   "decoder",
-  "protocols",
-  "storage_dynamodb",
+  "encoder",
+  "integration",
   "master",
   "master_handler",
   "master_server",
+  "protocols",
+  "storage_dynamodb",
+  "unit"
 ]
 
 [tool.isort]
@@ -89,7 +101,7 @@ skip_gitignore = true
 plugins = [
   "pydantic.mypy"
 ]
-python_version = "3.10"
+python_version = "3.12"
 check_untyped_defs = true
 ignore_missing_imports = true
 warn_return_any = true
@@ -99,7 +111,7 @@ show_error_codes = true
 strict_optional = false
 exclude = [
   "cdk.out",
-  ".venv"
+  ".venv",
 ]
 disallow_untyped_defs = true
 
@@ -108,3 +120,5 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
+
+[tool.pylint]

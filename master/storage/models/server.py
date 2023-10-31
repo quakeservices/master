@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 class Server(BaseModel):
     class Config:
-        anystr_strip_whitespace = True
+        str_strip_whitespace = True
 
     address: str = Field(
         description="Colon separated tuple of the server IP address and port, e.g.: <IP>:<PORT>"

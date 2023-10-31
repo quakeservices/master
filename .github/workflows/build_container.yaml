@@ -1,0 +1,57 @@
+---
+name: Build Container
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Hadolint: docker/${{ inputs.dockerfile }}"
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/${{ inputs.dockerfile }}
+
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v3
+
+      - name: "Login to GitHub Container Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}          
+
+      - name: "Set environment: ${{ inputs.target }}"
+        run: scripts/include/env-github ${{ inputs.target }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/${{ inputs.dockerfile }}
+          target: ${{ inputs.target }}
+          platforms: linux/amd64
+          build-args: |
+            "CDK_TAG=${{ env.CDK_TAG }}"
+            "CDK_VERSION=${{ env.CDK_VERSION }}"
+            "CODE_DIR=${{ env.CODE_DIR }}"
+            "PIP_VERSION=${{ env.PIP_VERSION }}"
+            "POETRY_VERSION=${{ env.POETRY_VERSION }}"
+          push: true
+          tags: ${{ env.CONTAINER_IMAGE_REVISION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

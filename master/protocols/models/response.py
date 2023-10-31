@@ -6,7 +6,7 @@ from master.protocols.models import BaseProtocol
 
 
 class ProtocolResponse(BaseProtocol):
-    game: str = Field(description=("Name of the game"))
+    game: str = Field(description="Name of the game")
     active: bool = Field(
         default=True,
         description=(
@@ -20,12 +20,12 @@ class ProtocolResponse(BaseProtocol):
     response_class: Literal["ping", "heartbeat", "shutdown", "query"] = Field(
         description="Response class"
     )
-    response: bytes | None = Field(default=None, description=("Response header"))
-    players: list[dict[str, str]] | None = Field(
+    response: bytes | None = Field(default=None, description="Response header")
+    players: list[dict[str, str]] = Field(
         default_factory=list,
         description=("List of server players if response belongs to a server"),
     )
-    details: dict[str, str | int] | None = Field(
+    details: dict[str, str | int] = Field(
         default_factory=dict,
         description=("Server details if response belongs to a server"),
     )

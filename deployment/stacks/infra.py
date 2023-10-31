@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 from aws_cdk import Annotations, RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
@@ -8,19 +8,14 @@ from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
 
-from deployment.constants import APP_NAME, DOMAINS, RECORDS
+from deployment.constants import *
 from deployment.types import Record
 
 
 class InfraStack(Stack):
     zones: dict[str, route53.IHostedZone] = {}
 
-    def __init__(
-        self,
-        scope: Construct,
-        construct_id: str,
-        **kwargs: Any,
-    ) -> None:
+    def __init__(self, scope: Construct, construct_id: str, **kwargs: Any) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         self.vpc = self._create_vpc()
@@ -43,7 +38,7 @@ class InfraStack(Stack):
         )
 
     def _create_ecs_cluster(self) -> None:
-        ecs.Cluster(
+        self.cluster = ecs.Cluster(
             self,
             "cluster",
             vpc=self.vpc,
@@ -80,7 +75,7 @@ class InfraStack(Stack):
 
     def _create_txt_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            key: str = record["key"]  # type: ignore
+            key: str = self._list_to_str(record["key"])
             entry = route53.TxtRecord(
                 self,
                 f"{domain}-{key}-txt",
@@ -92,7 +87,7 @@ class InfraStack(Stack):
 
     def _create_cname_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            key: str = record["key"]  # type: ignore
+            key: str = self._list_to_str(record["key"])
             for value in record["values"]:
                 entry = route53.CnameRecord(
                     self,
@@ -105,9 +100,8 @@ class InfraStack(Stack):
 
     def _create_a_records(self, domain: str, records: list[Record]) -> None:
         for record in records:
-            # TODO: Remove type ignore
-            key: str = record["key"]  # type: ignore
-            value: str = record["values"]  # type: ignore
+            key: str = self._list_to_str(record["key"])
+            value: str = self._list_to_str(record["values"])
 
             target: route53.RecordTarget = route53.RecordTarget.from_ip_addresses(value)
             entry = route53.ARecord(
@@ -118,3 +112,10 @@ class InfraStack(Stack):
                 target=target,
             )
             entry.apply_removal_policy(RemovalPolicy.DESTROY)
+
+    @staticmethod
+    def _list_to_str(value: str | list[str]) -> str:
+        if isinstance(value, list):
+            return value.pop()
+
+        return value
