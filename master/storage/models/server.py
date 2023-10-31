@@ -1,9 +1,8 @@
-from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, ConfigDict, Field  # pylint: disable=no-name-in-module
 
 
 class Server(BaseModel):
-    class Config:
-        str_strip_whitespace = True
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     address: str = Field(
         description="Colon separated tuple of the server IP address and port, e.g.: <IP>:<PORT>"
