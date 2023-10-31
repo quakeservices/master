@@ -30,15 +30,15 @@ on:
 
 jobs:
   build:
-    uses: quakeservices/master/.github/workflows/build_container.yaml@updates
+    uses: quakeservices/master/.github/workflows/build_container.yaml@main
     with:
       target: cdk-test
       dockerfile: Dockerfile.cdk
   lint_python:
-    uses: quakeservices/master/.github/workflows/lint_python.yaml@updates
+    uses: quakeservices/master/.github/workflows/lint_python.yaml@main
     needs: build
   lint_yaml:
-    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@updates
+    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@main
     needs: build
   test:
     needs: [lint_python, lint_yaml]
