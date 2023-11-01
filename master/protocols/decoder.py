@@ -48,8 +48,8 @@ class Decoder:
         return result
 
     def generate_protocol_response(self, data: bytes) -> ProtocolResponse:
-        response = self.decode(data)
-        return ProtocolResponse.parse_obj(response)
+        response: dict = self.decode(data)
+        return ProtocolResponse.model_validate(response, strict=True)
 
     def _generate_metadata(self) -> ResultTypeDict:
         """

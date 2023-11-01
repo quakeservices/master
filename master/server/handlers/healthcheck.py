@@ -1,4 +1,3 @@
-import logging
 from socketserver import StreamRequestHandler
 
 PROTOCOL: str = "HTTP/1.1"

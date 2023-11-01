@@ -1,12 +1,10 @@
-from collections.abc import Mapping
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, ConfigDict, Field  # pylint: disable=no-name-in-module
 
 
 class BaseProtocol(BaseModel):
-    class Config:
-        str_strip_whitespace = True
+    model_config = ConfigDict(str_strip_whitespace=True)
 
 
 class BaseProtocolHeader(BaseModel):

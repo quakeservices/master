@@ -1,5 +1,3 @@
-import logging
-
 from master.protocols.decoder import Decoder
 from master.protocols.models import ALL_ACTIVE_PROTOCOLS, GameProtocol
 from master.protocols.models.response import ProtocolResponse
