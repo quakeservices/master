@@ -3,15 +3,6 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
 
-if ! test -f pyproject.toml; then
-  echo "Missing pyproject.toml"
-  exit 1;
-fi
-if ! which poetry >/dev/null; then
-  echo "Missing poetry"
-  exit 1;
-fi
-
 #
 # General app variables
 #
