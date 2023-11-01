@@ -115,7 +115,7 @@ class DynamoDbStorage(BaseStorage):
         result: Item | None = self._query_item(address, game)
 
         if result:
-            server = Server.parse_obj(result)
+            server = Server.model_validate(result, strict=True)
 
         return server
 
@@ -124,7 +124,7 @@ class DynamoDbStorage(BaseStorage):
 
         result = self._scan(game)
         for server in result:
-            servers.append(Server.parse_obj(server))
+            servers.append(Server.model_validate(server, strict=True))
 
         return servers
 
