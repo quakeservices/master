@@ -3,8 +3,12 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
-source scripts/include/build-env
-scripts/build-cdk > /dev/null
+source scripts/include/build cdk >/dev/null 2>&1
+source scripts/include/env-container-run
+
+CONTAINER_AWS_OPTIONS+=(
+  --env JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=True
+)
 
 # shellcheck disable=SC2206
 CONTAINER_RUN_OPTIONS+=(
@@ -16,5 +20,5 @@ CONTAINER_RUN_OPTIONS+=(
 $CONTAINER_COMMAND run \
                    "${CONTAINER_RUN_OPTIONS[@]}" \
                    "${CONTAINER_AWS_OPTIONS[@]}" \
-                   "${APP_NAME}/cdk:latest" \
+                   "${CONTAINER_IMAGE_REVISION}" \
                    "$@"
