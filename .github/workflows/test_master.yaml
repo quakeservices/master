@@ -17,8 +17,6 @@ on:
       - 'pyproject.toml'
       - 'poetry.lock'
   pull_request:
-    branches:
-      - "main"
     paths:
       - '.github/workflows/test_master.yaml'
       - '.github/workflows/lint_python.yaml'

@@ -7,26 +7,28 @@ on:
     branches:
       - "main"
     paths:
-      - '.github/workflows/test_cdk.yaml'
       - '.github/workflows/lint_python.yaml'
       - '.github/workflows/lint_yaml.yaml'
-      - 'docker/Dockerfile.cdk'
+      - '.github/workflows/test_cdk.yaml'
       - 'deployment/**'
-      - 'test/unit/cdk/**'
-      - 'pyproject.toml'
+      - 'docker/Dockerfile.cdk'
       - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'scripts/cdk/*'
+      - 'scripts/include/cdk'
+      - 'test/unit/cdk/**'
   pull_request:
-    branches:
-      - "main"
     paths:
-      - '.github/workflows/test_cdk.yaml'
       - '.github/workflows/lint_python.yaml'
       - '.github/workflows/lint_yaml.yaml'
-      - 'docker/Dockerfile.cdk'
+      - '.github/workflows/test_cdk.yaml'
       - 'deployment/**'
-      - 'test/unit/cdk/**'
-      - 'pyproject.toml'
+      - 'docker/Dockerfile.cdk'
       - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'scripts/cdk/*'
+      - 'scripts/include/cdk'
+      - 'test/unit/cdk/**'
 
 jobs:
   build:
