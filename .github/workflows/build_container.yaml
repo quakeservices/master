@@ -53,5 +53,3 @@ jobs:
             "POETRY_VERSION=${{ env.POETRY_VERSION }}"
           push: true
           tags: ${{ env.CONTAINER_IMAGE_REVISION }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max

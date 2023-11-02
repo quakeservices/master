@@ -2,8 +2,37 @@
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit
+
+CONTAINER=${1:-}
+if [ -z "$CONTAINER" ]; then
+  echo "+++ $0 supplied with no argument +++"
+  exit 1
+else
+  echo "+++ Configuring build environment for $1 +++"
+fi
+
 source scripts/include/env-app
 source scripts/include/env-container-any
+
+function container-pull() {
+  local result
+  local return_result=${2:-"FALSE"}
+
+  echo -n "+++ Attempting to pull $1... "
+  if $CONTAINER_COMMAND pull "$1" >/dev/null 2>&1; then
+    echo "pull successful +++"
+    result=0
+  else
+    echo "pull failed +++"
+    result=1
+  fi
+
+  if [ "${return_result}" == "TRUE" ]; then
+    return ${result}
+  fi
+
+  return 0
+}
 
 CONTAINER_SKIP_BUILD="FALSE"
 
@@ -37,119 +66,123 @@ fi
 #
 # Container specific build variables
 #
-CONTAINER=${1:-}
 CDK_TAG="None"
-if [ -n "$CONTAINER" ]; then
-  case $CONTAINER in
-    master)
-      CONTAINER_TARGET="master"
-      CONTAINER_IMAGE=$MASTER_GHCR_TAG
-      CONTAINER_FILE="docker/Dockerfile"
-      ;;
+case $CONTAINER in
+  master)
+    CONTAINER_TARGET="master"
+    CONTAINER_IMAGE=$MASTER_GHCR_TAG
+    CONTAINER_FILE="docker/Dockerfile"
+    ;;
 
-    cdk-base)
-      CONTAINER_TARGET="cdk-base"
-      CONTAINER_IMAGE=$CDK_BASE_GHCR_TAG
-      CONTAINER_REVISION=$CDK_VERSION
-      CONTAINER_FILE="URL"
-      CONTAINER_URL="github.com/gazwald/cdk-docker.git"
-      CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_VERSION=$CDK_VERSION"
-      )
-      ;;
-    cdk)
-      CONTAINER_TARGET="cdk"
-      CONTAINER_IMAGE=$CDK_GHCR_TAG
-      CONTAINER_FILE="docker/Dockerfile.cdk"
-      CDK_TAG=$CDK_BASE_GHCR_TAG
-      CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_TAG"
-        --build-arg "CDK_VERSION=$CDK_VERSION"
-      )
-      ;;
+  cdk-base)
+    CONTAINER_TARGET="cdk-base"
+    CONTAINER_IMAGE=$CDK_BASE_GHCR_TAG
+    CONTAINER_REVISION=$CDK_VERSION
+    CONTAINER_FILE="URL"
+    CONTAINER_URL="github.com/gazwald/cdk-docker.git"
+    CONTAINER_BUILD_OPTIONS+=(
+      --build-arg "CDK_VERSION=$CDK_VERSION"
+    )
+    ;;
+  cdk)
+    CONTAINER_TARGET="cdk"
+    CONTAINER_IMAGE=$CDK_GHCR_TAG
+    CONTAINER_FILE="docker/Dockerfile.cdk"
+    CDK_TAG=$CDK_BASE_GHCR_TAG
+    CONTAINER_BUILD_OPTIONS+=(
+      --build-arg "CDK_TAG=$CDK_TAG"
+      --build-arg "CDK_VERSION=$CDK_VERSION"
+    )
+    ;;
 
-    cdk-test)
-      CONTAINER_TARGET="cdk-test"
-      CONTAINER_IMAGE=$CDK_TEST_GHCR_TAG
-      CONTAINER_FILE="docker/Dockerfile.cdk"
-      CDK_TAG=$CDK_BASE_GHCR_TAG
-      CONTAINER_BUILD_OPTIONS+=(
-        --build-arg "CDK_TAG=$CDK_TAG"
-        --build-arg "CDK_VERSION=$CDK_VERSION"
-      )
-      ;;
+  cdk-test)
+    CONTAINER_TARGET="cdk-test"
+    CONTAINER_IMAGE=$CDK_TEST_GHCR_TAG
+    CONTAINER_FILE="docker/Dockerfile.cdk"
+    CDK_TAG=$CDK_BASE_GHCR_TAG
+    CONTAINER_BUILD_OPTIONS+=(
+      --build-arg "CDK_TAG=$CDK_TAG"
+      --build-arg "CDK_VERSION=$CDK_VERSION"
+    )
+    ;;
 
-    docs)
-      CONTAINER_TARGET="docs"
-      CONTAINER_IMAGE=$DOCS_GHCR_TAG
-      CONTAINER_FILE="docker/Dockerfile.docs"
-      ;;
+  docs)
+    CONTAINER_TARGET="docs"
+    CONTAINER_IMAGE=$DOCS_GHCR_TAG
+    CONTAINER_FILE="docker/Dockerfile.docs"
+    ;;
 
-    test)
-      CONTAINER_TARGET="test"
-      CONTAINER_IMAGE=$TEST_GHCR_TAG
-      CONTAINER_FILE="docker/Dockerfile"
-      ;;
+  test)
+    CONTAINER_TARGET="test"
+    CONTAINER_IMAGE=$TEST_GHCR_TAG
+    CONTAINER_FILE="docker/Dockerfile"
+    ;;
 
-    *)
-      echo "$CONTAINER is unknown"
-      exit 1
-      ;;
+  *)
+    echo "+++ Target $CONTAINER is unknown +++"
+    exit 1
+    ;;
 
-  esac
+esac
 
-  #
-  # Final tags
-  #
-  CONTAINER_IMAGE_LATEST="${CONTAINER_IMAGE}:latest"
+#
+# Final tags
+#
+CONTAINER_IMAGE_LATEST="${CONTAINER_IMAGE}:latest"
+if [[ "$CONTAINER_TARGET" == "cdk-base" ]]; then
+  CONTAINER_IMAGE_REVISION="${CONTAINER_IMAGE}:${CDK_VERSION}"
+else
   CONTAINER_IMAGE_REVISION="${CONTAINER_IMAGE}:${CONTAINER_TARGET}-${CONTAINER_REVISION}"
+fi
 
-  #
-  # Caching
-  #
-  if docker inspect "$CONTAINER_IMAGE_LATEST" >/dev/null 2>&1; then
-    CONTAINER_BUILD_OPTIONS+=(
-      --cache-from "${CONTAINER_IMAGE_LATEST}"
-    )
-  fi
-  if docker inspect "$CONTAINER_IMAGE_REVISION" >/dev/null 2>&1; then
-    CONTAINER_BUILD_OPTIONS+=(
-      --cache-from "${CONTAINER_IMAGE_REVISION}"
-    )
-  fi
 
-  #
-  # Try to pull the container to speed up CI
-  #
-  echo "+++ Attempting to pull $CONTAINER_IMAGE_LATEST +++"
-  if $CONTAINER_COMMAND pull "$CONTAINER_IMAGE_LATEST" > /dev/null; then
-    echo "+++ Pull successful +++"
-  else
-    echo "+++ Pull failed +++"
+#
+# If we're building 'cdk' check to see if we can pull the base image
+# If not then build it locally
+#
+if [[ "$CONTAINER_TARGET" == "cdk" ]]; then
+  if ! container-pull "$CDK_BASE_GHCR_TAG:$CDK_VERSION" "TRUE"; then
+    echo "+++ Unable to pull base CDK image... building locally +++"
+    scripts/include/build cdk-base
   fi
+fi
 
-  #
-  # Support for using a URL instead of a PATH
-  # Try to pull the container and if that fails build it
-  #
-  echo "+++ Attempting to pull $CONTAINER_IMAGE_REVISION +++"
-  if $CONTAINER_COMMAND pull "$CONTAINER_IMAGE_REVISION" > /dev/null; then
-    echo "+++ Pull successful, skipping build... +++"
-    CONTAINER_SKIP_BUILD="TRUE"
-  else
-    echo "+++ Pull failed, continuing building locally +++"
-  fi
+#
+# Try to pull the container to speed up container commands
+#
+if container-pull "$CONTAINER_IMAGE_REVISION" "TRUE"; then
+  CONTAINER_SKIP_BUILD="TRUE"
+else
+  container-pull "$CONTAINER_IMAGE_LATEST"
+fi
 
-  if [[ "$CONTAINER_FILE" == "URL" ]]; then
-    CONTAINER_BUILD_OPTIONS+=(
-      "$CONTAINER_URL"
-    )
-  else
-    CONTAINER_BUILD_OPTIONS+=(
-       --file "${CONTAINER_FILE}"
-       .
-    )
-  fi
+#
+# Support for using a URL instead of a PATH
+# Try to pull the container and if that fails build it
+#
+if [[ "$CONTAINER_FILE" == "URL" ]]; then
+  CONTAINER_BUILD_OPTIONS+=(
+    "$CONTAINER_URL"
+  )
+else
+  CONTAINER_BUILD_OPTIONS+=(
+     --file "${CONTAINER_FILE}"
+     .
+  )
+fi
+
+#
+# Caching
+#
+if docker inspect "$CONTAINER_IMAGE_LATEST" >/dev/null 2>&1; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --cache-from "${CONTAINER_IMAGE_LATEST}"
+  )
+fi
+if docker inspect "$CONTAINER_IMAGE_REVISION" >/dev/null 2>&1; then
+  CONTAINER_BUILD_OPTIONS+=(
+    --cache-from "${CONTAINER_IMAGE_REVISION}"
+  )
 fi
 
 export CONTAINER_SKIP_BUILD
