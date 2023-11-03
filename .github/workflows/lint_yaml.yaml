@@ -20,4 +20,3 @@ jobs:
 
       - name: "Linting: yaml"
         run: scripts/ci/lint-yaml
-        if: always()

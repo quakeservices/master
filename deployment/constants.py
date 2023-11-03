@@ -31,11 +31,11 @@ DEFAULT_TIMEOUT: Final[int] = 15
 
 DOMAINS: Final[list[str]] = [DOMAIN_NAME, "quake2.services", "quake3.services"]
 RECORDS: Final[Records] = {
-    "quake.services": {
+    DOMAIN_NAME: {
         "TXT": [
             {
-                "key": "_github-pages-challenge-quakeservices",
-                "values": [
+                "name": f"_github-pages-challenge-{APP_NAME}",
+                "targets": [
                     "4cbb312cf881980e8b6ddef434f26b",  # Quake Services Organisation
                     "4cbb312cf881980e8b6ddef434f26bu",  # Quake Services Master
                 ],
@@ -43,14 +43,8 @@ RECORDS: Final[Records] = {
         ],
         "CNAME": [
             {
-                "key": "docs",
-                "values": ["quakeservices.github.io"],
-            }
-        ],
-        "A": [
-            {
-                "key": "mel",
-                "values": "45.121.209.140",
+                "name": "docs",
+                "targets": [f"{APP_NAME}.github.io"],
             }
         ],
     }

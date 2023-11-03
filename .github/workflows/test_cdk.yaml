@@ -3,20 +3,6 @@ name: CDK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "main"
-    paths:
-      - '.github/workflows/lint_python.yaml'
-      - '.github/workflows/lint_yaml.yaml'
-      - '.github/workflows/test_cdk.yaml'
-      - 'deployment/**'
-      - 'docker/Dockerfile.cdk'
-      - 'poetry.lock'
-      - 'pyproject.toml'
-      - 'scripts/cdk/*'
-      - 'scripts/include/cdk'
-      - 'test/unit/cdk/**'
   pull_request:
     paths:
       - '.github/workflows/lint_python.yaml'

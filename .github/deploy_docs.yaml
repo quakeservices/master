@@ -1,62 +1,35 @@
 ---
 name: Deploy Docs
 
-# yamllint disable-line rule:truthy
 on:
   workflow_run:
-    workflows: [Linting Docs, Linting YAML]
-    types:
-      - completed
     branches:
       - "main"
     paths:
       - '.github/workflows/deploy_docs.yaml'
-      - 'mkdocs.yaml'
+      - '.github/workflows/lint_docs.yaml'
+      - 'docker/Dockerfile.docs'
       - 'docs/**'
+      - 'mkdocs.yaml'
+      - 'poetry.lock'
       - 'pyproject.toml'
-      - 'package-lock.json'
-
-concurrency:
-  # yamllint disable-line rule:line-length
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
 
 jobs:
+  build:
+    uses: quakeservices/master/.github/workflows/build_container.yaml@main
+    with:
+      target: docs
+      dockerfile: Dockerfile.docs
+  lint_docs:
+    uses: quakeservices/master/.github/workflows/lint_docs.yaml@main
+    needs: build
+  lint_yaml:
+    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@main
+    needs: build
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    strategy:
-      matrix:
-        python-version: ["3.12"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        id: setup-python
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.2.2
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: "
-            venv\
-            -${{ runner.os }}\
-            -${{ steps.setup-python.outputs.python-version }}\
-            -${{ hashFiles('**/poetry.lock') }}"
-
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --with 'docs'
-
-      - name: Deploy documenation
-        run: poetry run mkdocs gh-deploy --force
+      - name: "Deploy documenation"
+        run: scripts/ci/deploy_docs

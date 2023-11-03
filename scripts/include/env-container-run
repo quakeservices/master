@@ -20,6 +20,7 @@ CONTAINER_RUN_OPTIONS=(
   --rm
   --tty
   --workdir "${PWD}"
+  --user "$(id -u):$(id -g)"
 )
 
 

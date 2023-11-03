@@ -3,19 +3,6 @@ name: Master
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "main"
-    paths:
-      - '.github/workflows/test_master.yaml'
-      - '.github/workflows/lint_python.yaml'
-      - '.github/workflows/lint_yaml.yaml'
-      - 'docker/Dockerfile'
-      - 'master/**'
-      - 'test/unit/master/**'
-      - 'test/unit/storage/**'
-      - 'pyproject.toml'
-      - 'poetry.lock'
   pull_request:
     paths:
       - '.github/workflows/test_master.yaml'

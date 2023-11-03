@@ -1,0 +1,65 @@
+---
+name: Deploy Master
+
+on:
+  push:
+    branchs:
+      - "main"
+    paths:
+      - '.github/workflows/lint_python.yaml'
+      - '.github/workflows/lint_yaml.yaml'
+      - '.github/workflows/test_cdk.yaml'
+      - '.github/workflows/test_master.yaml'
+      - 'cdk.json'
+      - 'cdk.py'
+      - 'deployment/**'
+      - 'docker/Dockerfile'
+      - 'docker/Dockerfile.cdk'
+      - 'master/**'
+      - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'qs.py'
+      - 'scripts/**'
+      - 'test/unit/**'
+
+jobs:
+  build-test:
+    uses: quakeservices/master/.github/workflows/build_container.yaml@main
+    with:
+      target: test
+      dockerfile: Dockerfile
+  lint_python:
+    uses: quakeservices/master/.github/workflows/lint_python.yaml@main
+    needs: build-test
+  lint_yaml:
+    uses: quakeservices/master/.github/workflows/lint_yaml.yaml@main
+    needs: build-test
+  test:
+    uses: quakeservices/master/.github/workflows/test_master.yaml@main
+    needs: [lint_python, lint_yaml]
+  build-master:
+    uses: quakeservices/master/.github/workflows/build_container.yaml@main
+    needs: test
+    with:
+      target: master
+      dockerfile: Dockerfile
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Login to GitHub Container Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}          
+
+      - name: "Deploy infra "
+        run: scripts/ci/deploy_infra
+
+      - name: "Deploy master"
+        run: scripts/ci/deploy_master

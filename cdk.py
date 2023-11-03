@@ -3,10 +3,11 @@ from aws_cdk import App
 
 from deployment.constants import APP_NAME
 from deployment.environments import us_west_2
-from deployment.stacks.pipeline import PipelineStack
+from deployment.stacks import InfraStack, MasterStack
 
 app = App()
 
-PipelineStack(app, f"{APP_NAME}-pipeline", env=us_west_2)
+InfraStack(app, f"{APP_NAME}-infra", env=us_west_2)
+MasterStack(app, f"{APP_NAME}-master", env=us_west_2)
 
 app.synth()

@@ -1,11 +1,11 @@
 ---
-name: Lint Documentation
+name: Lint Docs
 
 on:
   workflow_call:
 
 jobs:
-  lint_docs:
+  prettier:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
