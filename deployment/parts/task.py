@@ -1,9 +1,11 @@
-from constructs import Construct
-from aws_cdk import Duration, RemovalPolicy, Stack
-from aws_cdk import aws_logs as logs
-from aws_cdk import aws_ecs as ecs
 from dataclasses import dataclass
 from typing import Literal
+
+from aws_cdk import Duration, RemovalPolicy, Stack
+from aws_cdk import aws_ecs as ecs
+from aws_cdk import aws_logs as logs
+from aws_cdk import aws_secretsmanager as secretsmanager
+from constructs import Construct
 
 
 @dataclass
@@ -61,6 +63,7 @@ class FargateTask(Construct):
         self.memory = memory
         self.platform = self._platform(arch, family)
 
+        self.credentials = self._credentials()
         self.create()
 
     def create(self) -> None:
@@ -71,7 +74,7 @@ class FargateTask(Construct):
             cpu=self.cpu,
             runtime_platform=self.platform,
         )
-
+        self._grant_credentials_read_to_task()
         self._container()
 
     def _container(self) -> None:
@@ -82,7 +85,7 @@ class FargateTask(Construct):
         container = self.task.add_container(
             "master",
             container_name=f"{self.name}-{self.deployment_environment}",
-            image=self._define_container_image(),
+            image=self._container_image(),
             health_check=self._healtcheck(),
             start_timeout=self.timeout,
             stop_timeout=self.timeout,
@@ -95,6 +98,24 @@ class FargateTask(Construct):
             container.add_port_mappings(self._port_mapping(port))
 
         container.add_port_mappings(self._port_mapping(self.healthcheck))
+
+    def _credentials(self) -> secretsmanager.ISecret:
+        return secretsmanager.Secret.from_secret_name_v2(
+            self, "ghcr", secret_name=f"{self.name}/github"
+        )
+
+    def _container_image(self) -> ecs.ContainerImage:
+        return ecs.ContainerImage.from_registry(
+            "ghcr.io/quakeservices/master:latest",
+            credentials=self.credentials,
+        )
+
+    def _grant_credentials_read_to_task(self) -> None:
+        execution_role: iam.IRole | None = self.task.execution_role
+        if not execution_role:
+            execution_role = self.task.obtain_execution_role()
+
+        self.credentials.grant_read(execution_role)
 
     def _logging(self) -> ecs.LogDriver:
         return ecs.LogDrivers.aws_logs(

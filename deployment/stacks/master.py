@@ -50,11 +50,6 @@ class MasterStack(Stack):
             self, "cluster", vpc=self.vpc, cluster_name=APP_NAME, security_groups=[]
         )
 
-    def _get_ghcr_credentials(self) -> secretsmanager.ISecret:
-        return secretsmanager.Secret.from_secret_name_v2(
-            self, "ghcr", secret_name=f"{APP_NAME}/github"
-        )
-
     def _create_table(self) -> dynamodb.Table:
         """
         Partition key = server_ip:server_port
@@ -71,75 +66,8 @@ class MasterStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,
         )
 
-    def _create_master_task(self) -> ecs.FargateTaskDefinition:
-        """
-        Create master task
-        """
-        return ecs.FargateTaskDefinition(
-            self,
-            "task",
-            memory_limit_mib=MASTER_MEMORY,
-            cpu=MASTER_CPU,
-            runtime_platform=ecs.RuntimePlatform(
-                cpu_architecture=ecs.CpuArchitecture.X86_64,
-                operating_system_family=ecs.OperatingSystemFamily.LINUX,
-            ),
-        )
-
     def _grant_table_read_write_to_task(self) -> None:
         self.table.grant_read_write_data(self.task.task_role)
-
-    def _grant_credentials_read_to_task(self) -> None:
-        execution_role: Optional[iam.IRole] = self.task.execution_role
-        if not execution_role:
-            execution_role = self.task.obtain_execution_role()
-
-        self.credentials.grant_read(execution_role)
-
-    def _define_container_image(self) -> ecs.ContainerImage:
-        return ecs.ContainerImage.from_registry(
-            "ghcr.io/quakeservices/master:latest",
-            credentials=self.credentials,
-        )
-
-    def _create_task_container(self) -> None:
-        """
-        Create container
-        """
-        ecs_healthcheck = ecs.HealthCheck(
-            command=[
-                "CMD",
-                "curl",
-                "-f",
-                f"http://localhost:{MASTER_HEALTHCHECK_PORT}",
-            ]
-        )
-
-        log_settings = ecs.LogDrivers.aws_logs(
-            stream_prefix=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
-            log_retention=logs.RetentionDays.TWO_WEEKS,
-        )
-
-        container = self.task.add_container(
-            "master",
-            container_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
-            image=self._define_container_image(),
-            health_check=ecs_healthcheck,
-            start_timeout=Duration.seconds(DEFAULT_TIMEOUT),
-            stop_timeout=Duration.seconds(DEFAULT_TIMEOUT),
-            logging=log_settings,
-            memory_reservation_mib=MASTER_MEMORY,
-            environment={"DEPLOYMENT_ENVIRONMENT": DEPLOYMENT_ENVIRONMENT},
-        )
-
-        container.add_port_mappings(
-            ecs.PortMapping(container_port=MASTER_PORT, protocol=ecs.Protocol.UDP)
-        )
-        container.add_port_mappings(
-            ecs.PortMapping(
-                container_port=MASTER_HEALTHCHECK_PORT, protocol=ecs.Protocol.TCP
-            )
-        )
 
     def _create_security_group(self) -> ec2.ISecurityGroup:
         security_group = ec2.SecurityGroup(
