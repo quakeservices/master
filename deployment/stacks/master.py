@@ -14,6 +14,7 @@ from aws_cdk import aws_secretsmanager as secretsmanager
 from constructs import Construct
 
 from deployment.constants import *
+from deployment.parts.record import Record
 
 
 class MasterStack(Stack):
@@ -26,9 +27,7 @@ class MasterStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         self.vpc = self._get_vpc()
-        self.zone = self._get_zone()
         self.cluster = self._get_cluster()
-        self.repository = self._get_ecr_repository()
 
         self.table = self._create_table()
         self.task = self._create_master_task()
@@ -38,7 +37,7 @@ class MasterStack(Stack):
         self._create_task_container()
         self.nlb = self._create_network_load_balancer()
         self._create_service_and_nlb()
-        self._create_route53_record()
+        self._create_a_record()
 
     def _get_vpc(self) -> ec2.IVpc:
         return ec2.Vpc.from_lookup(self, "vpc", vpc_name=APP_NAME)
@@ -49,11 +48,6 @@ class MasterStack(Stack):
     def _get_cluster(self) -> ecs.ICluster:
         return ecs.Cluster.from_cluster_attributes(
             self, "cluster", vpc=self.vpc, cluster_name=APP_NAME, security_groups=[]
-        )
-
-    def _get_ecr_repository(self) -> ecr.IRepository:
-        return ecr.Repository.from_repository_name(
-            self, "repository", repository_name=APP_NAME
         )
 
     def _get_ghcr_credentials(self) -> secretsmanager.ISecret:
@@ -227,14 +221,20 @@ class MasterStack(Stack):
 
         service.register_load_balancer_targets(target)
 
-    def _create_route53_record(self) -> None:
+    def _create_a_record(self) -> None:
         """
         Create Route53 entries
         """
-        target = route53.RecordTarget.from_alias(
-            route53_targets.LoadBalancerTarget(self.nlb)
+        Record(
+            self,
+            "alias",
+            domain=DOMAIN_NAME,
+            record_type=route53.RecordType.A,
+            record_name="master",
+            record_target=self._network_loadbalancer_target(),
         )
 
-        route53.ARecord(
-            self, "alias", zone=self.zone, record_name="master", target=target
+    def _network_loadbalancer_target(self) -> route53.RecordTarget:
+        return route53.RecordTarget.from_alias(
+            route53_targets.LoadBalancerTarget(self.nlb)
         )
