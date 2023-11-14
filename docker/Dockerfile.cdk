@@ -15,7 +15,8 @@ WORKDIR $CODE_DIR
 COPY pyproject.toml poetry.lock $CODE_DIR/
 
 # hadolint ignore=DL4006
-RUN poetry export --format=requirements.txt \
+RUN --mount=type=cache,target=/root/.cache \
+  poetry export --format=requirements.txt \
                   --without-hashes \
                   --with main,cdk \
   | pip install --requirement /dev/stdin \
@@ -24,8 +25,12 @@ RUN poetry export --format=requirements.txt \
 FROM cdk AS cdk-test
 
 # hadolint ignore=DL4006
-RUN poetry export --format=requirements.txt \
+RUN --mount=type=cache,target=/root/.cache \
+  poetry export --format=requirements.txt \
                   --without-hashes \
                   --with dev \
   | pip install --requirement /dev/stdin \
                 --no-cache-dir
+
+RUN mkdir /.cache \
+ && chmod 777 /.cache

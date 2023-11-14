@@ -20,7 +20,8 @@ WORKDIR $CODE_DIR
 
 COPY pyproject.toml poetry.lock $CODE_DIR/
 
-RUN python -m pip install \
+RUN --mount=type=cache,target=/root/.cache \
+  python -m pip install \
       --no-cache-dir \
       "pip==$PIP_VERSION" \
       "poetry==$POETRY_VERSION"
@@ -32,7 +33,8 @@ RUN python -m pip install \
 FROM base AS master
 
 # hadolint ignore=DL4006
-RUN poetry export --format=requirements.txt \
+RUN --mount=type=cache,target=/root/.cache \
+  poetry export --format=requirements.txt \
                   --without-hashes \
                   --with main,master \
   | pip install --no-cache-dir \
@@ -59,7 +61,8 @@ RUN apt-get update -y \
  && git config --global --add safe.directory "*"
 
 # hadolint ignore=DL4006
-RUN poetry export --format=requirements.txt \
+RUN --mount=type=cache,target=/root/.cache \
+  poetry export --format=requirements.txt \
                   --without-hashes \
                   --with main,master,dev,cdk \
   | pip install --requirement /dev/stdin \

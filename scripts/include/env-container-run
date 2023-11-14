@@ -5,8 +5,12 @@ cd "$(git rev-parse --show-toplevel)" || exit
 source scripts/include/env-app
 source scripts/include/env-container-any
 
-export AWS_DEFAULT_REGION="us-west-2"
+if [ -z ${AWS_DEFAULT_REGION+x} ]; then
+  echo "+++ AWS_DEFAULT_REGION is not set, defaulting to us-west-2 +++"
+  AWS_DEFAULT_REGION="us-west-2"
+fi
 
+export AWS_DEFAULT_REGION
 
 CONTAINER_AWS_OPTIONS=(
   --env AWS_ACCESS_KEY_ID
@@ -14,6 +18,7 @@ CONTAINER_AWS_OPTIONS=(
   --env AWS_ACCOUNT
   --env AWS_SECURITY_TOKEN
   --env AWS_DEFAULT_REGION
+  --env JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=True
 )
 CONTAINER_RUN_OPTIONS=(
   --interactive

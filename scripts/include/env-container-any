@@ -29,6 +29,9 @@ export SHELLCHECK_TAG="${REPOSITORY_DOCKER}/koalaman/shellcheck-alpine:latest"
 #
 # Docker / Podman support
 #
+
+export MOUNT_JSII_CACHE="--mount=type=tmpfs,destination=/.cache"
+
 if which podman > /dev/null 2>&1; then
   export CONTAINER_COMMAND="podman"
   export COMPOSE_COMMAND="podman-compose"
