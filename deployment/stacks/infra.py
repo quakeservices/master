@@ -1,16 +1,14 @@
 from typing import Any
 
-from aws_cdk import Annotations, RemovalPolicy, Stack
-from aws_cdk import aws_dynamodb as dynamodb
+from aws_cdk import Annotations, Stack
 from aws_cdk import aws_ec2 as ec2
-from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_route53 as route53
 from constructs import Construct
 
-from deployment.constants import *
-from deployment.parts.record import Record, RecordBuilder
-from deployment.parts.zone import Zone
+from deployment.constants import APP_NAME, DOMAINS, RECORDS
+from deployment.parts.dns.record import Record, RecordBuilder
+from deployment.parts.dns.zone import Zone
 
 
 class InfraStack(Stack):

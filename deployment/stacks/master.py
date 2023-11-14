@@ -1,20 +1,36 @@
-from typing import Any, Final, Literal, Optional
+from typing import Any
 
-from aws_cdk import Duration, RemovalPolicy, Stack
+from aws_cdk import RemovalPolicy, Stack
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
-from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_elasticloadbalancingv2 as elb
-from aws_cdk import aws_iam as iam
-from aws_cdk import aws_logs as logs
 from aws_cdk import aws_route53 as route53
 from aws_cdk import aws_route53_targets as route53_targets
-from aws_cdk import aws_secretsmanager as secretsmanager
 from constructs import Construct
 
-from deployment.constants import *
-from deployment.parts.record import Record
+from deployment.constants import (
+    APP_NAME,
+    DEPLOYMENT_ENVIRONMENT,
+    DOMAIN_NAME,
+    MASTER_CPU,
+    MASTER_HEALTHCHECK_PORT,
+    MASTER_MEMORY,
+    MASTER_PORT,
+)
+from deployment.models.fargate.task import (
+    EcsHealthCheck,
+    FargateTaskConfiguration,
+    PortConfiguration,
+    RegistryConfiguration,
+)
+from deployment.models.network.security_group import (
+    SecurityGroupConfig,
+    SecurityGroupRule,
+)
+from deployment.parts.dns.record import Record
+from deployment.parts.fargate.task import FargateTask
+from deployment.parts.network.security_group import SecurityGroup
 
 
 class MasterStack(Stack):
@@ -30,14 +46,37 @@ class MasterStack(Stack):
         self.cluster = self._get_cluster()
 
         self.table = self._create_table()
-        self.task = self._create_master_task()
-        self.credentials = self._get_ghcr_credentials()
-        self._grant_credentials_read_to_task()
+        task_configuration = FargateTaskConfiguration(
+            name="master",
+            ports=self._ports(),
+            healthcheck=self._healthcheck(),
+            deployment_environment=DEPLOYMENT_ENVIRONMENT,
+            registry=RegistryConfiguration(
+                name="ghcr",
+                namespace="quakeservices",
+                image="master",
+                tag="latest",
+            ),
+            cpu=MASTER_CPU,
+            memory=MASTER_MEMORY,
+        )
+        self.task = FargateTask(
+            self,
+            "task",
+            config=task_configuration,
+        )
         self._grant_table_read_write_to_task()
-        self._create_task_container()
         self.nlb = self._create_network_load_balancer()
         self._create_service_and_nlb()
         self._create_a_record()
+
+    def _ports(self) -> list[PortConfiguration]:
+        return [PortConfiguration(port=MASTER_PORT, protocol="UDP")]
+
+    def _healthcheck(self) -> EcsHealthCheck:
+        return EcsHealthCheck(
+            port=MASTER_HEALTHCHECK_PORT, protocol="TCP", scheme="http"
+        )
 
     def _get_vpc(self) -> ec2.IVpc:
         return ec2.Vpc.from_lookup(self, "vpc", vpc_name=APP_NAME)
@@ -67,27 +106,26 @@ class MasterStack(Stack):
         )
 
     def _grant_table_read_write_to_task(self) -> None:
-        self.table.grant_read_write_data(self.task.task_role)
+        self.table.grant_read_write_data(self.task.task.task_role)
 
     def _create_security_group(self) -> ec2.ISecurityGroup:
-        security_group = ec2.SecurityGroup(
-            self,
-            "sg",
+        security_group_config = SecurityGroupConfig(
+            name=f"{APP_NAME}-master-sg",
             vpc=self.vpc,
-            allow_all_outbound=True,
-            security_group_name=f"{APP_NAME}-master-sg",
+            ingress=[
+                SecurityGroupRule(
+                    peer=ec2.Peer.any_ipv4(),
+                    connection=ec2.Port.udp(MASTER_PORT),
+                    description="Allow master access from anywhere",
+                ),
+                SecurityGroupRule(
+                    peer=ec2.Peer.ipv4(self.vpc.vpc_cidr_block),
+                    connection=ec2.Port.tcp(MASTER_HEALTHCHECK_PORT),
+                    description="Allow healthcheck from the vpc",
+                ),
+            ],
         )
-
-        security_group.add_ingress_rule(
-            ec2.Peer.any_ipv4(),
-            ec2.Port.udp(MASTER_PORT),
-            "Allow master access from anywhere",
-        )
-        security_group.add_ingress_rule(
-            ec2.Peer.ipv4(self.vpc.vpc_cidr_block),
-            ec2.Port.tcp(MASTER_HEALTHCHECK_PORT),
-            "Allow healthcheck from the vpc",
-        )
+        security_group = SecurityGroup(self, security_group_config)
         return security_group
 
     def _create_service(self) -> ecs.FargateService:
@@ -99,7 +137,7 @@ class MasterStack(Stack):
             "service",
             service_name=f"{APP_NAME}-{DEPLOYMENT_ENVIRONMENT}",
             cluster=self.cluster,
-            task_definition=self.task,
+            task_definition=self.task.task,
             assign_public_ip=True,
             security_groups=[self._create_security_group()],
             capacity_provider_strategies=[
@@ -155,7 +193,7 @@ class MasterStack(Stack):
         """
         Record(
             self,
-            "alias",
+            zone=None,
             domain=DOMAIN_NAME,
             record_type=route53.RecordType.A,
             record_name="master",

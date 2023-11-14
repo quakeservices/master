@@ -1,6 +1,6 @@
-from constructs import Construct
-from aws_cdk import aws_route53 as route53
 from aws_cdk import RemovalPolicy
+from aws_cdk import aws_route53 as route53
+from constructs import Construct
 
 
 class Zone(route53.PublicHostedZone):

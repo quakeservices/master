@@ -1,4 +1,4 @@
-from typing import Literal, Union
+from typing import Literal
 
-Record = dict[Literal["key", "values"], Union[str, list[str]]]
+Record = dict[Literal["name", "targets"], str | list[str]]
 Records = dict[str, dict[Literal["TXT", "CNAME", "A"], list[Record]]]
