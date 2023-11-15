@@ -1,17 +1,16 @@
-from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from aws_cdk import Duration
 from aws_cdk import aws_ecs as ecs
 
+from deployment.models.base import DeploymentBaseModel
 
-@dataclass
-class PortConfiguration:
+
+class PortConfiguration(DeploymentBaseModel):
     port: int
     protocol: str
 
 
-@dataclass
 class EcsHealthCheck(PortConfiguration):
     scheme: Literal["http", "https"]
     host: str = "localhost"
@@ -22,7 +21,7 @@ class EcsHealthCheck(PortConfiguration):
     start_period: Duration | None = None
     timeout: Duration = Duration.seconds(5)
 
-    def __post_init__(self) -> None:
+    def model_post_init(self, __context: Any) -> None:
         if self.command is None:
             self._build_command()
 
@@ -39,15 +38,14 @@ class EcsHealthCheck(PortConfiguration):
         return ecs.HealthCheck(command=self.command)
 
 
-@dataclass
-class RegistryConfiguration:
+class RegistryConfiguration(DeploymentBaseModel):
     name: Literal["ghcr", "ecr"]
     namespace: str
     image: str
     tag: str = "latest"
     region: str | None = None
 
-    def __post_init__(self) -> None:
+    def model_post_init(self, __context: Any) -> None:
         self.image_path = f"{self.namespace}/{self.image}:{self.tag}"
 
         if self.name == "ecr" and self.region is None:
@@ -73,8 +71,7 @@ class RegistryConfiguration:
         return f"{self.name}.dkr.ecr.{self.region}.amazonaws.com/{self.image_path}"
 
 
-@dataclass
-class FargateTaskConfiguration:
+class FargateTaskConfiguration(DeploymentBaseModel):
     name: str
     ports: list[PortConfiguration]
     healthcheck: EcsHealthCheck
@@ -87,7 +84,7 @@ class FargateTaskConfiguration:
     platform: ecs.RuntimePlatform | None = None
     timeout: Duration = Duration.seconds(15)
 
-    def __post_init__(self) -> None:
+    def model_post_init(self, __context: Any) -> None:
         if self.platform is None:
             self.platform = self._platform()
 

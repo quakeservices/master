@@ -1,6 +1,6 @@
 from typing import Any
 
-from aws_cdk import RemovalPolicy, Stack
+from aws_cdk import RemovalPolicy
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_ecs as ecs
@@ -28,12 +28,13 @@ from deployment.models.network.security_group import (
     SecurityGroupConfig,
     SecurityGroupRule,
 )
+from deployment.parts.base_stack import BaseStack
 from deployment.parts.dns.record import Record
 from deployment.parts.fargate.task import FargateTask
 from deployment.parts.network.security_group import SecurityGroup
 
 
-class MasterStack(Stack):
+class MasterStack(BaseStack):
     def __init__(
         self,
         scope: Construct,
@@ -42,8 +43,8 @@ class MasterStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        self.vpc = self._get_vpc()
-        self.cluster = self._get_cluster()
+        self._get_vpc(name=APP_NAME)
+        self._get_ecs_cluster(name=APP_NAME)
 
         self.table = self._create_table()
         task_configuration = FargateTaskConfiguration(
@@ -76,17 +77,6 @@ class MasterStack(Stack):
     def _healthcheck(self) -> EcsHealthCheck:
         return EcsHealthCheck(
             port=MASTER_HEALTHCHECK_PORT, protocol="TCP", scheme="http"
-        )
-
-    def _get_vpc(self) -> ec2.IVpc:
-        return ec2.Vpc.from_lookup(self, "vpc", vpc_name=APP_NAME)
-
-    def _get_zone(self) -> route53.IHostedZone:
-        return route53.HostedZone.from_lookup(self, "domain", domain_name=DOMAIN_NAME)
-
-    def _get_cluster(self) -> ecs.ICluster:
-        return ecs.Cluster.from_cluster_attributes(
-            self, "cluster", vpc=self.vpc, cluster_name=APP_NAME, security_groups=[]
         )
 
     def _create_table(self) -> dynamodb.Table:
