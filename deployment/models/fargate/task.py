@@ -4,14 +4,10 @@ from aws_cdk import Duration
 from aws_cdk import aws_ecs as ecs
 
 from deployment.models.base import DeploymentBaseModel
+from deployment.models.network.ports import PortConfiguration
 
 
-class PortConfiguration(DeploymentBaseModel):
-    port: int
-    protocol: str
-
-
-class EcsHealthCheck(PortConfiguration):
+class EcsHealthCheckConfiguration(PortConfiguration):
     scheme: Literal["http", "https"]
     host: str = "localhost"
     path: str | None = None
